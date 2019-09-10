@@ -46,13 +46,15 @@ def post_states():
     """posts a specified state"""
     try:
         dic = request.get_json()
-        if dic == {}:
-            abort(400, "Missing name")
-        else:
-            state = State(dic)
-            return jsonify(state.to_dict()), 201
-    except:
-        abort(400, "Not a JSON")
+    except Exception:
+        abort(400, 'Not a JSON')
+    print('DICTIONARY IN JSON')
+    print(dic)
+    if 'name' not in dic:
+        abort(400, "Missing name")
+    else:
+        state = State(dic)
+        return jsonify(state.to_dict()), 201
 
 
 @app_views.route('/states/<state_id>', methods=["PUT"],
