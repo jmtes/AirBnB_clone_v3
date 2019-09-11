@@ -48,12 +48,10 @@ def post_states():
         dic = request.get_json()
     except Exception:
         abort(400, 'Not a JSON')
-    print('DICTIONARY IN JSON')
-    print(dic)
     if 'name' not in dic:
         abort(400, "Missing name")
     else:
-        state = State(dic)
+        state = State(**dic)
         return jsonify(state.to_dict()), 201
 
 
