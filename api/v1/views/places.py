@@ -7,16 +7,16 @@ from models.place import Place
 from flask import abort, request
 
 
-@app_views.route('/cities', strict_slashes=False)
-def all_cities():
-    """retrieves all cities"""
+@app_views.route('/places', strict_slashes=False)
+def all_places():
+    """retrieves all places"""
     place_list = []
     for v in storage.all('Place').values():
         place_list.append(v.to_dict())
     return jsonify(place_list), 200
 
 
-@app_views.route('/cities/<place_id>', strict_slashes=False)
+@app_views.route('/places/<place_id>', strict_slashes=False)
 def one_place(place_id):
     """retrieve one place"""
     g = storage.get("Place", place_id)
@@ -26,7 +26,7 @@ def one_place(place_id):
         abort(404)
 
 
-@app_views.route('/cities/<place_id>', methods=['DELETE'],
+@app_views.route('/places/<place_id>', methods=['DELETE'],
                  strict_slashes=False)
 def del_one_place(place_id):
     """deletes place at passed in place id"""
@@ -40,9 +40,9 @@ def del_one_place(place_id):
         abort(404)
 
 
-@app_views.route('/states/<state_id>/cities', methods=['POST'],
+@app_views.route('/states/<state_id>/places', methods=['POST'],
                  strict_slashes=False)
-def post_cities(state_id):
+def post_places(state_id):
     """posts a specified place"""
     dic = request.get_json()
     if not dic:
@@ -60,7 +60,7 @@ def post_cities(state_id):
         return jsonify(place.to_dict()), 201
 
 
-@app_views.route('/cities/<place_id>', methods=["PUT"],
+@app_views.route('/places/<place_id>', methods=["PUT"],
                  strict_slashes=False)
 def put_place(place_id):
     """puts a specified place"""
@@ -90,6 +90,6 @@ def get_city_places(city_id):
     if g:
         places = []
         for place in g.places:
-            cities.append(place.to_dict())
+            places.append(place.to_dict())
         return jsonify(places), 200
     abort(404)
