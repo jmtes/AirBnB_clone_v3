@@ -40,20 +40,24 @@ def del_one_place(place_id):
         abort(404)
 
 
-@app_views.route('/states/<state_id>/places', methods=['POST'],
+@app_views.route('/cities/<city_id>/places', methods=['POST'],
                  strict_slashes=False)
-def post_places(state_id):
+def post_places(city_id):
     """posts a specified place"""
     dic = request.get_json()
     if not dic:
         return 'Not a JSON', 400
+    if 'user_id' not in dic:
+        return "Missing user_id", 400
     if 'name' not in dic:
-        return "Missing name", 400
-    if not storage.get('State', state_id):
+        return 'Missing name', 400
+    if not storage.get('User', dic.get('user_id')):
+        abort(404)
+    if not storage.get('City', city_id):
         abort(404)
     else:
         place = Place(**dic)
-        setattr(place, 'state_id', state_id)
+        setattr(place, 'city_id', city_id)
         storage.new(place)
         storage.save()
         storage.close()
@@ -74,7 +78,8 @@ def put_place(place_id):
         else:
             for attr in dic:
                 if attr == "id" or attr == "created_at" or \
-                  attr == "updated_at" or attr == 'state_id':
+                  attr == "updated_at" or attr == 'user_id' or \
+                  attr == 'city_id':
                     continue
                 setattr(g, attr, dic[attr])
             storage.save()
