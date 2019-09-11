@@ -23,7 +23,7 @@ def one_state(state_id):
     """retrieve one state"""
     g = storage.get("State", state_id)
     if g:
-        return jsonify(g.to_dict()), 201
+        return jsonify(g.to_dict()), 200
     else:
         abort(404)
 
