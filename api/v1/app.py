@@ -20,9 +20,9 @@ def handle_404(ex):
 
 
 @app.teardown_appcontext
-def teardown(exception):
+def teardown(self):
     '''close storage'''
-    return storage.close()
+    storage.close()
 
 
 if __name__ == "__main__":
