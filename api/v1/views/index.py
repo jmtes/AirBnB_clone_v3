@@ -5,7 +5,7 @@
         json_check - Return page status.
 '''
 from api.v1.views import app_views
-from flask import jsonify
+from flask import Flask, jsonify
 from models import storage
 
 
