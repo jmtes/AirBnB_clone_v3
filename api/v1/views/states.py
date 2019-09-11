@@ -35,7 +35,7 @@ def del_one_state(state_id):
         storage.delete(g)
         storage.save()
         storage.close()
-        return '{}\n'
+        return {}
     else:
         abort(404)
 
