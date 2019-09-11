@@ -35,7 +35,7 @@ def del_one_user(user_id):
         storage.delete(g)
         storage.save()
         storage.close()
-        return '{}\n'
+        return jsonify({}), 200
     else:
         abort(404)
 
@@ -43,14 +43,13 @@ def del_one_user(user_id):
 @app_views.route('/users', methods=['POST'], strict_slashes=False)
 def post_users():
     """posts a specified user"""
-    try:
-        dic = request.get_json()
-    except Exception:
-        abort(400, 'Not a JSON')
+    dic = request.get_json()
+    if not dic:
+        return 'Not a JSON', 400
     if 'email' not in dic:
-        abort(400, "Missing email")
+        return "Missing email", 400
     if 'password' not in dic:
-        abort(400, 'Missing password')
+        return 'Missing password', 400
     else:
         user = User(**dic)
         storage.new(user)
@@ -63,12 +62,11 @@ def post_users():
                  strict_slashes=False)
 def put_user(user_id):
     """puts a specified user"""
-    try:
-        dic = request.get_json()
-    except Exception:
-        abort(400, 'Not a JSON')
+    dic = request.get_json()
+    if not dic:
+        return 'Not a JSON', 400
     if 'name' not in dic:
-        abort(400, "Missing name")
+        return "Missing name", 400
     else:
         g = storage.get("User", user_id)
         if g is None:
