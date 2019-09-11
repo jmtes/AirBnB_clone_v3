@@ -64,19 +64,20 @@ def put_state(state_id):
     """puts a specified state"""
     try:
         dic = request.get_json()
-        if dic == {}:
-            abort(400, "Missing name")
+    except Exception:
+        abort(400, 'Not a JSON')
+    if 'name' not in dic:
+        abort(400, "Missing name")
+    else:
+        g = storage.get("State", state_id)
+        if g is None:
+            abort(404)
         else:
-            g = storage.get("State", state_id)
-            print(g)
-            if g is None:
-                abort(404)
-            else:
-                for attr in dic:
-                    if attr == "id" or attr == "created_at" or\
-                       attr == "updated_at":
-                        continue
-                    setattr(g, attr, dic[attr])
-                return jsonify(g.to_dict()), 200
-    except:
-        abort(400, "Not a JSON")
+            for attr in dic:
+                if attr == "id" or attr == "created_at" or \
+                  attr == "updated_at":
+                    continue
+                setattr(g, attr, dic[attr])
+            storage.save()
+            storage.close()
+            return jsonify(g.to_dict()), 200
