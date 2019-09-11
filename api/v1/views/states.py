@@ -7,21 +7,23 @@ from models.state import State
 from flask import abort, request
 
 
-@app_views.route('/states', strict_slashes=False)
+@app_views.route('/states', methods=['GET'],
+                 strict_slashes=False)
 def all_states():
     """retrieves all states"""
     state_list = []
     for v in storage.all('State').values():
         state_list.append(v.to_dict())
-    return jsonify(state_list)
+    return jsonify(state_list), 200
 
 
-@app_views.route('/states/<state_id>', strict_slashes=False)
+@app_views.route('/states/<state_id>', methods=['GET'],
+                 strict_slashes=False)
 def one_state(state_id):
     """retrieve one state"""
     g = storage.get("State", state_id)
     if g:
-        return jsonify(g.to_dict())
+        return jsonify(g.to_dict()), 201
     else:
         abort(404)
 
@@ -35,7 +37,7 @@ def del_one_state(state_id):
         storage.delete(g)
         storage.save()
         storage.close()
-        return {}
+        return jsonify({}), 200
     else:
         abort(404)
 
@@ -43,12 +45,11 @@ def del_one_state(state_id):
 @app_views.route('/states', methods=['POST'], strict_slashes=False)
 def post_states():
     """posts a specified state"""
-    try:
-        dic = request.get_json()
-    except Exception:
-        abort(400, 'Not a JSON')
+    dic = request.get_json()
+    if not dic:
+        return 'Not a JSON', 400
     if 'name' not in dic:
-        abort(400, "Missing name")
+        return "Missing name", 400
     else:
         state = State(**dic)
         storage.new(state)
@@ -61,10 +62,9 @@ def post_states():
                  strict_slashes=False)
 def put_state(state_id):
     """puts a specified state"""
-    try:
-        dic = request.get_json()
-    except Exception:
-        abort(400, 'Not a JSON')
+    dic = request.get_json()
+    if not dic:
+        return 'Not a JSON', 400
     else:
         g = storage.get("State", state_id)
         if g is None:
