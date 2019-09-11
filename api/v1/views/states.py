@@ -36,7 +36,6 @@ def del_one_state(state_id):
     if g:
         storage.delete(g)
         storage.save()
-        storage.close()
         return jsonify({}), 200
     else:
         abort(404)
@@ -54,7 +53,6 @@ def post_states():
         state = State(**dic)
         storage.new(state)
         storage.save()
-        storage.close()
         return jsonify(state.to_dict()), 201
 
 
@@ -76,5 +74,4 @@ def put_state(state_id):
                     continue
                 setattr(g, attr, dic[attr])
             storage.save()
-            storage.close()
             return jsonify(g.to_dict()), 200
