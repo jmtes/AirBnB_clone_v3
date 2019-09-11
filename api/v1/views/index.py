@@ -9,13 +9,13 @@ from flask import jsonify
 from models import storage
 
 
-@app_views.route('/status')
+@app_views.route('/status', strict_slashes=False)
 def json_check():
     ''' Return page status. '''
     return jsonify(status='OK')
 
 
-@app_views.route('/stats')
+@app_views.route('/stats'strict_slashes=False)
 def count_objects():
     ''' Return count of objects by type. '''
     return jsonify(amenities=storage.count('Amenity'),
@@ -23,4 +23,4 @@ def count_objects():
                    places=storage.count('Place'),
                    reviews=storage.count('Review'),
                    states=storage.count('State'),
-                   users=storage.count('User'))
+                   users=storage.count('User')), 200
