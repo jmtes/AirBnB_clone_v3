@@ -12,15 +12,15 @@ from models import storage
 @app_views.route('/status', strict_slashes=False)
 def json_check():
     ''' Return page status. '''
-    return jsonify(status='OK')
+    return jsonify({'status': 'OK'}), 200
 
 
-@app_views.route('/stats'strict_slashes=False)
+@app_views.route('/stats', strict_slashes=False)
 def count_objects():
     ''' Return count of objects by type. '''
-    return jsonify(amenities=storage.count('Amenity'),
-                   cities=storage.count('City'),
-                   places=storage.count('Place'),
-                   reviews=storage.count('Review'),
-                   states=storage.count('State'),
-                   users=storage.count('User')), 200
+    return jsonify({'amenities': storage.count('Amenity'),
+                    'cities': storage.count('City'),
+                    'places': storage.count('Place'),
+                    'reviews': storage.count('Review'),
+                    'states': storage.count('State'),
+                    'users': storage.count('User')}), 200
