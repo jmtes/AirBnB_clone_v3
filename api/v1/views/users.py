@@ -13,7 +13,7 @@ def all_users():
     user_list = []
     for v in storage.all('User').values():
         user_list.append(v.to_dict())
-    return jsonify(user_list)
+    return jsonify(user_list), 200
 
 
 @app_views.route('/users/<user_id>', strict_slashes=False)
@@ -21,7 +21,7 @@ def one_user(user_id):
     """retrieve one user"""
     g = storage.get("User", user_id)
     if g:
-        return jsonify(g.to_dict())
+        return jsonify(g.to_dict()), 200
     else:
         abort(404)
 
@@ -65,8 +65,6 @@ def put_user(user_id):
     dic = request.get_json()
     if not dic:
         return 'Not a JSON', 400
-    if 'name' not in dic:
-        return "Missing name", 400
     else:
         g = storage.get("User", user_id)
         if g is None:
