@@ -52,6 +52,9 @@ def post_states():
         abort(400, "Missing name")
     else:
         state = State(**dic)
+        storage.new(state)
+        storage.save()
+        storage.close()
         return jsonify(state.to_dict()), 201
 
 
