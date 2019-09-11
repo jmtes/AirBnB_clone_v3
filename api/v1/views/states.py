@@ -65,8 +65,6 @@ def put_state(state_id):
         dic = request.get_json()
     except Exception:
         abort(400, 'Not a JSON')
-    if 'name' not in dic:
-        abort(400, "Missing name")
     else:
         g = storage.get("State", state_id)
         if g is None:
