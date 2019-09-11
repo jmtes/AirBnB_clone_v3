@@ -43,12 +43,11 @@ def del_one_state(state_id):
 @app_views.route('/states', methods=['POST'], strict_slashes=False)
 def post_states():
     """posts a specified state"""
-    try:
-        dic = request.get_json()
-    except Exception:
-        abort(400, {'Not a JSON'})
+    dic = request.get_json()
+    if not dic:
+        return 'Not a JSON', 400
     if 'name' not in dic:
-        abort(400, {"Missing name"})
+        return "Missing name", 400
     else:
         state = State(**dic)
         storage.new(state)
@@ -61,10 +60,9 @@ def post_states():
                  strict_slashes=False)
 def put_state(state_id):
     """puts a specified state"""
-    try:
-        dic = request.get_json()
-    except Exception:
-        abort(400, {'Not a JSON'})
+    dic = request.get_json()
+    if not dic:
+        return 'Not a JSON', 400
     else:
         g = storage.get("State", state_id)
         if g is None:
