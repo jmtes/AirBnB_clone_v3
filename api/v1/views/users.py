@@ -47,8 +47,10 @@ def post_users():
         dic = request.get_json()
     except Exception:
         abort(400, 'Not a JSON')
-    if 'name' not in dic:
-        abort(400, "Missing name")
+    if 'email' not in dic:
+        abort(400, "Missing email")
+    if 'password' not in dic:
+        abort(400, 'Missing password')
     else:
         user = User(**dic)
         storage.new(user)
@@ -74,7 +76,7 @@ def put_user(user_id):
         else:
             for attr in dic:
                 if attr == "id" or attr == "created_at" or \
-                  attr == "updated_at":
+                  attr == "updated_at" or attr == 'email':
                     continue
                 setattr(g, attr, dic[attr])
             storage.save()
