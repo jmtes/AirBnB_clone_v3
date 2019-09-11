@@ -4,7 +4,6 @@ from flask import jsonify
 from api.v1.views import app_views
 from models import storage
 from models.city import City
-from api.v1.app import handle_404
 from flask import abort, request
 
 
