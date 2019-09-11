@@ -81,6 +81,7 @@ def put_city(city_id):
             storage.close()
             return jsonify(g.to_dict()), 200
 
+
 @app_views.route('/states/<state_id>/cities', methods=['GET'],
                  strict_slashes=False)
 def get_state_cities(state_id):
