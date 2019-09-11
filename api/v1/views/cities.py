@@ -41,8 +41,9 @@ def del_one_city(city_id):
         abort(404)
 
 
-@app_views.route('/cities', methods=['POST'], strict_slashes=False)
-def post_cities():
+@app_views.route('/states/<state_id>/cities', methods=['POST'],
+                 strict_slashes=False)
+def post_cities(state_id):
     """posts a specified city"""
     try:
         dic = request.get_json()
@@ -50,8 +51,11 @@ def post_cities():
         abort(400, 'Not a JSON')
     if 'name' not in dic:
         abort(400, "Missing name")
+    if not storage.get('State', state_id):
+        abort(404)
     else:
         city = City(**dic)
+        setattr(city, 'state_id', state_id)
         storage.new(city)
         storage.save()
         storage.close()
@@ -81,3 +85,15 @@ def put_city(city_id):
             storage.save()
             storage.close()
             return jsonify(g.to_dict()), 200
+
+@app_views.route('/states/<state_id>/cities', methods=['GET'],
+                 strict_slashes=False)
+def get_state_cities(state_id):
+    ''' Return list of cities in a specified state. '''
+    g = storage.get('State', state_id)
+    if g:
+        cities = []
+        for city in g.cities:
+            cities.append(city.to_dict())
+        return jsonify(cities), 200
+    abort(404)
