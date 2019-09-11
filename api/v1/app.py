@@ -16,12 +16,12 @@ cors = CORS(app, resources={"/*": {"origins": "0.0.0.0"}})
 def handle_404(ex):
     ''' Handle 404 error. '''
     if request.path.startswith('/api/v1/'):
-        return jsonify(error='Not found'), 404
+        return jsonify({'error': 'Not found'}), 404
 
 
 @app.teardown_appcontext
 def teardown(exception):
-    """close storage"""
+    '''close storage'''
     return storage.close()
 
 
