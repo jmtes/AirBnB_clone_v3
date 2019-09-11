@@ -35,7 +35,7 @@ def del_one_amenity(amenity_id):
         storage.delete(g)
         storage.save()
         storage.close()
-        return '{}\n'
+        return jsonify({}), 200
     else:
         abort(404)
 
@@ -43,12 +43,11 @@ def del_one_amenity(amenity_id):
 @app_views.route('/amenities', methods=['POST'], strict_slashes=False)
 def post_amenities():
     """posts a specified amenity"""
-    try:
-        dic = request.get_json()
-    except Exception:
-        abort(400, 'Not a JSON')
+    dic = request.get_json()
+    if not dic:
+        return 'Not a JSON', 400
     if 'name' not in dic:
-        abort(400, "Missing name")
+        return "Missing name", 400
     else:
         amenity = Amenity(**dic)
         storage.new(amenity)
@@ -61,12 +60,11 @@ def post_amenities():
                  strict_slashes=False)
 def put_amenity(amenity_id):
     """puts a specified amenity"""
-    try:
-        dic = request.get_json()
-    except Exception:
-        abort(400, 'Not a JSON')
+    dic = request.get_json()
+    if not dic:
+        return 'Not a JSON', 400
     if 'name' not in dic:
-        abort(400, "Missing name")
+        return "Missing name", 400
     else:
         g = storage.get("Amenity", amenity_id)
         if g is None:

@@ -13,7 +13,7 @@ def all_cities():
     city_list = []
     for v in storage.all('City').values():
         city_list.append(v.to_dict())
-    return jsonify(city_list)
+    return jsonify(city_list), 200
 
 
 @app_views.route('/cities/<city_id>', strict_slashes=False)
@@ -21,7 +21,7 @@ def one_city(city_id):
     """retrieve one city"""
     g = storage.get("City", city_id)
     if g:
-        return jsonify(g.to_dict())
+        return jsonify(g.to_dict()), 200
     else:
         abort(404)
 
@@ -35,7 +35,7 @@ def del_one_city(city_id):
         storage.delete(g)
         storage.save()
         storage.close()
-        return {}
+        return jsonify({}), 200
     else:
         abort(404)
 
@@ -44,12 +44,11 @@ def del_one_city(city_id):
                  strict_slashes=False)
 def post_cities(state_id):
     """posts a specified city"""
-    try:
-        dic = request.get_json()
-    except Exception:
-        abort(400, 'Not a JSON')
+    dic = request.get_json()
+    if not dic:
+        return 'Not a JSON', 400
     if 'name' not in dic:
-        abort(400, "Missing name")
+        return "Missing name", 400
     if not storage.get('State', state_id):
         abort(404)
     else:
@@ -65,10 +64,9 @@ def post_cities(state_id):
                  strict_slashes=False)
 def put_city(city_id):
     """puts a specified city"""
-    try:
-        dic = request.get_json()
-    except Exception:
-        abort(400, 'Not a JSON')
+    dic = request.get_json()
+    if not dic:
+        return 'Not a JSON', 400
     else:
         g = storage.get("City", city_id)
         if g is None:
@@ -82,6 +80,7 @@ def put_city(city_id):
             storage.save()
             storage.close()
             return jsonify(g.to_dict()), 200
+
 
 @app_views.route('/states/<state_id>/cities', methods=['GET'],
                  strict_slashes=False)
