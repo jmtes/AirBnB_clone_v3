@@ -35,7 +35,7 @@ def del_one_city(city_id):
         storage.delete(g)
         storage.save()
         storage.close()
-        return '{}\n'
+        return {}
     else:
         abort(404)
 
@@ -69,8 +69,6 @@ def put_city(city_id):
         dic = request.get_json()
     except Exception:
         abort(400, 'Not a JSON')
-    if 'name' not in dic:
-        abort(400, "Missing name")
     else:
         g = storage.get("City", city_id)
         if g is None:
@@ -78,7 +76,7 @@ def put_city(city_id):
         else:
             for attr in dic:
                 if attr == "id" or attr == "created_at" or \
-                  attr == "updated_at":
+                  attr == "updated_at" or attr == 'state_id':
                     continue
                 setattr(g, attr, dic[attr])
             storage.save()
