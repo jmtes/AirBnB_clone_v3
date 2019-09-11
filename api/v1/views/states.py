@@ -13,7 +13,7 @@ def all_states():
     state_list = []
     for v in storage.all('State').values():
         state_list.append(v.to_dict())
-    return jsonify(state_list)
+    return jsonify(state_list), 200
 
 
 @app_views.route('/states/<state_id>', strict_slashes=False)
@@ -21,7 +21,7 @@ def one_state(state_id):
     """retrieve one state"""
     g = storage.get("State", state_id)
     if g:
-        return jsonify(g.to_dict())
+        return jsonify(g.to_dict()), 201
     else:
         abort(404)
 
@@ -35,7 +35,7 @@ def del_one_state(state_id):
         storage.delete(g)
         storage.save()
         storage.close()
-        return {}
+        return {}, 200
     else:
         abort(404)
 
@@ -46,9 +46,9 @@ def post_states():
     try:
         dic = request.get_json()
     except Exception:
-        abort(400, 'Not a JSON')
+        abort(400, {'Not a JSON'})
     if 'name' not in dic:
-        abort(400, "Missing name")
+        abort(400, {"Missing name"})
     else:
         state = State(**dic)
         storage.new(state)
@@ -64,7 +64,7 @@ def put_state(state_id):
     try:
         dic = request.get_json()
     except Exception:
-        abort(400, 'Not a JSON')
+        abort(400, {'Not a JSON'})
     else:
         g = storage.get("State", state_id)
         if g is None:
