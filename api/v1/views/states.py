@@ -7,7 +7,8 @@ from models.state import State
 from flask import abort, request
 
 
-@app_views.route('/states', strict_slashes=False)
+@app_views.route('/states', methods=['GET'],
+                 strict_slashes=False)
 def all_states():
     """retrieves all states"""
     state_list = []
@@ -16,7 +17,8 @@ def all_states():
     return jsonify(state_list), 200
 
 
-@app_views.route('/states/<state_id>', strict_slashes=False)
+@app_views.route('/states/<state_id>', methods=['GET'],
+                 strict_slashes=False)
 def one_state(state_id):
     """retrieve one state"""
     g = storage.get("State", state_id)
@@ -35,8 +37,8 @@ def del_one_state(state_id):
         storage.delete(g)
         storage.save()
         storage.close()
-        return {}, 200
-    else:
+        return jsonify({}), 200
+    else
         abort(404)
 
 
