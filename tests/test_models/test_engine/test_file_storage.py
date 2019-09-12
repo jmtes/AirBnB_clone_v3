@@ -18,6 +18,7 @@ import json
 import os
 import pep8
 import unittest
+import MySQLdb
 FileStorage = file_storage.FileStorage
 classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
            "Place": Place, "Review": Review, "State": State, "User": User}
@@ -113,3 +114,37 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing file storage")
+    def test_get(self):
+        """Test that the get method returns an object"""
+        storage = FileStorage()
+        s = State(name="California")
+        storage.new(s)
+        storage.save()
+        storage.reload()
+        s_test = storage.get("State", s.id)
+        self.assertTrue(s_test)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing file storage")
+    def test_count(self):
+        """Test that the count method returns the number of
+            objects in storage
+        """
+        storage = FileStorage()
+        count_1 = storage.count()
+        s = State(name="New York")
+        storage.new(s)
+        storage.save()
+        c = City(name="NYC", state_id=s.id)
+        storage.new(c)
+        storage.save()
+        p = Place(name="Apartment")
+        storage.new(p)
+        storage.save()
+        storage.reload()
+        count_2 = storage.count()
+        self.assertNotEqual(count_1, count_2)
+        count_city = storage.count("City")
+        count_all_city = len(storage.all("City").values())
+        self.assertEqual(count_city, count_all_city)
