@@ -17,8 +17,8 @@ def all_place_amenities(place_id):
     else:
         amenity_list = []
         for v in g.amenities:
-            review_list.append(v.to_dict())
-    return jsonify(review_list), 200
+            amenity_list.append(v.to_dict())
+    return jsonify(amenity_list), 200
 
 
 @app_views.route('/places/<place_id>/amenities/<amenity_id>',
