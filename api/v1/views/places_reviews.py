@@ -52,8 +52,12 @@ def post_review(place_id):
     dic = request.get_json()
     if not dic:
         return 'Not a JSON', 400
-    if 'name' not in dic:
-        return "Missing name", 400
+    if 'user_id' not in dic:
+        return "Missing user_id", 400
+    if not storage.get('User', dic.get('user_id')):
+        abort(404)
+    if 'text' not in dic:
+        return 'Missing text', 400
     if not storage.get('Place', place_id):
         abort(404)
     else:
@@ -79,7 +83,8 @@ def put_review(review_id):
         else:
             for attr in dic:
                 if attr == "id" or attr == "created_at" or \
-                  attr == "updated_at" or attr == 'state_id':
+                  attr == "updated_at" or attr == 'user_id' or \
+                  attr == 'place_id':
                     continue
                 setattr(g, attr, dic[attr])
             storage.save()
