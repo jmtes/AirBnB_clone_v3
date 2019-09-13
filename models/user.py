@@ -33,7 +33,6 @@ class User(BaseModel, Base):
             _pass = hashlib.md5(value.encode())
             value = _pass.hexdigest()
         super.__setattr__(self, name, value)
-            
 
     def __init__(self, *args, **kwargs):
         """initializes user"""
