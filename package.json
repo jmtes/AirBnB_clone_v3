@@ -1,0 +1,27 @@
+{
+  "name": "bearbnb",
+  "version": "1.0.0",
+  "description": "an airbnb clone",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jmtes/AirBnB_clone_v3.git"
+  },
+  "author": "juno tesoro",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jmtes/AirBnB_clone_v3/issues"
+  },
+  "homepage": "https://github.com/jmtes/AirBnB_clone_v3#readme",
+  "devDependencies": {
+    "json-server": "^0.16.1",
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
