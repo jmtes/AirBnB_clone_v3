@@ -12,10 +12,6 @@ const CitySchema = mongoose.Schema({
   state: {
     type: String,
     default: null
-  },
-  places: {
-    type: Array,
-    default: []
   }
 });
 
