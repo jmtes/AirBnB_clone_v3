@@ -19,14 +19,22 @@ const UserSchema = mongoose.Schema({
     required: true
   },
   places: {
+    // Array of place IDs
     type: Array,
     default: []
   },
   reviews: {
+    // Array of review IDs
     type: Array,
     default: []
   },
   reservations: {
+    // Array of reservation IDs
+    type: Array,
+    default: []
+  },
+  inbox: {
+    // Array of message objects
     type: Array,
     default: []
   }
