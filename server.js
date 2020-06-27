@@ -6,6 +6,7 @@ const placeRoutes = require('./routes/places');
 const reviewRoutes = require('./routes/reviews');
 const reservationRoutes = require('./routes/reservations');
 const userRoutes = require('./routes/users');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use('/api/places', placeRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
 
 const PORT = process.env.BEARBNB_PORT || 5000;
 
