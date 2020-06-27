@@ -2,6 +2,14 @@ const express = require('express');
 
 const router = express.Router();
 
+// @route   GET /api/places/in/:cityID
+// @desc    Get all places in city
+// @access  Public
+router.get('/in/:cityID', async (req, res) => {
+  const cityID = req.params.cityID;
+  res.send(`GET all places in city with id ${cityID}`);
+});
+
 // @route   GET /api/places/:id
 // @desc    Get a place
 // @access  Public
