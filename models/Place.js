@@ -9,6 +9,10 @@ const PlaceSchema = mongoose.Schema({
     type: String,
     required: true
   },
+  userID: {
+    type: String,
+    required: true
+  },
   cityID: {
     type: String,
     required: true
