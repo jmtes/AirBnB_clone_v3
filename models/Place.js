@@ -9,7 +9,7 @@ const PlaceSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  userID: {
+  ownerID: {
     type: String,
     required: true
   },
@@ -53,14 +53,6 @@ const PlaceSchema = mongoose.Schema({
     default: []
   },
   photos: {
-    type: Array,
-    default: []
-  },
-  reservations: {
-    type: Array,
-    default: []
-  },
-  reviews: {
     type: Array,
     default: []
   }
