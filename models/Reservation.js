@@ -17,12 +17,15 @@ const ReservationSchema = mongoose.Schema({
     type: Date,
     required: true
   },
-  endDate: {
-    type: Date,
-    required: true
+  nights: {
+    type: Number,
+    required: true,
+    validate: {
+      validator: Number.isInteger
+    }
   },
   confirmed: {
     type: Boolean,
-    required: true
+    default: false
   }
 });
