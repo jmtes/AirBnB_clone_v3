@@ -17,7 +17,7 @@ router.get('/:id', async (req, res) => {
   res.send(`GET city with ID ${id}`);
 });
 
-// @route   GET /api/cities/search
+// @route   GET /api/cities/search/:q
 // @desc    Search cities
 // @access  Public
 router.get('/search/:q', async (req, res) => {
