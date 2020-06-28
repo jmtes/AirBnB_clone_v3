@@ -1,4 +1,5 @@
 const express = require('express');
+const connectDB = require('./config/db');
 
 // Import routes
 const cityRoutes = require('./routes/cities');
@@ -9,6 +10,9 @@ const userRoutes = require('./routes/users');
 const authRoutes = require('./routes/auth');
 
 const app = express();
+
+// Connect to MongoDB
+connectDB();
 
 // Set routes
 app.use('/api/cities', cityRoutes);
