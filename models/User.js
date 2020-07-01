@@ -16,7 +16,7 @@ const UserSchema = mongoose.Schema({
   },
   avatar: {
     type: String,
-    required: true
+    default: ''
   },
   places: {
     // Array of place IDs
