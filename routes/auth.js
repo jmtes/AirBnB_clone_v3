@@ -6,14 +6,22 @@ const { check, validationResult } = require('express-validator');
 const User = require('../models/User');
 
 const keys = require('../config/keys');
+const authCheck = require('../middleware/authCheck');
 
 const router = express.Router();
 
 // @route   GET /api/auth
 // @desc    Get logged-in user
 // @access  Private
-router.get('/', async (req, res) => {
-  res.send('GET logged in user');
+router.get('/', authCheck, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id, { password: 0, __v: 0 });
+
+    res.json(user);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+  }
 });
 
 // @route   POST /api/auth
