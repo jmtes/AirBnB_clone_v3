@@ -16,16 +16,16 @@ router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const user = await User.findById(id);
+    const user = await User.findById(id, {
+      name: 1,
+      avatar: 1,
+      places: 1
+    });
 
     if (!user) {
       res.status(404).json({ message: 'User not found.' });
     } else {
-      res.json({
-        name: user.name,
-        avatar: user.avatar,
-        places: user.places
-      });
+      res.json(user);
     }
   } catch (err) {
     console.log(err.message);
