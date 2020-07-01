@@ -6,7 +6,7 @@ const router = express.Router();
 // @desc    Get reservations for a place
 // @access  Public
 router.get('/for/:placeID', async (req, res) => {
-  const placeID = req.params.placeID;
+  const { placeID } = req.params;
   res.send(`GET reservations for place with id ${placeID}`);
 });
 
@@ -14,7 +14,7 @@ router.get('/for/:placeID', async (req, res) => {
 // @desc    Make reservation for place
 // @access  Private
 router.post('/for/:placeID', async (req, res) => {
-  const placeID = req.params.placeID;
+  const { placeID } = req.params;
   res.send(`POST Make reservation for place with id ${placeID}`);
 });
 
@@ -22,7 +22,7 @@ router.post('/for/:placeID', async (req, res) => {
 // @desc    Edit reservation details
 // @access  Private
 router.put('/:id', async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   res.send(`PUT Edit details for reservation with id ${id}`);
 });
 
@@ -30,7 +30,7 @@ router.put('/:id', async (req, res) => {
 // @desc    Cancel reservation
 // @access  Private
 router.delete('/:id', async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   res.send(`DELETE Cancel reservation with id ${id}`);
 });
 

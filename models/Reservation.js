@@ -29,3 +29,5 @@ const ReservationSchema = mongoose.Schema({
     default: false
   }
 });
+
+module.exports = mongoose.model('reservation', ReservationSchema);

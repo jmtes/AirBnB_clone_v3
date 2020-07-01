@@ -6,7 +6,7 @@ const router = express.Router();
 // @desc    Get all places in city
 // @access  Public
 router.get('/in/:cityID', async (req, res) => {
-  const cityID = req.params.cityID;
+  const { cityID } = req.params;
   res.send(`GET all places in city with id ${cityID}`);
 });
 
@@ -14,7 +14,7 @@ router.get('/in/:cityID', async (req, res) => {
 // @desc    Get a place
 // @access  Public
 router.get('/:id', async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   res.send(`GET place with id ${id}`);
 });
 
@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
 // @desc    Edit place details
 // @access  Private
 router.put('/:id', async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   res.send(`PUT edit details of place ${id}`);
 });
 
@@ -37,7 +37,7 @@ router.put('/:id', async (req, res) => {
 // @desc    Remove place from database
 // @access  Private
 router.delete('/:id', (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   res.send(`DELETE place with id ${id}`);
 });
 
