@@ -28,7 +28,7 @@ router.get('/:id', async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
+    console.log(err.message);
     res.status(500).json({ message: 'Something went wrong. Try again later.' });
   }
 });
