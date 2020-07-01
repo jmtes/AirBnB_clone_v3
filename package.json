@@ -18,8 +18,14 @@
   },
   "homepage": "https://github.com/jmtes/AirBnB_clone_v3#readme",
   "devDependencies": {
+    "eslint": "^7.3.1",
+    "eslint-config-node": "^4.1.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
     "json-server": "^0.16.1",
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "prettier": "^2.0.5"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
