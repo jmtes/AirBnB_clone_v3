@@ -13,7 +13,7 @@ const ReviewSchema = mongoose.Schema({
     type: Number,
     required: true,
     validate: {
-      validator: val => Number.isInteger(val) && val >= 0 && val <= 5
+      validator: (val) => Number.isInteger(val) && val >= 0 && val <= 5
     }
   },
   title: {

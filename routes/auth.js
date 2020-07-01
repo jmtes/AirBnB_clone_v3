@@ -28,22 +28,25 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      res.status(400).json({ errors: errors.array() });
+      return;
     }
 
     const { email, password } = req.body;
 
     try {
-      let user = await User.findOne({ email });
+      const user = await User.findOne({ email });
 
       if (!user) {
-        return res.status(401).json({ message: 'Invalid email or password.' });
+        res.status(401).json({ message: 'Invalid email or password.' });
+        return;
       }
 
       const isCorrectPassword = await bcrypt.compare(password, user.password);
 
       if (!isCorrectPassword) {
-        return res.status(401).json({ message: 'Invalid email or password.' });
+        res.status(401).json({ message: 'Invalid email or password.' });
+        return;
       }
 
       const payload = {

@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
 // @desc    Get one city
 // @access  Public
 router.get('/:id', async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   res.send(`GET city with ID ${id}`);
 });
 
@@ -21,7 +21,7 @@ router.get('/:id', async (req, res) => {
 // @desc    Search cities
 // @access  Public
 router.get('/search/:q', async (req, res) => {
-  const q = req.params.q;
+  const { q } = req.params;
   res.send(`GET cities matching ${q}`);
 });
 

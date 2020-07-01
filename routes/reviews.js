@@ -6,7 +6,7 @@ const router = express.Router();
 // @desc    Get reviews for a place
 // @access  Public
 router.get('/:placeID', async (req, res) => {
-  const placeID = req.params.placeID;
+  const { placeID } = req.params;
   res.send(`GET reviews for place with id ${placeID}`);
 });
 
@@ -14,7 +14,7 @@ router.get('/:placeID', async (req, res) => {
 // @desc    Post review for place
 // @access  Private
 router.post('/:placeID', async (req, res) => {
-  const placeID = req.params.placeID;
+  const { placeID } = req.params;
   res.send(`POST review for place with id ${placeID}`);
 });
 
@@ -22,7 +22,7 @@ router.post('/:placeID', async (req, res) => {
 // @desc    Edit review
 // @access  Private
 router.put('/:id', async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   res.send(`PUT Edit review with id ${id}`);
 });
 
@@ -30,8 +30,8 @@ router.put('/:id', async (req, res) => {
 // @desc    Delete review
 // @access  Private
 router.delete('/:id', async (req, res) => {
-  const id = req.params.id;
-  res.send(`DELETE review`);
+  const { id } = req.params;
+  res.send(`DELETE review with id ${id}`);
 });
 
 module.exports = router;
