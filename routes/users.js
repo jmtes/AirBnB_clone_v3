@@ -109,7 +109,7 @@ router.put('/:id', authCheck, async (req, res) => {
   }
 
   try {
-    const user = await User.findById(req.user.id);
+    let user = await User.findById(req.user.id);
 
     if (req.body.newPassword) {
       const isCorrectPassword = await bcrypt.compare(
@@ -151,12 +151,13 @@ router.put('/:id', authCheck, async (req, res) => {
       delete req.body.password;
     }
 
-    console.log(req.body);
+    user = await User.findByIdAndUpdate(
+      req.user.id,
+      { $set: req.body },
+      { new: true, fields: { password: 0, __v: 0 } }
+    );
 
-    await user.updateOne(req.body);
-    await user.save();
-
-    res.json({ message: 'Successfully updated user info.' });
+    res.json(user);
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ message: 'Something went wrong. Try again later.' });
