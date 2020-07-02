@@ -166,7 +166,7 @@ router.put('/:id', authCheck, async (req, res) => {
 // @route   DELETE /api/users/:id
 // @desc    Delete user account
 // @access  Private
-router.delete('/:id', async (req, res) => {
+router.post('/deactivate/:id', async (req, res) => {
   const { id } = req.params;
   res.send(`DELETE user with id ${id}`);
 });
