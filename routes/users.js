@@ -167,9 +167,39 @@ router.put('/:id', authCheck, async (req, res) => {
 // @route   DELETE /api/users/:id
 // @desc    Delete user account
 // @access  Private
-router.post('/deactivate/:id', async (req, res) => {
+router.post('/deactivate/:id', authCheck, async (req, res) => {
   const { id } = req.params;
-  res.send(`DELETE user with id ${id}`);
+
+  if (id !== req.user.id) {
+    res.status(403).json({ message: 'Access forbidden.' });
+    return;
+  }
+
+  if (!req.body.password) {
+    res.status(401).json({ message: 'Password required for deactivation.' });
+    return;
+  }
+
+  try {
+    let user = await User.findById(req.user.id);
+
+    const isCorrectPassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+
+    if (!isCorrectPassword) {
+      res.status(401).json({ message: 'Invalid password.' });
+      return;
+    }
+
+    user = await User.findByIdAndRemove(req.user.id);
+
+    res.json({ message: 'Successfully deactivated account. Bye!' });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+  }
 });
 
 module.exports = router;
