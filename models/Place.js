@@ -3,11 +3,13 @@ const mongoose = require('mongoose');
 const PlaceSchema = mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
+    maxlength: 32
   },
   desc: {
     type: String,
-    required: true
+    required: true,
+    maxlength: 1000
   },
   ownerID: {
     type: String,

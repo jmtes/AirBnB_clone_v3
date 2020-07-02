@@ -13,16 +13,18 @@ const ReviewSchema = mongoose.Schema({
     type: Number,
     required: true,
     validate: {
-      validator: val => Number.isInteger(val) && val >= 0 && val <= 5
+      validator: (val) => Number.isInteger(val) && val >= 0 && val <= 5
     }
   },
   title: {
     type: String,
-    required: true
+    required: true,
+    maxlength: 32
   },
   body: {
     type: String,
-    required: true
+    required: true,
+    maxlength: 1000
   },
   date: {
     type: Date,
