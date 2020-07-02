@@ -6,6 +6,7 @@ const { check, validationResult } = require('express-validator');
 const User = require('../models/User');
 
 const keys = require('../config/keys');
+const authCheck = require('../middleware/authCheck');
 
 const router = express.Router();
 
@@ -83,7 +84,7 @@ router.post(
         }
       };
 
-      jwt.sign(payload, keys.jwtSecret, { expiresIn: 240000 }, (err, token) => {
+      jwt.sign(payload, keys.jwtSecret, { expiresIn: 2400 }, (err, token) => {
         if (err) throw err;
         res.json({ token });
       });
@@ -99,9 +100,67 @@ router.post(
 // @route   PUT /api/users/:id
 // @desc    Edit user info
 // @access  Private
-router.put('/:id', async (req, res) => {
+router.put('/:id', authCheck, async (req, res) => {
   const { id } = req.params;
-  res.send(`PUT Edit info for user ${id}`);
+
+  if (id !== req.user.id) {
+    res.status(403).json({ message: 'Access forbidden.' });
+    return;
+  }
+
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (req.body.newPassword) {
+      const isCorrectPassword = await bcrypt.compare(
+        req.body.oldPassword,
+        user.password
+      );
+
+      if (!isCorrectPassword) {
+        res.status(401).json({ message: 'Invalid password.' });
+        return;
+      }
+
+      if (req.body.newPassword.length < 8) {
+        res
+          .status(400)
+          .json({ message: 'Password must be at least 8 characters.' });
+        return;
+      }
+
+      const salt = await bcrypt.genSalt();
+      const newPassword = await bcrypt.hash(req.body.newPassword, salt);
+
+      req.body.password = newPassword;
+      delete req.body.newPassword;
+      delete req.body.oldPassword;
+    }
+
+    if (req.body.email) {
+      const isCorrectPassword = await bcrypt.compare(
+        req.body.password,
+        user.password
+      );
+
+      if (!isCorrectPassword) {
+        res.status(401).json({ message: 'Invalid password.' });
+        return;
+      }
+
+      delete req.body.password;
+    }
+
+    console.log(req.body);
+
+    await user.updateOne(req.body);
+    await user.save();
+
+    res.json({ message: 'Successfully updated user info.' });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+  }
 });
 
 // @route   DELETE /api/users/:id
