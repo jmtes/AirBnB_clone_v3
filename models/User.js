@@ -12,11 +12,17 @@ const UserSchema = mongoose.Schema({
   },
   name: {
     type: String,
-    required: true
+    required: true,
+    maxlength: 32
   },
   avatar: {
     type: String,
     default: ''
+  },
+  bio: {
+    type: String,
+    default: 'This user has not set a bio.',
+    maxlength: 200
   },
   places: {
     // Array of place IDs
