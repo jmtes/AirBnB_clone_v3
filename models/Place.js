@@ -23,6 +23,14 @@ const PlaceSchema = mongoose.Schema({
     type: String,
     required: true
   },
+  latitude: {
+    type: String,
+    required: true
+  },
+  longitude: {
+    type: String,
+    required: true
+  },
   beds: {
     type: Number,
     required: true,
