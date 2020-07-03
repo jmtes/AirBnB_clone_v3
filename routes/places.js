@@ -8,6 +8,8 @@ const keys = require('../config/keys');
 const City = require('../models/City');
 const Place = require('../models/Place');
 
+const createCity = require('./utils/createCity');
+
 const router = express.Router();
 
 // @route   GET /api/places/in/:cityID
@@ -87,36 +89,15 @@ router.post(
     });
 
     if (!city) {
-      // Get city coordinates
-      const cityRes = await axios.get(
-        'https://us1.locationiq.com/v1/search.php',
-        {
-          params: {
-            city: locData.address.city,
-            state: locData.address.state || '',
-            region: locData.address.region || '',
-            country: locData.address.country || '',
-            format: 'json',
-            addressdetails: 1,
-            limit: 1,
-            key: keys.locationIQAPIKey
-          }
-        }
+      city = await createCity(
+        locData.address.city,
+        locData.address.state,
+        locData.address.region,
+        locData.address.country
       );
-
-      const { lat, lon } = cityRes.data[0];
-
-      const newCity = new City({
-        name: locData.address.city,
-        state: locData.address.state || '',
-        region: locData.address.region || '',
-        country: locData.address.country,
-        latitude: lat,
-        longitude: lon
-      });
-
-      city = await newCity.save();
     }
+
+    console.log(city);
 
     const newPlace = new Place({
       name: req.body.name,
