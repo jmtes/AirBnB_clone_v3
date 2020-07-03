@@ -61,13 +61,25 @@ router.post(
       return;
     }
 
+    const {
+      name,
+      desc,
+      address,
+      beds,
+      baths,
+      price,
+      maxGuests,
+      amenities,
+      photos
+    } = req.body;
+
     try {
       // Validate address with Location IQ
       const locRes = await axios.get(
         'https://us1.locationiq.com/v1/search.php',
         {
           params: {
-            q: req.body.address,
+            q: address,
             format: 'json',
             addressdetails: 1,
             limit: 1,
@@ -86,37 +98,35 @@ router.post(
         return;
       }
 
+      const { lat, lon } = locData;
+      const { road, state, region, country } = locData.address;
+
       // Check if city exists
       let city = await City.findOne({
         name: locData.address.city,
-        state: locData.address.state || '',
-        region: locData.address.region || '',
-        country: locData.address.country
+        state: state || '',
+        region: region || '',
+        country
       });
 
       if (!city) {
-        city = await createCity(
-          locData.address.city,
-          locData.address.state,
-          locData.address.region,
-          locData.address.country
-        );
+        city = await createCity(locData.address.city, state, region, country);
       }
 
       const newPlace = new Place({
-        name: req.body.name,
-        desc: req.body.desc,
+        name,
+        desc,
         ownerID: req.user.id,
         cityID: city._id,
-        address: `${locData.address.house_number} ${locData.address.road}`,
-        latitude: locData.lat,
-        longitude: locData.lon,
-        beds: req.body.beds,
-        baths: req.body.baths,
-        price: req.body.price,
-        maxGuests: req.body.maxGuests,
-        amenities: req.body.amenities,
-        photos: req.body.photos
+        address: `${locData.address.house_number} ${road}`,
+        latitude: lat,
+        longitude: lon,
+        beds,
+        baths,
+        price,
+        maxGuests,
+        amenities,
+        photos
       });
 
       const place = await newPlace.save();
