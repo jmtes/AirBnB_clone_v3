@@ -1,14 +1,13 @@
 const express = require('express');
 const { check, validationResult } = require('express-validator');
-const axios = require('axios');
 
 const authCheck = require('../middleware/authCheck');
-const keys = require('../config/keys');
 
 const City = require('../models/City');
 const Place = require('../models/Place');
 
 const createCity = require('./utils/createCity');
+const validateAddress = require('./utils/validateAddress');
 
 const router = express.Router();
 
@@ -74,29 +73,8 @@ router.post(
     } = req.body;
 
     try {
-      // Validate address with Location IQ
-      const locRes = await axios.get(
-        'https://us1.locationiq.com/v1/search.php',
-        {
-          params: {
-            q: address,
-            format: 'json',
-            addressdetails: 1,
-            limit: 1,
-            key: keys.locationIQAPIKey
-          }
-        }
-      );
-
-      const locData = locRes.data[0];
-
-      // Make sure place is residential
-      if (locData.class !== 'place' || locData.type !== 'house') {
-        res
-          .status(400)
-          .json({ message: 'Please provide a valid residential address.' });
-        return;
-      }
+      // Validate address
+      const locData = await validateAddress(address);
 
       const { lat, lon } = locData;
       const { road, state, region, country } = locData.address;
@@ -139,6 +117,10 @@ router.post(
           message:
             'Could not validate address. Please check to make sure address is correct.'
         });
+      } else if (err.message === 'Not a valid residential address') {
+        res
+          .status(400)
+          .json({ message: 'Please provide a valid residential address.' });
       } else {
         res
           .status(500)
