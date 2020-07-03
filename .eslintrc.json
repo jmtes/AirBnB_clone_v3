@@ -5,6 +5,7 @@
     "prettier/prettier": "warn",
     "no-console": "off",
     "func-names": "off",
-    "no-process-exit": "off"
+    "no-process-exit": "off",
+    "node/no-unsupported-features/es-syntax": "off"
   }
 }
