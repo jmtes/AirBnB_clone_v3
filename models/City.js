@@ -6,8 +6,10 @@ const CitySchema = mongoose.Schema({
     required: true
   },
   state: {
-    type: String,
-    required: true
+    type: String
+  },
+  region: {
+    type: String
   },
   country: {
     type: String,
