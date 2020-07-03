@@ -41,7 +41,16 @@ router.post(
     check(
       'price',
       'Please provide the price per night for your place.'
-    ).isNumeric()
+    ).isNumeric(),
+    check('maxGuests', 'Please provide a number for maximum guests.')
+      .optional()
+      .isInt(),
+    check('amenities', 'Please provide an array of amenities.')
+      .optional()
+      .isArray(),
+    check('photos', 'Please provide an array of photo URLS.')
+      .optional()
+      .isArray()
   ],
   async (req, res) => {
     const errors = validationResult(req);
