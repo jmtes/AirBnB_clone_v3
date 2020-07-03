@@ -61,63 +61,80 @@ router.post(
       return;
     }
 
-    // Validate address with Location IQ
-    const locRes = await axios.get('https://us1.locationiq.com/v1/search.php', {
-      params: {
-        q: req.body.address,
-        format: 'json',
-        addressdetails: 1,
-        limit: 1,
-        key: keys.locationIQAPIKey
-      }
-    });
-
-    const locData = locRes.data[0];
-
-    // Make sure place is residential
-    if (locData.class !== 'place' || locData.type !== 'house') {
-      res.status(400).json({ message: 'Please provide a valid address.' });
-      return;
-    }
-
-    // Check if city exists
-    let city = await City.findOne({
-      name: locData.address.city,
-      state: locData.address.state || '',
-      region: locData.address.region || '',
-      country: locData.address.country
-    });
-
-    if (!city) {
-      city = await createCity(
-        locData.address.city,
-        locData.address.state,
-        locData.address.region,
-        locData.address.country
+    try {
+      // Validate address with Location IQ
+      const locRes = await axios.get(
+        'https://us1.locationiq.com/v1/search.php',
+        {
+          params: {
+            q: req.body.address,
+            format: 'json',
+            addressdetails: 1,
+            limit: 1,
+            key: keys.locationIQAPIKey
+          }
+        }
       );
+
+      const locData = locRes.data[0];
+
+      // Make sure place is residential
+      if (locData.class !== 'place' || locData.type !== 'house') {
+        res
+          .status(400)
+          .json({ message: 'Please provide a valid residential address.' });
+        return;
+      }
+
+      // Check if city exists
+      let city = await City.findOne({
+        name: locData.address.city,
+        state: locData.address.state || '',
+        region: locData.address.region || '',
+        country: locData.address.country
+      });
+
+      if (!city) {
+        city = await createCity(
+          locData.address.city,
+          locData.address.state,
+          locData.address.region,
+          locData.address.country
+        );
+      }
+
+      const newPlace = new Place({
+        name: req.body.name,
+        desc: req.body.desc,
+        ownerID: req.user.id,
+        cityID: city._id,
+        address: `${locData.address.house_number} ${locData.address.road}`,
+        latitude: locData.lat,
+        longitude: locData.lon,
+        beds: req.body.beds,
+        baths: req.body.baths,
+        price: req.body.price,
+        maxGuests: req.body.maxGuests,
+        amenities: req.body.amenities,
+        photos: req.body.photos
+      });
+
+      const place = await newPlace.save();
+
+      res.json(place);
+    } catch (err) {
+      console.log(err.message);
+      if (err.message === 'Request failed with status code 404') {
+        res.status(400).json({
+          message:
+            'Could not validate address. Please check to make sure address is correct.'
+        });
+      } else {
+        res
+          .status(500)
+          .json({ message: 'Something went wrong. Try again later.' });
+      }
     }
-
-    console.log(city);
-
-    const newPlace = new Place({
-      name: req.body.name,
-      desc: req.body.desc,
-      ownerID: req.user.id,
-      cityID: city._id,
-      address: `${locData.address.house_number} ${locData.address.road}`,
-      latitude: locData.lat,
-      longitude: locData.lon,
-      beds: req.body.beds,
-      baths: req.body.baths,
-      price: req.body.price,
-      maxGuests: req.body.maxGuests,
-      amenities: req.body.amenities,
-      photos: req.body.photos
-    });
-
-    const place = await newPlace.save();
-
-    res.json(place);
   }
 );
 
