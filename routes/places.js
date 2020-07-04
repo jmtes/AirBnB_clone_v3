@@ -233,9 +233,33 @@ router.put(
 // @route   DELETE api/places/:id
 // @desc    Remove place from database
 // @access  Private
-router.delete('/:id', (req, res) => {
+router.delete('/:id', authCheck, async (req, res) => {
   const { id } = req.params;
-  res.send(`DELETE place with id ${id}`);
+
+  try {
+    let place = await Place.findById(id);
+
+    if (!place) {
+      res.status(404).json({ message: `No place found with ID ${id}.` });
+      return;
+    }
+
+    if (place.ownerID !== req.user.id) {
+      res.status(403).json({ message: 'Access forbidden.' });
+      return;
+    }
+
+    place = await Place.findByIdAndRemove(id);
+
+    await User.findByIdAndUpdate(place.ownerID, {
+      $pull: { places: place._id }
+    });
+
+    res.json({ message: 'Successfully removed listing.' });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+  }
 });
 
 module.exports = router;
