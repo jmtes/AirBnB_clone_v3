@@ -117,10 +117,10 @@ router.post(
           message:
             'Could not validate address. Please check to make sure address is correct.'
         });
-      } else if (err.message === 'Not a valid residential address') {
-        res
-          .status(400)
-          .json({ message: 'Please provide a valid residential address.' });
+      } else if (err.message === 'Not a valid street address') {
+        res.status(400).json({
+          message: 'Please make sure your address contains a street address.'
+        });
       } else {
         res
           .status(500)
