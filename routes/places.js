@@ -5,6 +5,7 @@ const authCheck = require('../middleware/authCheck');
 
 const City = require('../models/City');
 const Place = require('../models/Place');
+const User = require('../models/User');
 
 const createCity = require('./utils/createCity');
 const validateAddress = require('./utils/validateAddress');
@@ -129,6 +130,10 @@ router.post(
       });
 
       const place = await newPlace.save();
+
+      await User.findByIdAndUpdate(req.user.id, {
+        $push: { places: place._id }
+      });
 
       res.json(place);
     } catch (err) {
