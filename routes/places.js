@@ -16,7 +16,15 @@ const router = express.Router();
 // @access  Public
 router.get('/in/:cityID', async (req, res) => {
   const { cityID } = req.params;
-  res.send(`GET all places in city with id ${cityID}`);
+
+  try {
+    const places = await Place.find({ cityID }, { __v: 0 });
+
+    res.json({ places });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+  }
 });
 
 // @route   GET /api/places/:id
