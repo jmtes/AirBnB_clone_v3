@@ -9,7 +9,7 @@ const router = express.Router();
 // @access  Public
 router.get('/', async (req, res) => {
   try {
-    const cities = await City.find();
+    const cities = await City.find({}, { __v: 0 });
 
     res.json({ cities });
   } catch (err) {
