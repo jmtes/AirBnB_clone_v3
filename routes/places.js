@@ -159,10 +159,76 @@ router.post(
 // @route   PUT api/places/:id
 // @desc    Edit place details
 // @access  Private
-router.put('/:id', async (req, res) => {
-  const { id } = req.params;
-  res.send(`PUT edit details of place ${id}`);
-});
+router.put(
+  '/:id',
+  [
+    authCheck,
+    check('name', 'Please provide a valid name.').optional().isString(),
+    check('desc', 'Please provide a valid description.').optional().isString(),
+    check('address', 'Cannot change address of a place.').not().exists(),
+    check('beds', 'Please provide a valid number of beds.').optional().isInt(),
+    check('baths', 'Please provide a valid number of baths.')
+      .optional()
+      .isInt(),
+    check('price', 'Please provide a valid price per night.')
+      .optional()
+      .isNumeric(),
+    check('maxGuests', 'Please provide a valid number for maximum guests.')
+      .optional()
+      .isInt(),
+    check('amenities', 'Please provide an array of amenities.')
+      .optional()
+      .isArray(),
+    check('photos', 'Please provide an array of photo URLS.')
+      .optional()
+      .isArray(),
+    check('_id', 'Cannot change the ID of a place.').not().exists(),
+    check('ownerID', 'Cannot change the owner of a place.').not().exists(),
+    check('cityID', 'Cannot change the city of a place.').not().exists(),
+    check('latitude', 'Cannot change the coordinates of a place.')
+      .not()
+      .exists(),
+    check('longitude', 'Cannot change the coordinates of a place.')
+      .not()
+      .exists()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
+      return;
+    }
+
+    const { id } = req.params;
+
+    try {
+      let place = await Place.findById(id);
+
+      if (!place) {
+        res.status(404).json({ message: `No place found with ID ${id}` });
+        return;
+      }
+
+      if (place.ownerID !== req.user.id) {
+        res.status(403).json({ message: 'Access forbidden.' });
+        return;
+      }
+
+      place = await Place.findByIdAndUpdate(
+        id,
+        { $set: req.body },
+        { new: true, fields: { __v: 0 } }
+      );
+
+      res.json(place);
+    } catch (err) {
+      console.log(err.message);
+      res
+        .status(500)
+        .json({ message: 'Something went wrong. Try again later.' });
+    }
+  }
+);
 
 // @route   DELETE api/places/:id
 // @desc    Remove place from database
