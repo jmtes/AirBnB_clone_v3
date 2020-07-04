@@ -18,20 +18,4 @@ router.get('/', async (req, res) => {
   }
 });
 
-// @route   GET api/cities/:id
-// @desc    Get one city
-// @access  Public
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-  res.send(`GET city with ID ${id}`);
-});
-
-// @route   GET /api/cities/search/:q
-// @desc    Search cities
-// @access  Public
-router.get('/search/:q', async (req, res) => {
-  const { q } = req.params;
-  res.send(`GET cities matching ${q}`);
-});
-
 module.exports = router;
