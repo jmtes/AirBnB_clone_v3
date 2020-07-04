@@ -8,8 +8,14 @@ const router = express.Router();
 // @desc    Get all cities
 // @access  Public
 router.get('/', async (req, res) => {
-  console.log(req.query);
-  res.send('GET all cities');
+  try {
+    const cities = await City.find();
+
+    res.json({ cities });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: 'Something went wrong, Try again later.' });
+  }
 });
 
 // @route   GET api/cities/:id
