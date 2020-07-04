@@ -32,7 +32,20 @@ router.get('/in/:cityID', async (req, res) => {
 // @access  Public
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
-  res.send(`GET place with id ${id}`);
+
+  try {
+    const place = await Place.findById(id);
+
+    if (!place) {
+      res.status(404).json({ message: `No place found with ID ${id}.` });
+      return;
+    }
+
+    res.json({ place });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+  }
 });
 
 // @route   POST /api/places
