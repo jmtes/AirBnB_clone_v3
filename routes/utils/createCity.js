@@ -21,13 +21,29 @@ module.exports = async (city, state, region, country) => {
 
   const { lat, lon } = cityRes.data[0];
 
+  const photoRes = await axios.get('https://api.unsplash.com/search/photos', {
+    params: {
+      query: `${city} city`,
+      orientation: 'landscape',
+      page: 1,
+      per_page: 1,
+      color: 'blue'
+    },
+    headers: {
+      Authorization: `Client-ID ${keys.unsplashAccessKey}`
+    }
+  });
+
+  const { regular } = photoRes.data.results[0].urls;
+
   let newCity = new City({
     name: city,
     state: state || '',
     region: region || '',
     country,
     latitude: lat,
-    longitude: lon
+    longitude: lon,
+    photo: regular
   });
 
   newCity = await newCity.save();
