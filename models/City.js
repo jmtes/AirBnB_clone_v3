@@ -22,6 +22,10 @@ const CitySchema = mongoose.Schema({
   longitude: {
     type: String,
     required: true
+  },
+  photo: {
+    type: String,
+    required: true
   }
 });
 
