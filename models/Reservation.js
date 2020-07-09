@@ -13,16 +13,13 @@ const ReservationSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  startDate: {
+  arrival: {
     type: Date,
     required: true
   },
-  nights: {
-    type: Number,
-    required: true,
-    validate: {
-      validator: Number.isInteger
-    }
+  checkout: {
+    type: Date,
+    required: true
   },
   confirmed: {
     type: Boolean,
