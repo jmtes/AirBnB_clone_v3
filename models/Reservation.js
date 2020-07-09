@@ -13,7 +13,7 @@ const ReservationSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  arrival: {
+  checkin: {
     type: Date,
     required: true
   },
