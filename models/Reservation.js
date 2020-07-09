@@ -14,11 +14,11 @@ const ReservationSchema = mongoose.Schema({
     required: true
   },
   checkin: {
-    type: Date,
+    type: String,
     required: true
   },
   checkout: {
-    type: Date,
+    type: String,
     required: true
   },
   confirmed: {
