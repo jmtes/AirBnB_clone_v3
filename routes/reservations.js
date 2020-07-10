@@ -5,6 +5,7 @@ const authCheck = require('../middleware/authCheck');
 
 const Place = require('../models/Place');
 const Reservation = require('../models/Reservation');
+const User = require('../models/User');
 
 const router = express.Router();
 
@@ -23,7 +24,7 @@ router.post(
   '/for/:placeID',
   [
     authCheck,
-    check('arrival', 'Please specify a valid date of arrival.').isISO8601(),
+    check('checkin', 'Please specify a valid check-in date.').isISO8601(),
     check('checkout', 'Please specify a valid check-out date.').isISO8601()
   ],
   async (req, res) => {
@@ -36,6 +37,18 @@ router.post(
     const { placeID } = req.params;
 
     try {
+      const existingReservation = await Reservation.findOne({
+        userID: req.user.id,
+        placeID
+      });
+
+      if (existingReservation) {
+        res
+          .status(403)
+          .json({ message: 'You already have a reservation for this place.' });
+        return;
+      }
+
       const place = await Place.findById(placeID);
 
       if (!place) {
@@ -43,13 +56,30 @@ router.post(
         return;
       }
 
+      if (place.ownerID === req.user.id) {
+        res.status(403).json({
+          message: 'You cannot make a reservation for your own place.'
+        });
+        return;
+      }
+
+      const { checkin, checkout } = req.body;
+
       const newReservation = new Reservation({
         userID: req.user.id,
         placeID: place._id,
         ownerID: place.ownerID,
-        arrival: new Date(arrival),
-        checkout: new Date(checkout)
+        checkin,
+        checkout
       });
+
+      const reservation = await newReservation.save();
+
+      await User.findByIdAndUpdate(req.user.id, {
+        $push: { reservations: reservation._id }
+      });
+
+      res.json(reservation);
     } catch (err) {
       console.log(err.message);
       res
