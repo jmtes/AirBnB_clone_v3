@@ -37,6 +37,15 @@ router.post(
     const { placeID } = req.params;
 
     try {
+      const user = await User.findById(req.user.id);
+
+      if (user.reservations.length >= 2) {
+        res.status(403).json({
+          message: 'Users can have a maximum of two active reservations.'
+        });
+        return;
+      }
+
       const existingReservation = await Reservation.findOne({
         userID: req.user.id,
         placeID
@@ -76,7 +85,7 @@ router.post(
       const reservation = await newReservation.save();
 
       await User.findByIdAndUpdate(req.user.id, {
-        $push: { reservations: reservation._id }
+        $push: { reservations: reservation }
       });
 
       res.json(reservation);
