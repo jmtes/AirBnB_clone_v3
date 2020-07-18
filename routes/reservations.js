@@ -152,10 +152,78 @@ router.post(
 // @route   PUT /api/reservations/:id
 // @desc    Edit reservation details
 // @access  Private
-router.put('/:id', async (req, res) => {
-  const { id } = req.params;
-  res.send(`PUT Edit details for reservation with id ${id}`);
-});
+router.put(
+  '/:id',
+  [
+    authCheck,
+    check('checkin', 'Please specify a valid check-in date.')
+      .optional()
+      .isISO8601(),
+    check('checkout', 'Please specify a valid check-out date.')
+      .optional()
+      .isISO8601(),
+    check('_id', 'Cannot change the ID of a reservation.').not().exists(),
+    check('userID', 'Cannot edit the user associated with a reservation.')
+      .not()
+      .exists(),
+    check('placeID', 'Cannot change the place for a reservation.')
+      .not()
+      .exists(),
+    check('ownerID', 'Cannot change the owner of the place for a reservation.')
+      .not()
+      .exists(),
+    check(
+      'confirmed',
+      'Cannot change the confirmation status of a reservation.'
+    )
+      .not()
+      .exists()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
+      return;
+    }
+
+    const { id } = req.params;
+
+    try {
+      let reservation = await Reservation.findById(id);
+
+      if (!reservation) {
+        res.status(404).json({ message: 'No reservation found.' });
+        return;
+      }
+
+      if (reservation.userID !== req.user.id) {
+        res.status(403).json({ message: 'Access forbidden.' });
+        return;
+      }
+
+      if (reservation.confirmed) {
+        res.status(403).json({
+          message:
+            'Cannot edit a confirmed reservation. Please cancel your the reservation and make a new one.'
+        });
+        return;
+      }
+
+      reservation = await Reservation.findByIdAndUpdate(
+        id,
+        { $set: req.body },
+        { new: true, fields: { __v: 0 } }
+      );
+
+      res.json(reservation);
+    } catch (err) {
+      console.log(err.message);
+      res
+        .status(500)
+        .json({ message: 'Something went wrong. Try again later.' });
+    }
+  }
+);
 
 // @route   DELETE /api/reservation/:id
 // @desc    Cancel reservation
