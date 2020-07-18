@@ -11,10 +11,61 @@ const router = express.Router();
 
 // @route   GET /api/reservations/for/:placeID
 // @desc    Get reservations for a place
-// @access  Public
-router.get('/for/:placeID', async (req, res) => {
+// @access  Private
+router.get('/for/:placeID', authCheck, async (req, res) => {
   const { placeID } = req.params;
-  res.send(`GET reservations for place with id ${placeID}`);
+
+  try {
+    const place = await Place.findById(placeID);
+
+    if (!place) {
+      res.status(404).json({ message: 'Place not found.' });
+      return;
+    }
+
+    if (place.ownerID !== req.user.id) {
+      res.status(403).json({ message: 'Access forbidden.' });
+      return;
+    }
+
+    const reservations = await Reservation.find({ placeID });
+
+    res.json({ reservations });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+  }
+});
+
+// @route   GET /api/reservations/:id
+// @desc    Get reservation
+// @access  Private
+router.get('/:id', authCheck, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const reservation = await Reservation.findById(id);
+
+    if (!reservation) {
+      res.status(404).json({ message: 'No reservation found.' });
+      return;
+    }
+
+    if (
+      !(
+        reservation.userID === req.user.id ||
+        reservation.ownerID === req.user.id
+      )
+    ) {
+      res.status(403).json({ message: 'Access forbidden.' });
+      return;
+    }
+
+    res.json(reservation);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+  }
 });
 
 // @route   POST /api/reservations/for/:placeID
