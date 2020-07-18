@@ -149,6 +149,46 @@ router.post(
   }
 );
 
+// @route   PUT /api/reservations/confirm/:id
+// @desc    Confirm reservation
+// @access  Private
+router.put('/confirm/:id', authCheck, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    let reservation = await Reservation.findById(id);
+
+    if (!reservation) {
+      res.status(404).json({ message: 'No reservation found.' });
+      return;
+    }
+
+    if (reservation.ownerID !== req.user.id) {
+      res.status(403).json({ message: 'Access forbidden.' });
+      return;
+    }
+
+    reservation = await Reservation.findByIdAndUpdate(
+      id,
+      { $set: { confirmed: true } },
+      { new: true, fields: { __v: 0 } }
+    );
+
+    await User.updateOne(
+      {
+        _id: reservation.userID,
+        'reservations._id': reservation._id
+      },
+      { $set: { 'reservations.$.confirmed': true } }
+    );
+
+    res.json(reservation);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+  }
+});
+
 // @route   PUT /api/reservations/:id
 // @desc    Edit reservation details
 // @access  Private
