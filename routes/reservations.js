@@ -276,9 +276,33 @@ router.put(
 // @route   DELETE /api/reservation/:id
 // @desc    Cancel reservation
 // @access  Private
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authCheck, async (req, res) => {
   const { id } = req.params;
-  res.send(`DELETE Cancel reservation with id ${id}`);
+
+  try {
+    let reservation = await Reservation.findById(id);
+
+    if (!reservation) {
+      res.status(404).json({ message: 'No reservation found.' });
+      return;
+    }
+
+    if (reservation.userID !== req.user.id) {
+      res.status(403).json({ message: 'Access forbidden.' });
+      return;
+    }
+
+    reservation = await Reservation.findByIdAndRemove(id);
+
+    await User.findByIdAndUpdate(reservation.userID, {
+      $pull: { reservations: { _id: reservation._id } }
+    });
+
+    res.json({ message: 'Successfully cancelled reservation.' });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+  }
 });
 
 module.exports = router;
