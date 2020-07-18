@@ -255,6 +255,14 @@ router.put(
         { new: true, fields: { __v: 0 } }
       );
 
+      await User.updateOne(
+        {
+          _id: reservation.userID,
+          'reservations._id': reservation._id
+        },
+        { $set: { 'reservations.$': reservation } }
+      );
+
       res.json(reservation);
     } catch (err) {
       console.log(err.message);
