@@ -1,4 +1,7 @@
 const express = require('express');
+const { check, validationResult } = require('express-validator');
+
+const authCheck = require('../middleware/authCheck');
 
 const router = express.Router();
 
@@ -10,13 +13,35 @@ router.get('/:placeID', async (req, res) => {
   res.send(`GET reviews for place with id ${placeID}`);
 });
 
-// @route   POST /api/reviews/:placeID
+// @route   POST /api/reviews/for/:placeID
 // @desc    Post review for place
 // @access  Private
-router.post('/:placeID', async (req, res) => {
-  const { placeID } = req.params;
-  res.send(`POST review for place with id ${placeID}`);
-});
+router.post(
+  '/for/:placeID',
+  [
+    authCheck,
+    check('userName', 'Please provide a valid user name.')
+      .optional()
+      .isString(),
+    check('stars', 'Please provide a valid rating.').isInt({ min: 1, max: 5 }),
+    check('title', 'Please provide a title that is 32 characters or less.')
+      .isString()
+      .isLength({ min: 1, max: 32 }),
+    check('body', 'Please provide a body that is 1000 characters or less.')
+      .isString()
+      .isLength({ min: 1, max: 1000 })
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
+      return;
+    }
+
+    const { placeID } = req.params;
+    res.send(`POST review for place with id ${placeID}`);
+  }
+);
 
 // @route   PUT /api/reviews/:id
 // @desc    Edit review
