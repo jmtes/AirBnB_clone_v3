@@ -123,7 +123,10 @@ router.post(
         return;
       }
 
-      const { checkin, checkout } = req.body;
+      let { checkin, checkout } = req.body;
+
+      checkin = new Date(checkin);
+      checkout = new Date(checkout);
 
       const newReservation = new Reservation({
         userID: req.user.id,
