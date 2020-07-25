@@ -252,6 +252,9 @@ router.put(
         return;
       }
 
+      if (req.body.checkin) req.body.checkin = new Date(req.body.checkin);
+      if (req.body.checkout) req.body.checkout = new Date(req.body.checkout);
+
       reservation = await Reservation.findByIdAndUpdate(
         id,
         { $set: req.body },
