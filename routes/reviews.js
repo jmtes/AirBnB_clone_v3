@@ -2,6 +2,9 @@ const express = require('express');
 const { check, validationResult } = require('express-validator');
 
 const authCheck = require('../middleware/authCheck');
+const Place = require('../models/Place');
+const Review = require('../models/Review');
+const User = require('../models/User');
 
 const router = express.Router();
 
@@ -39,7 +42,40 @@ router.post(
     }
 
     const { placeID } = req.params;
-    res.send(`POST review for place with id ${placeID}`);
+
+    try {
+      const place = await Place.findById(placeID);
+
+      if (!place) {
+        res.status(404).json({ message: 'No place found.' });
+        return;
+      }
+
+      if (place.ownerID === req.user.id) {
+        res
+          .status(403)
+          .json({ message: 'Cannot write a review for your own place.' });
+        return;
+      }
+
+      const newReview = new Review({
+        userID: req.user.id,
+        ...req.body
+      });
+
+      const review = await newReview.save();
+
+      await User.findByIdAndUpdate(req.user.id, {
+        $push: { reviews: review._id }
+      });
+
+      res.json(review);
+    } catch (err) {
+      console.log(err.message);
+      res
+        .status(500)
+        .json({ message: 'Something went wrong. Try again later.' });
+    }
   }
 );
 
