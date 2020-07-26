@@ -58,12 +58,25 @@ router.post(
         return;
       }
 
+      let review = await Review.findOne({
+        userID: req.user.id,
+        placeID: place._id
+      });
+
+      if (review) {
+        res
+          .status(403)
+          .json({ message: 'Cannot write multiple reviews for one place.' });
+        return;
+      }
+
       const newReview = new Review({
         userID: req.user.id,
+        placeID: place._id,
         ...req.body
       });
 
-      const review = await newReview.save();
+      review = await newReview.save();
 
       await User.findByIdAndUpdate(req.user.id, {
         $push: { reviews: review._id }
