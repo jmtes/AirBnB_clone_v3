@@ -8,12 +8,39 @@ const User = require('../models/User');
 
 const router = express.Router();
 
-// @route   GET /api/reviews/:placeID
-// @desc    Get reviews for a place
+// @route   GET /api/reviews/:id
+// @desc    Get review
 // @access  Public
-router.get('/:placeID', async (req, res) => {
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const review = await Review.findById(id, { __v: 0 });
+
+    if (!review) {
+      res.status(404).json({ message: 'No review found.' });
+      return;
+    }
+
+    res.json(review);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+  }
+});
+
+// @route   GET /api/reviews/for/:placeID
+// @desc    Get all reviews for a place
+// @access  Public
+router.get('/for/:placeID', async (req, res) => {
   const { placeID } = req.params;
-  res.send(`GET reviews for place with id ${placeID}`);
+
+  try {
+    res.send(`GET all reviews for place with id ${placeID}`);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+  }
 });
 
 // @route   POST /api/reviews/for/:placeID
