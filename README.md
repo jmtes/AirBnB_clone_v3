@@ -1,4 +1,4 @@
-![bearbnb logo](https://i.imgur.com/VBNaSJr.png)
+![bearbnb logo](https://i.imgur.com/sszpMlw.png)
 
 # bearbnb
 
