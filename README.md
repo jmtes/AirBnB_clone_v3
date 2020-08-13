@@ -1,3 +1,4 @@
+![bearbnb logo](https://i.imgur.com/VBNaSJr.png)
 # bearbnb
 A clone of AirBnB!
 
