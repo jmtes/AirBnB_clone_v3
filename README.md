@@ -76,7 +76,7 @@ At the time of writing, the app is still just an Express server, but that will c
 
 ## Testing the API with Postman
 
-Bearbnb has a Postman collection! Simply open up Postman and import `BearBnB.postman_collection.json`, located at the root of the repository.
+Bearbnb has a Postman collection! Simply open up Postman and import `bearbnb.postman_collection.json`, located at the root of the repository.
 
 Each request is rife with usage and response examples. They are updated as endpoint handlers are implemented.
 
