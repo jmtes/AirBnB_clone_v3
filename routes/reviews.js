@@ -1,5 +1,5 @@
 const express = require('express');
-const { check, validationResult } = require('express-validator');
+const { body, param, validationResult } = require('express-validator');
 
 const authCheck = require('../middleware/authCheck');
 const Place = require('../models/Place');
@@ -10,45 +10,69 @@ const router = express.Router();
 // @route   GET /api/reviews/:id
 // @desc    Get review
 // @access  Public
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const review = await Review.findById(id, { __v: 0 });
-
-    if (!review) {
-      res.status(404).json({ message: 'No review found.' });
+router.get(
+  '/:id',
+  param('id', 'Please provide a valid review ID.').isMongoId(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
       return;
     }
 
-    res.json(review);
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+    const { id } = req.params;
+
+    try {
+      const review = await Review.findById(id, { __v: 0 });
+
+      if (!review) {
+        res.status(404).json({ message: 'No review found.' });
+        return;
+      }
+
+      res.json(review);
+    } catch (err) {
+      console.log(err.message);
+      res
+        .status(500)
+        .json({ message: 'Something went wrong. Try again later.' });
+    }
   }
-});
+);
 
 // @route   GET /api/reviews/for/:placeID
 // @desc    Get all reviews for a place
 // @access  Public
-router.get('/for/:placeID', async (req, res) => {
-  const { placeID } = req.params;
-
-  try {
-    const place = await Place.findById(placeID);
-
-    if (!place) {
-      res.status(404).json({ message: `No place found with ID ${placeID}.` });
+router.get(
+  '/for/:placeID',
+  param('placeID', 'Please provide a valid place ID.').isMongoId(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
       return;
     }
 
-    const reviews = await Review.find({ placeID }, { __v: 0 });
-    res.json(reviews);
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+    const { placeID } = req.params;
+
+    try {
+      const place = await Place.findById(placeID);
+
+      if (!place) {
+        res.status(404).json({ message: `No place found with ID ${placeID}.` });
+        return;
+      }
+
+      const reviews = await Review.find({ placeID }, { __v: 0 });
+      res.json(reviews);
+    } catch (err) {
+      console.log(err.message);
+      res
+        .status(500)
+        .json({ message: 'Something went wrong. Try again later.' });
+    }
   }
-});
+);
 
 // @route   POST /api/reviews/for/:placeID
 // @desc    Post review for place
@@ -57,14 +81,13 @@ router.post(
   '/for/:placeID',
   [
     authCheck,
-    check('userName', 'Please provide a valid user name.')
-      .optional()
-      .isString(),
-    check('stars', 'Please provide a valid rating.').isInt({ min: 1, max: 5 }),
-    check('title', 'Please provide a title that is 32 characters or less.')
+    param('placeID', 'Please provide a valid place ID.').isMongoId(),
+    body('userName', 'Please provide a valid user name.').optional(),
+    body('stars', 'Please provide a valid rating.').isInt({ min: 1, max: 5 }),
+    body('title', 'Please provide a title that is 32 characters or less.')
       .isString()
       .isLength({ min: 1, max: 32 }),
-    check('body', 'Please provide a body that is 1000 characters or less.')
+    body('body', 'Please provide a body that is 1000 characters or less.')
       .isString()
       .isLength({ min: 1, max: 1000 })
   ],
@@ -129,24 +152,25 @@ router.put(
   '/:id',
   [
     authCheck,
-    check('stars', 'Please provide a valid rating.')
+    param('id', 'Please provide a valid review ID.').isMongoId(),
+    body('stars', 'Please provide a valid rating.')
       .optional()
       .isInt({ min: 1, max: 5 }),
-    check('title', 'Please provide a title that is 32 characters or less.')
+    body('title', 'Please provide a title that is 32 characters or less.')
       .optional()
       .isString()
       .isLength({ min: 1, max: 32 }),
-    check('body', 'Please provide a body that is 1000 characters or less.')
+    body('body', 'Please provide a body that is 1000 characters or less.')
       .optional()
       .isString()
       .isLength({ min: 1, max: 1000 }),
-    check('userName', 'Cannot change username.').not().exists(),
-    check('date', 'Cannot change the date of a review.').not().exists(),
-    check('_id', 'Cannot change the ID of a review.').not().exists(),
-    check('userID', 'Cannot change the user attributed to a review.')
+    body('userName', 'Cannot change username.').not().exists(),
+    body('date', 'Cannot change the date of a review.').not().exists(),
+    body('_id', 'Cannot change the ID of a review.').not().exists(),
+    body('userID', 'Cannot change the user attributed to a review.')
       .not()
       .exists(),
-    check('placeID', 'Cannot change the place a review is for.').not().exists()
+    body('placeID', 'Cannot change the place a review is for.').not().exists()
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -189,29 +213,41 @@ router.put(
 // @route   DELETE /api/reviews/:id
 // @desc    Delete review
 // @access  Private
-router.delete('/:id', authCheck, async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    let review = await Review.findById(id);
-
-    if (!review) {
-      res.status(404).json({ message: `No review found with ID ${id}.` });
+router.delete(
+  '/:id',
+  [authCheck, param('id', 'Please provide a valid review ID.').isMongoId()],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
       return;
     }
 
-    if (review.userID !== req.user.id) {
-      res.status(404).json({ message: 'Access forbidden.' });
-      return;
+    const { id } = req.params;
+
+    try {
+      let review = await Review.findById(id);
+
+      if (!review) {
+        res.status(404).json({ message: `No review found with ID ${id}.` });
+        return;
+      }
+
+      if (review.userID !== req.user.id) {
+        res.status(404).json({ message: 'Access forbidden.' });
+        return;
+      }
+
+      review = await Review.findByIdAndRemove(id);
+
+      res.json({ message: 'Successfully deleted review.' });
+    } catch (err) {
+      console.log(err);
+      res
+        .status(500)
+        .json({ message: 'Something went wrong. Try again later.' });
     }
-
-    review = await Review.findByIdAndRemove(id);
-
-    res.json({ message: 'Successfully deleted review.' });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: 'Something went wrong. Try again later.' });
   }
-});
+);
 
 module.exports = router;

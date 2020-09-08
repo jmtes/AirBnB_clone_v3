@@ -1,5 +1,5 @@
 const express = require('express');
-const { check, validationResult } = require('express-validator');
+const { body, param, validationResult } = require('express-validator');
 
 const authCheck = require('../middleware/authCheck');
 
@@ -16,39 +16,63 @@ const router = express.Router();
 // @route   GET /api/places/in/:cityID
 // @desc    Get all places in city
 // @access  Public
-router.get('/in/:cityID', async (req, res) => {
-  const { cityID } = req.params;
+router.get(
+  '/in/:cityID',
+  param('cityID', 'Please provide a valid city ID.').isMongoId(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
+      return;
+    }
 
-  try {
-    const places = await Place.find({ cityID }, { __v: 0 });
+    const { cityID } = req.params;
 
-    res.json({ places });
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+    try {
+      const places = await Place.find({ cityID }, { __v: 0 });
+
+      res.json({ places });
+    } catch (err) {
+      console.log(err.message);
+      res
+        .status(500)
+        .json({ message: 'Something went wrong. Try again later.' });
+    }
   }
-});
+);
 
 // @route   GET /api/places/:id
 // @desc    Get a place
 // @access  Public
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const place = await Place.findById(id);
-
-    if (!place) {
-      res.status(404).json({ message: `No place found with ID ${id}.` });
+router.get(
+  '/:id',
+  param('id', 'Please provide a valid place ID.').isMongoId(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
       return;
     }
 
-    res.json({ place });
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+    const { id } = req.params;
+
+    try {
+      const place = await Place.findById(id);
+
+      if (!place) {
+        res.status(404).json({ message: `No place found with ID ${id}.` });
+        return;
+      }
+
+      res.json({ place });
+    } catch (err) {
+      console.log(err.message);
+      res
+        .status(500)
+        .json({ message: 'Something went wrong. Try again later.' });
+    }
   }
-});
+);
 
 // @route   POST /api/places
 // @desc    Add place to database
@@ -57,22 +81,22 @@ router.post(
   '/',
   [
     authCheck,
-    check('name', 'Please provide a name for your place.').isString(),
-    check('desc', 'Please provide a description for your place.').isString(),
-    check('address', 'Please provide an address for your place.').isString(),
-    check('beds', 'Please provide the number of beds.').isInt(),
-    check('baths', 'Please provide the number of baths.').isInt(),
-    check(
+    body('name', 'Please provide a name for your place.').exists(),
+    body('desc', 'Please provide a description for your place.').exists(),
+    body('address', 'Please provide an address for your place.').exists(),
+    body('beds', 'Please provide the number of beds.').isInt(),
+    body('baths', 'Please provide the number of baths.').isInt(),
+    body(
       'price',
       'Please provide the price per night for your place.'
     ).isNumeric(),
-    check('maxGuests', 'Please provide a number for maximum guests.')
+    body('maxGuests', 'Please provide a number for maximum guests.')
       .optional()
       .isInt(),
-    check('amenities', 'Please provide an array of amenities.')
+    body('amenities', 'Please provide an array of amenities.')
       .optional()
       .isArray(),
-    check('photos', 'Please provide an array of photo URLS.')
+    body('photos', 'Please provide an array of photo URLS.')
       .optional()
       .isArray()
   ],
@@ -160,32 +184,31 @@ router.put(
   '/:id',
   [
     authCheck,
-    check('name', 'Please provide a valid name.').optional().isString(),
-    check('desc', 'Please provide a valid description.').optional().isString(),
-    check('address', 'Cannot change address of a place.').not().exists(),
-    check('beds', 'Please provide a valid number of beds.').optional().isInt(),
-    check('baths', 'Please provide a valid number of baths.')
-      .optional()
-      .isInt(),
-    check('price', 'Please provide a valid price per night.')
+    param('id', 'Please provide a valid place ID.').isMongoId(),
+    body('name', 'Please provide a valid name.').optional().exists(),
+    body('desc', 'Please provide a valid description.').optional().exists(),
+    body('address', 'Cannot change address of a place.').not().exists(),
+    body('beds', 'Please provide a valid number of beds.').optional().isInt(),
+    body('baths', 'Please provide a valid number of baths.').optional().isInt(),
+    body('price', 'Please provide a valid price per night.')
       .optional()
       .isNumeric(),
-    check('maxGuests', 'Please provide a valid number for maximum guests.')
+    body('maxGuests', 'Please provide a valid number for maximum guests.')
       .optional()
       .isInt(),
-    check('amenities', 'Please provide an array of amenities.')
+    body('amenities', 'Please provide an array of amenities.')
       .optional()
       .isArray(),
-    check('photos', 'Please provide an array of photo URLS.')
+    body('photos', 'Please provide an array of photo URLS.')
       .optional()
       .isArray(),
-    check('_id', 'Cannot change the ID of a place.').not().exists(),
-    check('ownerID', 'Cannot change the owner of a place.').not().exists(),
-    check('cityID', 'Cannot change the city of a place.').not().exists(),
-    check('latitude', 'Cannot change the coordinates of a place.')
+    body('_id', 'Cannot change the ID of a place.').not().exists(),
+    body('ownerID', 'Cannot change the owner of a place.').not().exists(),
+    body('cityID', 'Cannot change the city of a place.').not().exists(),
+    body('latitude', 'Cannot change the coordinates of a place.')
       .not()
       .exists(),
-    check('longitude', 'Cannot change the coordinates of a place.')
+    body('longitude', 'Cannot change the coordinates of a place.')
       .not()
       .exists()
   ],
@@ -230,32 +253,44 @@ router.put(
 // @route   DELETE api/places/:id
 // @desc    Remove place from database
 // @access  Private
-router.delete('/:id', authCheck, async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    let place = await Place.findById(id);
-
-    if (!place) {
-      res.status(404).json({ message: `No place found with ID ${id}.` });
+router.delete(
+  '/:id',
+  [authCheck, param('id', 'Please provide a valid place ID.').isMongoId()],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
       return;
     }
 
-    if (place.ownerID !== req.user.id) {
-      res.status(403).json({ message: 'Access forbidden.' });
-      return;
+    const { id } = req.params;
+
+    try {
+      let place = await Place.findById(id);
+
+      if (!place) {
+        res.status(404).json({ message: `No place found with ID ${id}.` });
+        return;
+      }
+
+      if (place.ownerID !== req.user.id) {
+        res.status(403).json({ message: 'Access forbidden.' });
+        return;
+      }
+
+      place = await Place.findByIdAndRemove(id);
+
+      await Reservation.deleteMany({ placeID: id });
+      await Review.deleteMany({ placeID: id });
+
+      res.json({ message: 'Successfully removed listing.' });
+    } catch (err) {
+      console.log(err.message);
+      res
+        .status(500)
+        .json({ message: 'Something went wrong. Try again later.' });
     }
-
-    place = await Place.findByIdAndRemove(id);
-
-    await Reservation.deleteMany({ placeID: id });
-    await Review.deleteMany({ placeID: id });
-
-    res.json({ message: 'Successfully removed listing.' });
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: 'Something went wrong. Try again later.' });
   }
-});
+);
 
 module.exports = router;

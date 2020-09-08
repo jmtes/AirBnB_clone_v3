@@ -1,5 +1,5 @@
 const express = require('express');
-const { check, validationResult } = require('express-validator');
+const { body, param, validationResult } = require('express-validator');
 
 const authCheck = require('../middleware/authCheck');
 
@@ -12,61 +12,88 @@ const router = express.Router();
 // @route   GET /api/reservations/for/:placeID
 // @desc    Get reservations for a place
 // @access  Private
-router.get('/for/:placeID', authCheck, async (req, res) => {
-  const { placeID } = req.params;
-
-  try {
-    const place = await Place.findById(placeID);
-
-    if (!place) {
-      res.status(404).json({ message: 'Place not found.' });
+router.get(
+  '/for/:placeID',
+  [authCheck, param('placeID', 'Please provide a valid place ID.').isMongoId()],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
       return;
     }
 
-    if (place.ownerID !== req.user.id) {
-      res.status(403).json({ message: 'Access forbidden.' });
-      return;
+    const { placeID } = req.params;
+
+    try {
+      const place = await Place.findById(placeID);
+
+      if (!place) {
+        res.status(404).json({ message: 'Place not found.' });
+        return;
+      }
+
+      if (place.ownerID !== req.user.id) {
+        res.status(403).json({ message: 'Access forbidden.' });
+        return;
+      }
+
+      const reservations = await Reservation.find({ placeID });
+
+      res.json({ reservations });
+    } catch (err) {
+      console.log(err.message);
+      res
+        .status(500)
+        .json({ message: 'Something went wrong. Try again later.' });
     }
-
-    const reservations = await Reservation.find({ placeID });
-
-    res.json({ reservations });
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: 'Something went wrong. Try again later.' });
   }
-});
+);
 
 // @route   GET /api/reservations/:id
 // @desc    Get reservation
 // @access  Private
-router.get('/:id', authCheck, async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const reservation = await Reservation.findById(id);
-
-    if (!reservation) {
-      res.status(404).json({ message: 'No reservation found.' });
+router.get(
+  '/:id',
+  [
+    authCheck,
+    param('id', 'Please provide a valid reservation ID.').isMongoId()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
       return;
     }
 
-    if (
-      !(
-        reservation.userID === req.user.id ||
-        reservation.ownerID === req.user.id
-      )
-    ) {
-      res.status(403).json({ message: 'Access forbidden.' });
-      return;
-    }
+    const { id } = req.params;
 
-    res.json(reservation);
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+    try {
+      const reservation = await Reservation.findById(id);
+
+      if (!reservation) {
+        res.status(404).json({ message: 'No reservation found.' });
+        return;
+      }
+
+      if (
+        !(
+          reservation.userID === req.user.id ||
+          reservation.ownerID === req.user.id
+        )
+      ) {
+        res.status(403).json({ message: 'Access forbidden.' });
+        return;
+      }
+
+      res.json(reservation);
+    } catch (err) {
+      console.log(err.message);
+      res
+        .status(500)
+        .json({ message: 'Something went wrong. Try again later.' });
+    }
   }
-});
+);
 
 // @route   POST /api/reservations/for/:placeID
 // @desc    Make reservation for place
@@ -75,8 +102,9 @@ router.post(
   '/for/:placeID',
   [
     authCheck,
-    check('checkin', 'Please specify a valid check-in date.').isISO8601(),
-    check('checkout', 'Please specify a valid check-out date.').isISO8601()
+    param('placeID', 'Please provide a valid place ID.').isMongoId(),
+    body('checkin', 'Please specify a valid check-in date.').isISO8601(),
+    body('checkout', 'Please specify a valid check-out date.').isISO8601()
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -195,26 +223,24 @@ router.put(
   '/:id',
   [
     authCheck,
-    check('checkin', 'Please specify a valid check-in date.')
+    param('id', 'Please provide a valid reservation ID.').isMongoId(),
+    body('checkin', 'Please specify a valid check-in date.')
       .optional()
       .isISO8601(),
-    check('checkout', 'Please specify a valid check-out date.')
+    body('checkout', 'Please specify a valid check-out date.')
       .optional()
       .isISO8601(),
-    check('_id', 'Cannot change the ID of a reservation.').not().exists(),
-    check('userID', 'Cannot edit the user associated with a reservation.')
+    body('_id', 'Cannot change the ID of a reservation.').not().exists(),
+    body('userID', 'Cannot edit the user associated with a reservation.')
       .not()
       .exists(),
-    check('placeID', 'Cannot change the place for a reservation.')
+    body('placeID', 'Cannot change the place for a reservation.')
       .not()
       .exists(),
-    check('ownerID', 'Cannot change the owner of the place for a reservation.')
+    body('ownerID', 'Cannot change the owner of the place for a reservation.')
       .not()
       .exists(),
-    check(
-      'confirmed',
-      'Cannot change the confirmation status of a reservation.'
-    )
+    body('confirmed', 'Cannot change the confirmation status of a reservation.')
       .not()
       .exists()
   ],
@@ -278,29 +304,44 @@ router.put(
 // @route   DELETE /api/reservation/:id
 // @desc    Cancel reservation
 // @access  Private
-router.delete('/:id', authCheck, async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    let reservation = await Reservation.findById(id);
-
-    if (!reservation) {
-      res.status(404).json({ message: 'No reservation found.' });
+router.delete(
+  '/:id',
+  [
+    authCheck,
+    param('id', 'Please provide a valid reservation ID.').isMongoId()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
       return;
     }
 
-    if (reservation.userID !== req.user.id) {
-      res.status(403).json({ message: 'Access forbidden.' });
-      return;
+    const { id } = req.params;
+
+    try {
+      let reservation = await Reservation.findById(id);
+
+      if (!reservation) {
+        res.status(404).json({ message: 'No reservation found.' });
+        return;
+      }
+
+      if (reservation.userID !== req.user.id) {
+        res.status(403).json({ message: 'Access forbidden.' });
+        return;
+      }
+
+      reservation = await Reservation.findByIdAndRemove(id);
+
+      res.json({ message: 'Successfully cancelled reservation.' });
+    } catch (err) {
+      console.log(err.message);
+      res
+        .status(500)
+        .json({ message: 'Something went wrong. Try again later.' });
     }
-
-    reservation = await Reservation.findByIdAndRemove(id);
-
-    res.json({ message: 'Successfully cancelled reservation.' });
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: 'Something went wrong. Try again later.' });
   }
-});
+);
 
 module.exports = router;
