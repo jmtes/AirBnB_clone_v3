@@ -143,6 +143,7 @@ router.put(
       .normalizeEmail(),
     body('newPassword', 'Please enter a password with 8 or more characters.')
       .optional()
+      .isString()
       .isLength({ min: 8 }),
     body('_id', 'Cannot change the ID of a user.').not().exists(),
     body('places', 'Cannot modify user listings.').not().exists(),
@@ -223,43 +224,53 @@ router.put(
 // @route   POST /api/users/deactivate
 // @desc    Delete user account
 // @access  Private
-router.post('/deactivate', authCheck, async (req, res) => {
-  const { id } = req.user;
-
-  if (!req.body.password) {
-    res.status(401).json({ message: 'Password required for deactivation.' });
-    return;
-  }
-
-  try {
-    let user = await User.findById(id);
-
-    if (!user) {
-      res.status(404).json({ message: 'User not found.' });
+router.post(
+  '/deactivate',
+  [
+    authCheck,
+    body('password', 'Password required for deactivation.').isString()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
       return;
     }
 
-    const isCorrectPassword = await bcrypt.compare(
-      req.body.password,
-      user.password
-    );
+    const { id } = req.user;
 
-    if (!isCorrectPassword) {
-      res.status(401).json({ message: 'Invalid password.' });
-      return;
+    try {
+      let user = await User.findById(id);
+
+      if (!user) {
+        res.status(404).json({ message: 'User not found.' });
+        return;
+      }
+
+      const isCorrectPassword = await bcrypt.compare(
+        req.body.password,
+        user.password
+      );
+
+      if (!isCorrectPassword) {
+        res.status(401).json({ message: 'Invalid password.' });
+        return;
+      }
+
+      user = await User.findByIdAndRemove(id);
+
+      await Place.deleteMany({ ownerID: id });
+      await Reservation.deleteMany({ userID: id });
+      await Reservation.deleteMany({ ownerID: id });
+
+      res.json({ message: 'Successfully deactivated account. Bye!' });
+    } catch (err) {
+      console.log(err.message);
+      res
+        .status(500)
+        .json({ message: 'Something went wrong. Try again later.' });
     }
-
-    user = await User.findByIdAndRemove(id);
-
-    await Place.deleteMany({ ownerID: id });
-    await Reservation.deleteMany({ userID: id });
-    await Reservation.deleteMany({ ownerID: id });
-
-    res.json({ message: 'Successfully deactivated account. Bye!' });
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: 'Something went wrong. Try again later.' });
   }
-});
+);
 
 module.exports = router;

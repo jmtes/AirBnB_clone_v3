@@ -43,7 +43,7 @@ router.post(
   '/',
   [
     check('email', 'Please provide a valid email.').isEmail().normalizeEmail(),
-    check('password', 'Please provide a password.').exists()
+    check('password', 'Please provide a password.').isString()
   ],
   async (req, res) => {
     const errors = validationResult(req);
