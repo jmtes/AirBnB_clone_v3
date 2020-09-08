@@ -83,9 +83,13 @@ router.post(
     authCheck,
     body('name', 'Please provide a name for your place.')
       .isString()
+      .escape()
+      .trim()
       .isLength({ min: 1, max: 32 }),
     body('desc', 'Please provide a description for your place.')
       .isString()
+      .escape()
+      .trim()
       .isLength({ min: 1, max: 1000 }),
     body('address', 'Please provide an address for your place.').isString(),
     body('beds', 'Please provide the number of beds.').isInt(),
@@ -192,10 +196,14 @@ router.put(
     body('name', 'Please provide a valid name.')
       .optional()
       .isString()
+      .escape()
+      .trim()
       .isLength({ min: 1, max: 32 }),
     body('desc', 'Please provide a valid description.')
       .optional()
       .isString()
+      .escape()
+      .trim()
       .isLength({ min: 1, max: 1000 }),
     body('address', 'Cannot change address of a place.').not().exists(),
     body('beds', 'Please provide a valid number of beds.').optional().isInt(),

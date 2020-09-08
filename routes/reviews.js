@@ -85,13 +85,19 @@ router.post(
     body('userName', 'Please provide a valid user name.')
       .optional()
       .isString()
+      .escape()
+      .trim()
       .isLength({ max: 32 }),
     body('stars', 'Please provide a valid rating.').isInt({ min: 1, max: 5 }),
     body('title', 'Please provide a title that is 32 characters or less.')
       .isString()
+      .escape()
+      .trim()
       .isLength({ min: 1, max: 32 }),
     body('body', 'Please provide a body that is 1000 characters or less.')
       .isString()
+      .escape()
+      .trim()
       .isLength({ min: 1, max: 1000 })
   ],
   async (req, res) => {
@@ -162,10 +168,14 @@ router.put(
     body('title', 'Please provide a title that is 32 characters or less.')
       .optional()
       .isString()
+      .escape()
+      .trim()
       .isLength({ min: 1, max: 32 }),
     body('body', 'Please provide a body that is 1000 characters or less.')
       .optional()
       .isString()
+      .escape()
+      .trim()
       .isLength({ min: 1, max: 1000 }),
     body('userName', 'Cannot change username.').not().exists(),
     body('date', 'Cannot change the date of a review.').not().exists(),

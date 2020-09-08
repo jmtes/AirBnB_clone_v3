@@ -59,6 +59,8 @@ router.post(
   [
     body('name', 'Please provide a name.')
       .isString()
+      .escape()
+      .trim()
       .isLength({ min: 1, max: 32 }),
     body('email', 'Please provide a valid email.').isEmail().normalizeEmail(),
     body('password', 'Please enter a password with 8 or more characters.')
@@ -125,10 +127,14 @@ router.put(
     body('name', 'Please provide a name that is 32 characters or less.')
       .optional()
       .isString()
+      .escape()
+      .trim()
       .isLength({ min: 1, max: 32 }),
     body('bio', 'Please provide a bio that is 200 characters or less.')
       .optional()
       .isString()
+      .escape()
+      .trim()
       .isLength({ max: 200 }),
     body('avatar', 'Please provide a valid image URL.').optional().isURL(),
     body('email', 'Please provide a valid email.')
