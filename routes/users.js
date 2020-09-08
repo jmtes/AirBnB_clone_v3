@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
 
 const User = require('../models/User');
+const Place = require('../models/Place');
+const Reservation = require('../models/Reservation');
 
 const keys = require('../config/keys');
 const authCheck = require('../middleware/authCheck');
@@ -164,16 +166,11 @@ router.put('/:id', authCheck, async (req, res) => {
   }
 });
 
-// @route   DELETE /api/users/:id
+// @route   POST /api/users/deactivate
 // @desc    Delete user account
 // @access  Private
-router.post('/deactivate/:id', authCheck, async (req, res) => {
-  const { id } = req.params;
-
-  if (id !== req.user.id) {
-    res.status(403).json({ message: 'Access forbidden.' });
-    return;
-  }
+router.post('/deactivate', authCheck, async (req, res) => {
+  const { id } = req.user;
 
   if (!req.body.password) {
     res.status(401).json({ message: 'Password required for deactivation.' });
@@ -181,7 +178,12 @@ router.post('/deactivate/:id', authCheck, async (req, res) => {
   }
 
   try {
-    let user = await User.findById(req.user.id);
+    let user = await User.findById(id);
+
+    if (!user) {
+      res.status(404).json({ message: 'User not found.' });
+      return;
+    }
 
     const isCorrectPassword = await bcrypt.compare(
       req.body.password,
@@ -193,7 +195,11 @@ router.post('/deactivate/:id', authCheck, async (req, res) => {
       return;
     }
 
-    user = await User.findByIdAndRemove(req.user.id);
+    user = await User.findByIdAndRemove(id);
+
+    await Place.deleteMany({ ownerID: id });
+    await Reservation.deleteMany({ userID: id });
+    await Reservation.deleteMany({ ownerID: id });
 
     res.json({ message: 'Successfully deactivated account. Bye!' });
   } catch (err) {
