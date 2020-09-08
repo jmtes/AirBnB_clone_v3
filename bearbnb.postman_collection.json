@@ -91,7 +91,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/api/places/in/5f00428b0af1152116f93dd4",
+							"raw": "http://localhost:5000/api/places/in/:cityID",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -101,7 +101,13 @@
 								"api",
 								"places",
 								"in",
-								"5f00428b0af1152116f93dd4"
+								":cityID"
+							],
+							"variable": [
+								{
+									"key": "cityID",
+									"value": "5f00428b0af1152116f93dd4"
+								}
 							]
 						}
 					},
@@ -218,7 +224,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/api/places/5f00fabb787c483cf2c58c43",
+							"raw": "http://localhost:5000/api/places/:id",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -227,7 +233,13 @@
 							"path": [
 								"api",
 								"places",
-								"5f00fabb787c483cf2c58c43"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5f00428c0af1152116f93dd5"
+								}
 							]
 						}
 					},
@@ -355,7 +367,7 @@
 						"header": [
 							{
 								"key": "Auth-Token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWVmZTRhYzljYzZhYWEyNjRmOWQ4MjM2In0sImlhdCI6MTU5Mzg5OTY5NCwiZXhwIjoxNTkzOTAyMDk0fQ.uyDmq-_gsphOBiUxbiRnX1QXJD7RwWAEruoTgggg41c",
+								"value": "{{BEARBNB_JWT}}",
 								"type": "text"
 							},
 							{
@@ -839,7 +851,7 @@
 						"header": [
 							{
 								"key": "Auth-Token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWVmZTRhYzljYzZhYWEyNjRmOWQ4MjM2In0sImlhdCI6MTU5MzkwMjI5NCwiZXhwIjoxNTkzOTA0Njk0fQ.tnAB_4y4ZMrZhXOXSsazPEprog-GMb3eEJQuw3o2jYI",
+								"value": "{{BEARBNB_JWT}}",
 								"type": "text"
 							},
 							{
@@ -853,7 +865,7 @@
 							"raw": "{\n    \"name\": \"a nice place to stay\"\n}"
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/places/5effe321fbcd8e253bf434d2",
+							"raw": "http://localhost:5000/api/places/:id",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -862,7 +874,13 @@
 							"path": [
 								"api",
 								"places",
-								"5effe321fbcd8e253bf434d2"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5f00428c0af1152116f93dd5"
+								}
 							]
 						}
 					},
@@ -1273,12 +1291,12 @@
 						"header": [
 							{
 								"key": "Auth-Token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWVmZTRhYzljYzZhYWEyNjRmOWQ4MjM2In0sImlhdCI6MTU5MzkwNDgyNCwiZXhwIjoxNTkzOTA3MjI0fQ.j7lVO9aMTFrNt7WDxopsJmQ_CD1u84trtjqKEJiOBn4",
+								"value": "{{BEARBNB_JWT}}",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "http://localhost:5000/api/places/5f00fabb787c483cf2c58c43",
+							"raw": "http://localhost:5000/api/places/:id",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1287,7 +1305,13 @@
 							"path": [
 								"api",
 								"places",
-								"5f00fabb787c483cf2c58c43"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5f00fabb787c483cf2c58c43"
+								}
 							]
 						}
 					},
@@ -1529,12 +1553,12 @@
 						"header": [
 							{
 								"key": "Auth-Token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWVmZTRhYzljYzZhYWEyNjRmOWQ4MjM2In0sImlhdCI6MTU5NDQ5Nzk5MCwiZXhwIjoxNTk0NTAwMzkwfQ.jk3Ut7hRDqIdsf8nXw7A2SFwBrMIUkO3j82MXxdCnWY",
+								"value": "{{BEARBNB_JWT}}",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "http://localhost:5000/api/reservations/for/5effe321fbcd8e253bf434d2",
+							"raw": "http://localhost:5000/api/reservations/for/:placeID",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1544,7 +1568,13 @@
 								"api",
 								"reservations",
 								"for",
-								"5effe321fbcd8e253bf434d2"
+								":placeID"
+							],
+							"variable": [
+								{
+									"key": "placeID",
+									"value": "5effe321fbcd8e253bf434d2"
+								}
 							]
 						}
 					},
@@ -1784,7 +1814,7 @@
 						"header": [
 							{
 								"key": "Auth-Token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWVmZTMzZGQ2ZmY5ODQxZGViNWRlOWQ0In0sImlhdCI6MTU5NTcxNjc0MywiZXhwIjoxNTk1NzE5MTQzfQ.8V8oUOWm2RqGCipvghmTdx4UI609IXA9UcS0c8EjE5w",
+								"value": "{{BEARBNB_JWT}}",
 								"type": "text"
 							},
 							{
@@ -1798,7 +1828,7 @@
 							"raw": "{\n    \"checkin\": \"2020-07-25\",\n    \"checkout\": \"2020-07-26\"\n}"
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/reservations/for/5f002985c51d2f0f15c9a21b",
+							"raw": "http://localhost:5000/api/reservations/for/:placeID",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1808,7 +1838,13 @@
 								"api",
 								"reservations",
 								"for",
-								"5f002985c51d2f0f15c9a21b"
+								":placeID"
+							],
+							"variable": [
+								{
+									"key": "placeID",
+									"value": "5f002985c51d2f0f15c9a21b"
+								}
 							]
 						}
 					},
@@ -2405,7 +2441,7 @@
 						"header": [
 							{
 								"key": "Auth-Token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWVmZTMzZGQ2ZmY5ODQxZGViNWRlOWQ0In0sImlhdCI6MTU5NTcxOTYyOSwiZXhwIjoxNTk1NzIyMDI5fQ.nQAhpiea4D8S6DZ9JpxjkHHnxkPt1DzOW8VIgpSS_lE",
+								"value": "{{BEARBNB_JWT}}",
 								"type": "text"
 							},
 							{
@@ -2419,7 +2455,7 @@
 							"raw": "{\n    \"checkin\": \"2020-07-25T00:00:00.000Z\",\n    \"checkout\": \"2020-07-26\"\n}"
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/reservations/5f1cb6ecd868fd1f258f58cc",
+							"raw": "http://localhost:5000/api/reservations/:id",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2428,7 +2464,13 @@
 							"path": [
 								"api",
 								"reservations",
-								"5f1cb6ecd868fd1f258f58cc"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5f1cb6ecd868fd1f258f58cc"
+								}
 							]
 						}
 					},
@@ -2896,12 +2938,12 @@
 						"header": [
 							{
 								"key": "Auth-Token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWVmZTMzZGQ2ZmY5ODQxZGViNWRlOWQ0In0sImlhdCI6MTU5NTExNDMyNSwiZXhwIjoxNTk1MTE2NzI1fQ.vJRX7HRraBpkGDCdOG2TtujKZvValC6wgrl2QMYeXOc",
+								"value": "{{BEARBNB_JWT}}",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "http://localhost:5000/api/reservations/5f07bf64758c550c81fbbc28",
+							"raw": "http://localhost:5000/api/reservations/:id",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2910,7 +2952,13 @@
 							"path": [
 								"api",
 								"reservations",
-								"5f07bf64758c550c81fbbc28"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5f07bf64758c550c81fbbc28"
+								}
 							]
 						}
 					},
@@ -3153,12 +3201,12 @@
 						"header": [
 							{
 								"key": "Auth-Token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWVmZTMzZGQ2ZmY5ODQxZGViNWRlOWQ0In0sImlhdCI6MTU5NTcxOTYyOSwiZXhwIjoxNTk1NzIyMDI5fQ.nQAhpiea4D8S6DZ9JpxjkHHnxkPt1DzOW8VIgpSS_lE",
+								"value": "{{BEARBNB_JWT}}",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "http://localhost:5000/api/reservations/5f1cb6ecd868fd1f258f58cc",
+							"raw": "http://localhost:5000/api/reservations/:id",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -3167,7 +3215,13 @@
 							"path": [
 								"api",
 								"reservations",
-								"5f1cb6ecd868fd1f258f58cc"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5f1cb6ecd868fd1f258f58cc"
+								}
 							]
 						}
 					},
@@ -3410,12 +3464,12 @@
 						"header": [
 							{
 								"key": "Auth-Token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWVmZTRhYzljYzZhYWEyNjRmOWQ4MjM2In0sImlhdCI6MTU5NTExMTgzOSwiZXhwIjoxNTk1MTE0MjM5fQ.vOawSR6SQjwLsZzJ_ZNVwbcfx28YevjT38f54X4kQso",
+								"value": "{{BEARBNB_JWT}}",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "http://localhost:5000/api/reservations/confirm/5f07bf52758c550c81fbbc27",
+							"raw": "http://localhost:5000/api/reservations/confirm/:id",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -3425,7 +3479,13 @@
 								"api",
 								"reservations",
 								"confirm",
-								"5f07bf52758c550c81fbbc27"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5f07bf52758c550c81fbbc27"
+								}
 							]
 						}
 					},
@@ -3676,7 +3736,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/api/reviews/5f1cccb1b9320b2d08ec955b",
+							"raw": "http://localhost:5000/api/reviews/:id",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -3685,7 +3745,13 @@
 							"path": [
 								"api",
 								"reviews",
-								"5f1cccb1b9320b2d08ec955b"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5f1cccb1b9320b2d08ec955b"
+								}
 							]
 						}
 					},
@@ -3800,7 +3866,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/api/reviews/for/123",
+							"raw": "http://localhost:5000/api/reviews/for/:placeID",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -3810,11 +3876,122 @@
 								"api",
 								"reviews",
 								"for",
-								"123"
+								":placeID"
+							],
+							"variable": [
+								{
+									"key": "placeID",
+									"value": "5effe321fbcd8e253bf434d2"
+								}
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Place does not exist",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/api/reviews/for/5effe321fbcd8e253bf434d3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"reviews",
+										"for",
+										"5effe321fbcd8e253bf434d3"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "62"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"3e-FWZWN7gQvekTLDNSTocKyvclGeM\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 08 Sep 2020 05:48:02 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"No place found with id 5effe321fbcd8e253bf434d3.\"\n}"
+						},
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/api/reviews/for/5effe321fbcd8e253bf434d2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"reviews",
+										"for",
+										"5effe321fbcd8e253bf434d2"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "679"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2a7-ws5xRiPuObNrRRasDw2Yf4/d2qE\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 08 Sep 2020 05:45:50 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"userName\": \"Mari R.\",\n        \"date\": \"2020-07-26T00:18:28.342Z\",\n        \"_id\": \"5f1cccb1b9320b2d08ec955b\",\n        \"userID\": \"5efe33dd6ff9841deb5de9d4\",\n        \"placeID\": \"5effe321fbcd8e253bf434d2\",\n        \"stars\": 5,\n        \"title\": \"Great place to stay\",\n        \"body\": \"The hosts were very pleasant to correspond with and the place itself had a very homey feeling. Would stay here again!\"\n    },\n    {\n        \"userName\": \"Ellen\",\n        \"date\": \"2020-09-08T05:36:56.394Z\",\n        \"_id\": \"5f5719007e1b6a0fb7b285f7\",\n        \"userID\": \"5f133632c0768732754eaca5\",\n        \"placeID\": \"5effe321fbcd8e253bf434d2\",\n        \"stars\": 5,\n        \"title\": \"Lovely stay\",\n        \"body\": \"The hosts were very accommodating and friendly. The location itself was one of the most beautiful I've ever been to. Don't miss out on this stay!\"\n    }\n]"
+						}
+					]
 				},
 				{
 					"name": "Post review for place",
@@ -3823,7 +4000,7 @@
 						"header": [
 							{
 								"key": "Auth-Token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWVmZTMzZGQ2ZmY5ODQxZGViNWRlOWQ0In0sImlhdCI6MTU5NTcyMjA2MywiZXhwIjoxNTk1NzI0NDYzfQ.-DodYJMZbhBfm4UPgCRZURo0bl1eqIenCVSY3usTf18",
+								"value": "{{BEARBNB_JWT}}",
 								"type": "text"
 							},
 							{
@@ -3834,10 +4011,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userName\": \"Mari R.\",\n    \"stars\": 5,\n    \"title\": \"Great place to stay\",\n    \"body\": \"The hosts were very pleasant to correspond with and the place itself had a very homey feeling. Would stay here again!\"\n}"
+							"raw": "{\n    \"userName\": \"Ellen\",\n    \"stars\": 5,\n    \"title\": \"Lovely stay\",\n    \"body\": \"The hosts were very accommodating and friendly. The location itself was one of the most beautiful I've ever been to. Don't miss out on this stay!\"\n}"
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/reviews/for/5effe321fbcd8e253bf434d2",
+							"raw": "http://localhost:5000/api/reviews/for/:placeID",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -3847,7 +4024,13 @@
 								"api",
 								"reviews",
 								"for",
-								"5effe321fbcd8e253bf434d2"
+								":placeID"
+							],
+							"variable": [
+								{
+									"key": "placeID",
+									"value": "5effe321fbcd8e253bf434d2"
+								}
 							]
 						}
 					},
@@ -4245,9 +4428,24 @@
 					"name": "Edit review",
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Auth-Token",
+								"value": "{{BEARBNB_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Awesome stay!\"\n}"
+						},
 						"url": {
-							"raw": "http://localhost:5000/api/reviews/123",
+							"raw": "http://localhost:5000/api/reviews/:id",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -4256,19 +4454,377 @@
 							"path": [
 								"api",
 								"reviews",
-								"123"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5f5719007e1b6a0fb7b285f7"
+								}
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Missing or invalid token",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Auth-Token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWYxMzM2MzJjMDc2ODczMjc1NGVhY2E1In0sImlhdCI6MTU5OTU0MzQyMCwiZXhwIjoxNTk5NTQ1ODIwfQ.fM_BBpZS8zWA9ukhwe5WsZDQpUFcfDG3b_pxnpBQJPM",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5000/api/reviews/123",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"reviews",
+										"123"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "35"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"23-cbPtiA0OQPYMRJId6Dg6jX2F15M\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 08 Sep 2020 06:12:20 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Authorization denied.\"\n}"
+						},
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Auth-Token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWYxMzM2MzJjMDc2ODczMjc1NGVhY2E1In0sImlhdCI6MTU5OTU0NTgzMiwiZXhwIjoxNTk5NTQ4MjMyfQ.U6dTtjuZ3TNf6SY72cWtVk_XISWrxZmP4ikDrPvUxgM",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Awesome stay!\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/reviews/:id",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"reviews",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "5f5719007e1b6a0fb7b285f7"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "349"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"15d-z7CfqHfyUg6QT8hup35ZOfRqJRI\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 08 Sep 2020 06:22:54 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"userName\": \"Ellen\",\n    \"date\": \"2020-09-08T05:36:56.394Z\",\n    \"_id\": \"5f5719007e1b6a0fb7b285f7\",\n    \"userID\": \"5f133632c0768732754eaca5\",\n    \"placeID\": \"5effe321fbcd8e253bf434d2\",\n    \"stars\": 5,\n    \"title\": \"Awesome stay!\",\n    \"body\": \"The hosts were very accommodating and friendly. The location itself was one of the most beautiful I've ever been to. Don't miss out on this stay!\"\n}"
+						},
+						{
+							"name": "Invalid body params",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Auth-Token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWYxMzM2MzJjMDc2ODczMjc1NGVhY2E1In0sImlhdCI6MTU5OTU0MzQyMCwiZXhwIjoxNTk5NTQ1ODIwfQ.fM_BBpZS8zWA9ukhwe5WsZDQpUFcfDG3b_pxnpBQJPM",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userName\": \"Not me\",\n    \"date\": \"Tomorrow\",\n    \"_id\": \"asjdjasknd13y\",\n    \"userID\": \"12893629847824\",\n    \"placeID\": \"2847290473204\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/reviews/123",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"reviews",
+										"123"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "526"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"20e-06X93sPp8GhaZk9h+w46priwj9M\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 08 Sep 2020 06:14:00 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"errors\": [\n        {\n            \"value\": \"Not me\",\n            \"msg\": \"Cannot change username.\",\n            \"param\": \"userName\",\n            \"location\": \"body\"\n        },\n        {\n            \"value\": \"Tomorrow\",\n            \"msg\": \"Cannot change the date of a review.\",\n            \"param\": \"date\",\n            \"location\": \"body\"\n        },\n        {\n            \"value\": \"asjdjasknd13y\",\n            \"msg\": \"Cannot change the ID of a review.\",\n            \"param\": \"_id\",\n            \"location\": \"body\"\n        },\n        {\n            \"value\": \"12893629847824\",\n            \"msg\": \"Cannot change the user attributed to a review.\",\n            \"param\": \"userID\",\n            \"location\": \"body\"\n        },\n        {\n            \"value\": \"2847290473204\",\n            \"msg\": \"Cannot change the place a review is for.\",\n            \"param\": \"placeID\",\n            \"location\": \"body\"\n        }\n    ]\n}"
+						},
+						{
+							"name": "User ID does not match review user ID",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Auth-Token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWYxMzM2MzJjMDc2ODczMjc1NGVhY2E1In0sImlhdCI6MTU5OTU0NTgzMiwiZXhwIjoxNTk5NTQ4MjMyfQ.U6dTtjuZ3TNf6SY72cWtVk_XISWrxZmP4ikDrPvUxgM",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Awesome stay!\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/reviews/:id",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"reviews",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "5f1cccb1b9320b2d08ec955b"
+										}
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "31"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"1f-bW5yWzjkSzWBHAmncvBQ/vomwsY\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 08 Sep 2020 06:19:49 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Access forbidden.\"\n}"
+						},
+						{
+							"name": "No review found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Auth-Token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWYxMzM2MzJjMDc2ODczMjc1NGVhY2E1In0sImlhdCI6MTU5OTU0NTgzMiwiZXhwIjoxNTk5NTQ4MjMyfQ.U6dTtjuZ3TNf6SY72cWtVk_XISWrxZmP4ikDrPvUxgM",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Awesome stay!\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/reviews/:id",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"reviews",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "5f5719007e1b6a0fb7b285f8"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "63"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"3f-4yDpbB3/UUK5cJd4EqpHeqUj2zs\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 08 Sep 2020 06:17:29 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"No review with ID 5f5719007e1b6a0fb7b285f8 found.\"\n}"
+						}
+					]
 				},
 				{
 					"name": "Delete review",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Auth-Token",
+								"value": "{{BEARBNB_JWT}}",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "http://localhost:5000/api/reviews/123",
+							"raw": "http://localhost:5000/api/reviews/:id",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -4277,11 +4833,270 @@
 							"path": [
 								"api",
 								"reviews",
-								"123"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5f5729331aaf5017608ea202"
+								}
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "No review found",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Auth-Token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWYxMzM2MzJjMDc2ODczMjc1NGVhY2E1In0sImlhdCI6MTU5OTU0NTgzMiwiZXhwIjoxNTk5NTQ4MjMyfQ.U6dTtjuZ3TNf6SY72cWtVk_XISWrxZmP4ikDrPvUxgM",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5000/api/reviews/:id",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"reviews",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "5f5719007e1b6a0fb7b285f8"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "63"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"3f-zjTjknHs4dx2FP7emn+H51JOSSI\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 08 Sep 2020 06:46:52 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"No review found with ID 5f5719007e1b6a0fb7b285f8.\"\n}"
+						},
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Auth-Token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWYxMzM2MzJjMDc2ODczMjc1NGVhY2E1In0sImlhdCI6MTU5OTU0NTgzMiwiZXhwIjoxNTk5NTQ4MjMyfQ.U6dTtjuZ3TNf6SY72cWtVk_XISWrxZmP4ikDrPvUxgM",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5000/api/reviews/:id",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"reviews",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "5f5729331aaf5017608ea202"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "42"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2a-gIGhJQo/qWAcFHCc3EaJ0yWQ65M\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 08 Sep 2020 06:48:43 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Successfully deleted review.\"\n}"
+						},
+						{
+							"name": "Missing or invalid token",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Auth-Token",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5000/api/reviews/:id",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"reviews",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "123"
+										}
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "35"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"23-cbPtiA0OQPYMRJId6Dg6jX2F15M\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 08 Sep 2020 06:42:29 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Authorization denied.\"\n}"
+						},
+						{
+							"name": "User ID does not match review user ID",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Auth-Token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWYxMzM2MzJjMDc2ODczMjc1NGVhY2E1In0sImlhdCI6MTU5OTU0NTgzMiwiZXhwIjoxNTk5NTQ4MjMyfQ.U6dTtjuZ3TNf6SY72cWtVk_XISWrxZmP4ikDrPvUxgM",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5000/api/reviews/:id",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"reviews",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "5f1cccb1b9320b2d08ec955b"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "31"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"1f-bW5yWzjkSzWBHAmncvBQ/vomwsY\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 08 Sep 2020 06:47:27 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Access forbidden.\"\n}"
+						}
+					]
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -4295,7 +5110,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/api/users/5efbd6bed035881cabf3af8c",
+							"raw": "http://localhost:5000/api/users/:id",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -4304,7 +5119,13 @@
 							"path": [
 								"api",
 								"users",
-								"5efbd6bed035881cabf3af8c"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5efbd6bed035881cabf3af8c"
+								}
 							]
 						}
 					},
@@ -4808,9 +5629,15 @@
 					"name": "Edit user info",
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Auth-Token",
+								"value": "{{BEARBNB_JWT}}",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "http://localhost:5000/api/users/123",
+							"raw": "http://localhost:5000/api/users/:id",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -4819,7 +5646,13 @@
 							"path": [
 								"api",
 								"users",
-								"123"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5efe4ac9cc6aaa264f9d8236"
+								}
 							]
 						}
 					},
@@ -5359,7 +6192,7 @@
 							},
 							{
 								"key": "Auth-Token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWVmZTQ4YTRmYjFhNGQyNWUzN2IyMzg0In0sImlhdCI6MTU5MzcyMzA0NCwiZXhwIjoxNTkzNzI1NDQ0fQ.7yXzQUyjwcfEzNKSPuXfI4DmzAG9WP8zFbt8ltLz5e4",
+								"value": "{{BEARBNB_JWT}}",
 								"type": "text"
 							}
 						],
@@ -5368,7 +6201,7 @@
 							"raw": "{\n    \"password\": \"incorrect\"\n}"
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/users/deactivate/5efe48a4fb1a4d25e37b2384",
+							"raw": "http://localhost:5000/api/users/deactivate/:id",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -5378,7 +6211,13 @@
 								"api",
 								"users",
 								"deactivate",
-								"5efe48a4fb1a4d25e37b2384"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5efe48a4fb1a4d25e37b2384"
+								}
 							]
 						}
 					},
@@ -5716,7 +6555,7 @@
 						"header": [
 							{
 								"key": "Auth-Token",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWVmZTMzZGQ2ZmY5ODQxZGViNWRlOWQ0In0sImlhdCI6MTU5NTcyMjA2MywiZXhwIjoxNTk1NzI0NDYzfQ.-DodYJMZbhBfm4UPgCRZURo0bl1eqIenCVSY3usTf18",
+								"value": "{{BEARBNB_JWT}}",
 								"type": "text"
 							}
 						],
@@ -5918,7 +6757,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"mari_r@domain.tld\",\n    \"password\": \"gecgecgec\"\n}"
+							"raw": "{\n    \"email\": \"juno@domain.tld\",\n    \"password\": \"gecgecgec\"\n}"
 						},
 						"url": {
 							"raw": "http://localhost:5000/api/auth",
