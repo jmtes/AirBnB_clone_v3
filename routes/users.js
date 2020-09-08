@@ -60,7 +60,7 @@ router.post(
     body('name', 'Please provide a name.')
       .isString()
       .isLength({ min: 1, max: 32 }),
-    body('email', 'Please provide a valid email.').isEmail(),
+    body('email', 'Please provide a valid email.').isEmail().normalizeEmail(),
     body('password', 'Please enter a password with 8 or more characters.')
       .isString()
       .isLength({ min: 8 })
@@ -131,7 +131,10 @@ router.put(
       .isString()
       .isLength({ max: 200 }),
     body('avatar', 'Please provide a valid image URL.').optional().isURL(),
-    body('email', 'Please provide a valid email.').optional().isEmail(),
+    body('email', 'Please provide a valid email.')
+      .optional()
+      .isEmail()
+      .normalizeEmail(),
     body('newPassword', 'Please enter a password with 8 or more characters.')
       .optional()
       .isLength({ min: 8 }),
