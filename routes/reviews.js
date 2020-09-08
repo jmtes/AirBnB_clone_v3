@@ -82,7 +82,10 @@ router.post(
   [
     authCheck,
     param('placeID', 'Please provide a valid place ID.').isMongoId(),
-    body('userName', 'Please provide a valid user name.').optional(),
+    body('userName', 'Please provide a valid user name.')
+      .optional()
+      .isString()
+      .isLength({ max: 32 }),
     body('stars', 'Please provide a valid rating.').isInt({ min: 1, max: 5 }),
     body('title', 'Please provide a title that is 32 characters or less.')
       .isString()

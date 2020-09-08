@@ -81,9 +81,13 @@ router.post(
   '/',
   [
     authCheck,
-    body('name', 'Please provide a name for your place.').exists(),
-    body('desc', 'Please provide a description for your place.').exists(),
-    body('address', 'Please provide an address for your place.').exists(),
+    body('name', 'Please provide a name for your place.')
+      .isString()
+      .isLength({ min: 1, max: 32 }),
+    body('desc', 'Please provide a description for your place.')
+      .isString()
+      .isLength({ min: 1, max: 1000 }),
+    body('address', 'Please provide an address for your place.').isString(),
     body('beds', 'Please provide the number of beds.').isInt(),
     body('baths', 'Please provide the number of baths.').isInt(),
     body(
@@ -185,8 +189,14 @@ router.put(
   [
     authCheck,
     param('id', 'Please provide a valid place ID.').isMongoId(),
-    body('name', 'Please provide a valid name.').optional().exists(),
-    body('desc', 'Please provide a valid description.').optional().exists(),
+    body('name', 'Please provide a valid name.')
+      .optional()
+      .isString()
+      .isLength({ min: 1, max: 32 }),
+    body('desc', 'Please provide a valid description.')
+      .optional()
+      .isString()
+      .isLength({ min: 1, max: 1000 }),
     body('address', 'Cannot change address of a place.').not().exists(),
     body('beds', 'Please provide a valid number of beds.').optional().isInt(),
     body('baths', 'Please provide a valid number of baths.').optional().isInt(),
