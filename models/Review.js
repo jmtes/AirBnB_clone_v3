@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const ReviewSchema = mongoose.Schema({
   userName: {
     type: String,
-    default: 'Anonymous User'
+    default: 'Anonymous User',
+    maxlength: 32
   },
   userID: {
     type: String,
