@@ -130,10 +130,66 @@ router.post(
 // @route   PUT /api/reviews/:id
 // @desc    Edit review
 // @access  Private
-router.put('/:id', async (req, res) => {
-  const { id } = req.params;
-  res.send(`PUT Edit review with id ${id}`);
-});
+router.put(
+  '/:id',
+  [
+    authCheck,
+    check('stars', 'Please provide a valid rating.')
+      .optional()
+      .isInt({ min: 1, max: 5 }),
+    check('title', 'Please provide a title that is 32 characters or less.')
+      .optional()
+      .isString()
+      .isLength({ min: 1, max: 32 }),
+    check('body', 'Please provide a body that is 1000 characters or less.')
+      .optional()
+      .isString()
+      .isLength({ min: 1, max: 1000 }),
+    check('userName', 'Cannot change username.').not().exists(),
+    check('date', 'Cannot change the date of a review.').not().exists(),
+    check('_id', 'Cannot change the ID of a review.').not().exists(),
+    check('userID', 'Cannot change the user attributed to a review.')
+      .not()
+      .exists(),
+    check('placeID', 'Cannot change the place a review is for.').not().exists()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
+      return;
+    }
+
+    const { id } = req.params;
+
+    try {
+      let review = await Review.findById(id);
+
+      if (!review) {
+        res.status(404).json({ message: `No review with ID ${id} found.` });
+        return;
+      }
+
+      if (review.userID !== req.user.id) {
+        res.status(403).json({ message: 'Access forbidden.' });
+        return;
+      }
+
+      review = await Review.findByIdAndUpdate(
+        id,
+        { $set: req.body },
+        { new: true, fields: { __v: 0 } }
+      );
+
+      res.json(review);
+    } catch (err) {
+      console.log(err);
+      res
+        .status(500)
+        .json({ message: 'Something went wrong. Try again later.' });
+    }
+  }
+);
 
 // @route   DELETE /api/reviews/:id
 // @desc    Delete review
