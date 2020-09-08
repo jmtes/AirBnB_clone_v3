@@ -76,11 +76,11 @@ At the time of writing, the app is still just an Express server, but that will c
 
 ## Testing the API with Postman
 
-Bearbnb has a Postman collection! Simply open up Postman and import `bearbnb.postman_collection.json`, located at the root of the repository.
+Bearbnb has a Postman collection! Each request is rife with usage and response examples. Simply open up Postman and import `bearbnb.postman_collection.json`, located at the root of the repository.
 
-Each request is rife with usage and response examples. They are updated as endpoint handlers are implemented.
+To get started with using the collection, create a user by making a "Register new user" request, which is located in the User Routes folder. You will receive a JSON response containing a JWT that you can use for accessing private routes. Copy the token value and assign it to the current value of the `BEARBNB_JWT` global variable.
 
-As of now, the review routes are still in development. As such, it is of note that the review requests are by no means complete.
+In the event that your token expires, just make an "Authenticate user" request, located in the Authentication Routes folder, to receive a fresh token. Happy testing!
 
 ## Contributing and Future Developments
 
