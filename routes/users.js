@@ -57,7 +57,9 @@ router.get(
 router.post(
   '/',
   [
-    body('name', 'Please provide a name.').not().isEmpty(),
+    body('name', 'Please provide a name.')
+      .isString()
+      .isLength({ min: 1, max: 32 }),
     body('email', 'Please provide a valid email.').isEmail(),
     body('password', 'Please enter a password with 8 or more characters.')
       .isString()
@@ -113,12 +115,31 @@ router.post(
   }
 );
 
-// @route   PUT /api/users/:id
+// @route   PUT /api/users
 // @desc    Edit user info
 // @access  Private
 router.put(
-  '/:id',
-  [authCheck, param('id', 'Please provide a valid user ID.').isMongoId()],
+  '/',
+  [
+    authCheck,
+    body('name', 'Please provide a name that is 32 characters or less.')
+      .optional()
+      .isString()
+      .isLength({ min: 1, max: 32 }),
+    body('bio', 'Please provide a bio that is 200 characters or less.')
+      .optional()
+      .isString()
+      .isLength({ max: 200 }),
+    body('avatar', 'Please provide a valid image URL.').optional().isURL(),
+    body('email', 'Please provide a valid email.').optional().isEmail(),
+    body('newPassword', 'Please enter a password with 8 or more characters.')
+      .optional()
+      .isLength({ min: 8 }),
+    body('_id', 'Cannot change the ID of a user.').not().exists(),
+    body('places', 'Cannot modify user listings.').not().exists(),
+    body('reservations', 'Cannot modify user reservations.').not().exists(),
+    body('reviews', 'Cannot modify user reviews.').not().exists()
+  ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -126,17 +147,17 @@ router.put(
       return;
     }
 
-    const { id } = req.params;
-
-    if (id !== req.user.id) {
-      res.status(403).json({ message: 'Access forbidden.' });
-      return;
-    }
+    const { id } = req.user;
 
     try {
-      let user = await User.findById(req.user.id);
+      let user = await User.findById(id);
 
       if (req.body.newPassword) {
+        if (!req.body.oldPassword) {
+          res.status(401).json({ message: 'Please enter your old password.' });
+          return;
+        }
+
         const isCorrectPassword = await bcrypt.compare(
           req.body.oldPassword,
           user.password
@@ -144,13 +165,6 @@ router.put(
 
         if (!isCorrectPassword) {
           res.status(401).json({ message: 'Invalid password.' });
-          return;
-        }
-
-        if (req.body.newPassword.length < 8) {
-          res
-            .status(400)
-            .json({ message: 'Password must be at least 8 characters.' });
           return;
         }
 
@@ -163,6 +177,11 @@ router.put(
       }
 
       if (req.body.email) {
+        if (!req.body.password) {
+          res.status(401).json({ message: 'Please enter your password.' });
+          return;
+        }
+
         const isCorrectPassword = await bcrypt.compare(
           req.body.password,
           user.password
@@ -177,7 +196,7 @@ router.put(
       }
 
       user = await User.findByIdAndUpdate(
-        req.user.id,
+        id,
         { $set: req.body },
         { new: true, fields: { password: 0, __v: 0 } }
       );
