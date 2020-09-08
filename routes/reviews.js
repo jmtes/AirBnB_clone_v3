@@ -194,9 +194,29 @@ router.put(
 // @route   DELETE /api/reviews/:id
 // @desc    Delete review
 // @access  Private
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authCheck, async (req, res) => {
   const { id } = req.params;
-  res.send(`DELETE review with id ${id}`);
+
+  try {
+    let review = await Review.findById(id);
+
+    if (!review) {
+      res.status(404).json({ message: `No review found with ID ${id}.` });
+      return;
+    }
+
+    if (review.userID !== req.user.id) {
+      res.status(404).json({ message: 'Access forbidden.' });
+      return;
+    }
+
+    review = await Review.findByIdAndRemove(id);
+
+    res.json({ message: 'Successfully deleted review.' });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: 'Something went wrong. Try again later.' });
+  }
 });
 
 module.exports = router;
