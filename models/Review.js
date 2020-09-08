@@ -9,6 +9,10 @@ const ReviewSchema = mongoose.Schema({
     type: String,
     required: true
   },
+  placeID: {
+    type: String,
+    required: true
+  },
   stars: {
     type: Number,
     required: true,
