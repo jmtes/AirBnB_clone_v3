@@ -4,7 +4,6 @@ const { check, validationResult } = require('express-validator');
 const authCheck = require('../middleware/authCheck');
 const Place = require('../models/Place');
 const Review = require('../models/Review');
-const User = require('../models/User');
 
 const router = express.Router();
 
@@ -112,10 +111,6 @@ router.post(
       });
 
       review = await newReview.save();
-
-      await User.findByIdAndUpdate(req.user.id, {
-        $push: { reviews: review._id }
-      });
 
       res.json(review);
     } catch (err) {

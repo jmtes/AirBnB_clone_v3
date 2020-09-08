@@ -138,10 +138,6 @@ router.post(
 
       const reservation = await newReservation.save();
 
-      await User.findByIdAndUpdate(req.user.id, {
-        $push: { reservations: reservation }
-      });
-
       res.json(reservation);
     } catch (err) {
       console.log(err.message);
@@ -299,10 +295,6 @@ router.delete('/:id', authCheck, async (req, res) => {
     }
 
     reservation = await Reservation.findByIdAndRemove(id);
-
-    await User.findByIdAndUpdate(reservation.userID, {
-      $pull: { reservations: { _id: reservation._id } }
-    });
 
     res.json({ message: 'Successfully cancelled reservation.' });
   } catch (err) {

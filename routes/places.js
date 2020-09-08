@@ -5,7 +5,6 @@ const authCheck = require('../middleware/authCheck');
 
 const City = require('../models/City');
 const Place = require('../models/Place');
-const User = require('../models/User');
 
 const createCity = require('./utils/createCity');
 const validateAddress = require('./utils/validateAddress');
@@ -131,10 +130,6 @@ router.post(
 
       const place = await newPlace.save();
 
-      await User.findByIdAndUpdate(req.user.id, {
-        $push: { places: place._id }
-      });
-
       res.json(place);
     } catch (err) {
       console.log(err.message);
@@ -250,10 +245,6 @@ router.delete('/:id', authCheck, async (req, res) => {
     }
 
     place = await Place.findByIdAndRemove(id);
-
-    await User.findByIdAndUpdate(place.ownerID, {
-      $pull: { places: place._id }
-    });
 
     res.json({ message: 'Successfully removed listing.' });
   } catch (err) {
