@@ -36,7 +36,15 @@ router.get('/for/:placeID', async (req, res) => {
   const { placeID } = req.params;
 
   try {
-    res.send(`GET all reviews for place with id ${placeID}`);
+    const place = await Place.findById(placeID);
+
+    if (!place) {
+      res.status(404).json({ message: `No place found with ID ${placeID}.` });
+      return;
+    }
+
+    const reviews = await Review.find({ placeID }, { __v: 0 });
+    res.json(reviews);
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ message: 'Something went wrong. Try again later.' });
