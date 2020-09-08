@@ -5,6 +5,8 @@ const authCheck = require('../middleware/authCheck');
 
 const City = require('../models/City');
 const Place = require('../models/Place');
+const Reservation = require('../models/Reservation');
+const Review = require('../models/Review');
 
 const createCity = require('./utils/createCity');
 const validateAddress = require('./utils/validateAddress');
@@ -245,6 +247,9 @@ router.delete('/:id', authCheck, async (req, res) => {
     }
 
     place = await Place.findByIdAndRemove(id);
+
+    await Reservation.deleteMany({ placeID: id });
+    await Review.deleteMany({ placeID: id });
 
     res.json({ message: 'Successfully removed listing.' });
   } catch (err) {
