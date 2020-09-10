@@ -1,7 +1,9 @@
 const express = require('express');
-const { body, param, validationResult } = require('express-validator');
+const { body, param } = require('express-validator');
 
 const authCheck = require('../middleware/authCheck');
+const requestIsValid = require('./utils/requestIsValid');
+
 const Place = require('../models/Place');
 const Review = require('../models/Review');
 
@@ -14,11 +16,7 @@ router.get(
   '/:id',
   param('id', 'Please provide a valid review ID.').isMongoId(),
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
+    if (!requestIsValid(req, res)) return;
 
     const { id } = req.params;
 
@@ -47,11 +45,7 @@ router.get(
   '/for/:placeID',
   param('placeID', 'Please provide a valid place ID.').isMongoId(),
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
+    if (!requestIsValid(req, res)) return;
 
     const { placeID } = req.params;
 
@@ -101,11 +95,7 @@ router.post(
       .isLength({ min: 1, max: 1000 })
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
+    if (!requestIsValid(req, res)) return;
 
     const { placeID } = req.params;
 
@@ -186,11 +176,7 @@ router.put(
     body('placeID', 'Cannot change the place a review is for.').not().exists()
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
+    if (!requestIsValid(req, res)) return;
 
     const { id } = req.params;
 
@@ -230,11 +216,7 @@ router.delete(
   '/:id',
   [authCheck, param('id', 'Please provide a valid review ID.').isMongoId()],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
+    if (!requestIsValid(req, res)) return;
 
     const { id } = req.params;
 

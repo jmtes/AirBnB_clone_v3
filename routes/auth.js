@@ -1,7 +1,9 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { check, validationResult } = require('express-validator');
+const { check } = require('express-validator');
+
+const requestIsValid = require('./utils/requestIsValid');
 
 const User = require('../models/User');
 const Place = require('../models/Place');
@@ -46,11 +48,7 @@ router.post(
     check('password', 'Please provide a password.').isString()
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
+    if (!requestIsValid(req, res)) return;
 
     const { email, password } = req.body;
 

@@ -1,7 +1,9 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { body, param, validationResult } = require('express-validator');
+const { body, param } = require('express-validator');
+
+const requestIsValid = require('./utils/requestIsValid');
 
 const User = require('../models/User');
 const Place = require('../models/Place');
@@ -19,11 +21,7 @@ router.get(
   '/:id',
   param('id', 'Please provide a valid user ID.').isMongoId(),
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
+    if (!requestIsValid(req, res)) return;
 
     const { id } = req.params;
 
@@ -68,11 +66,7 @@ router.post(
       .isLength({ min: 8 })
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
+    if (!requestIsValid(req, res)) return;
 
     const { name, email, password } = req.body;
 
@@ -151,11 +145,7 @@ router.put(
     body('reviews', 'Cannot modify user reviews.').not().exists()
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
+    if (!requestIsValid(req, res)) return;
 
     const { id } = req.user;
 
@@ -231,11 +221,7 @@ router.post(
     body('password', 'Password required for deactivation.').isString()
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
+    if (!requestIsValid(req, res)) return;
 
     const { id } = req.user;
 

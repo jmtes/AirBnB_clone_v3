@@ -1,7 +1,8 @@
 const express = require('express');
-const { body, param, validationResult } = require('express-validator');
+const { body, param } = require('express-validator');
 
 const authCheck = require('../middleware/authCheck');
+const requestIsValid = require('./utils/requestIsValid');
 
 const City = require('../models/City');
 const Place = require('../models/Place');
@@ -20,11 +21,7 @@ router.get(
   '/in/:cityID',
   param('cityID', 'Please provide a valid city ID.').isMongoId(),
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
+    if (!requestIsValid(req, res)) return;
 
     const { cityID } = req.params;
 
@@ -48,11 +45,7 @@ router.get(
   '/:id',
   param('id', 'Please provide a valid place ID.').isMongoId(),
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
+    if (!requestIsValid(req, res)) return;
 
     const { id } = req.params;
 
@@ -109,11 +102,7 @@ router.post(
       .isArray()
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
+    if (!requestIsValid(req, res)) return;
 
     const {
       name,
@@ -231,11 +220,7 @@ router.put(
       .exists()
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
+    if (!requestIsValid(req, res)) return;
 
     const { id } = req.params;
 
@@ -275,11 +260,7 @@ router.delete(
   '/:id',
   [authCheck, param('id', 'Please provide a valid place ID.').isMongoId()],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
+    if (!requestIsValid(req, res)) return;
 
     const { id } = req.params;
 
