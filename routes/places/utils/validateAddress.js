@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const keys = require('../../config/keys');
+const keys = require('../../../config/keys');
 
 module.exports = async (address) => {
   // Make sure address starts with building number

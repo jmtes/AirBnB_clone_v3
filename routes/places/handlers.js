@@ -3,8 +3,8 @@ const Place = require('../../models/Place');
 const Reservation = require('../../models/Reservation');
 const Review = require('../../models/Review');
 
-const createCity = require('../utils/createCity');
-const validateAddress = require('../utils/validateAddress');
+const createCity = require('./utils/createCity');
+const validateAddress = require('./utils/validateAddress');
 
 const getPlacesInCity = async (req, res) => {
   const { cityID } = req.params;
