@@ -156,14 +156,22 @@ router.post(
       res.json(place);
     } catch (err) {
       console.log(err.message);
-      if (err.message === 'Request failed with status code 404') {
+      if (err.message === 'Unable to geocode') {
         res.status(400).json({
-          message:
-            'Could not validate address. Please check to make sure address is correct.'
+          errors: {
+            msg:
+              'Could not validate address. Please check to make sure address is correct.',
+            param: 'address',
+            location: 'body'
+          }
         });
       } else if (err.message === 'Not a valid street address') {
         res.status(400).json({
-          message: 'Please make sure your address contains a street address.'
+          errors: {
+            msg: 'Please make sure your address contains a street address.',
+            param: 'address',
+            location: 'body'
+          }
         });
       } else {
         res

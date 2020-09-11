@@ -4,8 +4,7 @@ module.exports = (req, res) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    const message = errors.array()[0].msg;
-    res.status(400).json({ message });
+    res.status(400).json({ errors: errors.array() });
     return false;
   }
 
