@@ -6,7 +6,6 @@ const requestIsValid = require('./utils/requestIsValid');
 
 const Place = require('../models/Place');
 const Reservation = require('../models/Reservation');
-const User = require('../models/User');
 
 const router = express.Router();
 
@@ -105,15 +104,6 @@ router.post(
     const { placeID } = req.params;
 
     try {
-      const user = await User.findById(req.user.id);
-
-      if (user.reservations.length >= 2) {
-        res.status(403).json({
-          message: 'Users can have a maximum of two active reservations.'
-        });
-        return;
-      }
-
       const existingReservation = await Reservation.findOne({
         userID: req.user.id,
         placeID
@@ -190,14 +180,6 @@ router.put('/confirm/:id', authCheck, async (req, res) => {
       { new: true, fields: { __v: 0 } }
     );
 
-    await User.updateOne(
-      {
-        _id: reservation.userID,
-        'reservations._id': reservation._id
-      },
-      { $set: { 'reservations.$.confirmed': true } }
-    );
-
     res.json(reservation);
   } catch (err) {
     console.log(err.message);
@@ -266,14 +248,6 @@ router.put(
         id,
         { $set: req.body },
         { new: true, fields: { __v: 0 } }
-      );
-
-      await User.updateOne(
-        {
-          _id: reservation.userID,
-          'reservations._id': reservation._id
-        },
-        { $set: { 'reservations.$': reservation } }
       );
 
       res.json(reservation);
