@@ -122,14 +122,6 @@ const editReservation = async (req, res) => {
       return;
     }
 
-    if (reservation.confirmed) {
-      res.status(403).json({
-        message:
-          'Cannot edit a confirmed reservation. Please cancel your the reservation and make a new one.'
-      });
-      return;
-    }
-
     if (req.body.checkin) req.body.checkin = new Date(req.body.checkin);
     if (req.body.checkout) req.body.checkout = new Date(req.body.checkout);
 

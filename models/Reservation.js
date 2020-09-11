@@ -21,10 +21,6 @@ const ReservationSchema = mongoose.Schema({
     type: Date,
     required: true,
     expires: 7200
-  },
-  confirmed: {
-    type: Boolean,
-    default: false
   }
 });
 

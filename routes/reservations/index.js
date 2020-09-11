@@ -12,8 +12,6 @@ const {
   cancelReservation
 } = require('./handlers');
 
-const Reservation = require('../../models/Reservation');
-
 const router = express.Router();
 
 // @route   GET /api/reservations/for/:placeID
@@ -57,38 +55,6 @@ router.post(
   makeReservation
 );
 
-// @route   PUT /api/reservations/confirm/:id
-// @desc    Confirm reservation
-// @access  Private
-router.put('/confirm/:id', checkAuth, async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    let reservation = await Reservation.findById(id);
-
-    if (!reservation) {
-      res.status(404).json({ message: 'Reservation not found.' });
-      return;
-    }
-
-    if (reservation.ownerID !== req.user.id) {
-      res.status(403).json({ message: 'Invalid credentials.' });
-      return;
-    }
-
-    reservation = await Reservation.findByIdAndUpdate(
-      id,
-      { $set: { confirmed: true } },
-      { new: true, fields: { __v: 0 } }
-    );
-
-    res.json(reservation);
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: 'Something went wrong. Try again later.' });
-  }
-});
-
 // @route   PUT /api/reservations/:id
 // @desc    Edit reservation details
 // @access  Private
@@ -111,9 +77,6 @@ router.put(
       .not()
       .exists(),
     body('ownerID', 'Cannot change the owner of the place for a reservation.')
-      .not()
-      .exists(),
-    body('confirmed', 'Cannot change the confirmation status of a reservation.')
       .not()
       .exists(),
     validateRequest
