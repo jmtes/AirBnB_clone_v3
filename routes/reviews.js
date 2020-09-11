@@ -24,7 +24,7 @@ router.get(
       const review = await Review.findById(id, { __v: 0 });
 
       if (!review) {
-        res.status(404).json({ message: 'No review found.' });
+        res.status(404).json({ message: 'Review not found.' });
         return;
       }
 
@@ -53,7 +53,7 @@ router.get(
       const place = await Place.findById(placeID);
 
       if (!place) {
-        res.status(404).json({ message: `No place found with ID ${placeID}.` });
+        res.status(404).json({ message: `Place not found.` });
         return;
       }
 
@@ -103,7 +103,7 @@ router.post(
       const place = await Place.findById(placeID);
 
       if (!place) {
-        res.status(404).json({ message: 'No place found.' });
+        res.status(404).json({ message: 'Place not found.' });
         return;
       }
 
@@ -184,7 +184,7 @@ router.put(
       let review = await Review.findById(id);
 
       if (!review) {
-        res.status(404).json({ message: `No review with ID ${id} found.` });
+        res.status(404).json({ message: `Review not found.` });
         return;
       }
 
@@ -224,12 +224,12 @@ router.delete(
       let review = await Review.findById(id);
 
       if (!review) {
-        res.status(404).json({ message: `No review found with ID ${id}.` });
+        res.status(404).json({ message: `Review not found.` });
         return;
       }
 
       if (review.userID !== req.user.id) {
-        res.status(404).json({ message: 'Access forbidden.' });
+        res.status(403).json({ message: 'Access forbidden.' });
         return;
       }
 

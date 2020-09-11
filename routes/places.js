@@ -53,7 +53,7 @@ router.get(
       const place = await Place.findById(id);
 
       if (!place) {
-        res.status(404).json({ message: `No place found with ID ${id}.` });
+        res.status(404).json({ message: 'Place not found.' });
         return;
       }
 
@@ -236,7 +236,7 @@ router.put(
       let place = await Place.findById(id);
 
       if (!place) {
-        res.status(404).json({ message: `No place found with ID ${id}` });
+        res.status(404).json({ message: 'Place not found.' });
         return;
       }
 
@@ -276,7 +276,7 @@ router.delete(
       let place = await Place.findById(id);
 
       if (!place) {
-        res.status(404).json({ message: `No place found with ID ${id}.` });
+        res.status(404).json({ message: 'Place not found.' });
         return;
       }
 

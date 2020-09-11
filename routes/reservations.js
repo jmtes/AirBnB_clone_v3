@@ -64,7 +64,7 @@ router.get(
       const reservation = await Reservation.findById(id);
 
       if (!reservation) {
-        res.status(404).json({ message: 'No reservation found.' });
+        res.status(404).json({ message: 'Reservation not found.' });
         return;
       }
 
@@ -175,7 +175,7 @@ router.put('/confirm/:id', authCheck, async (req, res) => {
     let reservation = await Reservation.findById(id);
 
     if (!reservation) {
-      res.status(404).json({ message: 'No reservation found.' });
+      res.status(404).json({ message: 'Reservation not found.' });
       return;
     }
 
@@ -242,7 +242,7 @@ router.put(
       let reservation = await Reservation.findById(id);
 
       if (!reservation) {
-        res.status(404).json({ message: 'No reservation found.' });
+        res.status(404).json({ message: 'Reservation not found.' });
         return;
       }
 
@@ -304,7 +304,7 @@ router.delete(
       let reservation = await Reservation.findById(id);
 
       if (!reservation) {
-        res.status(404).json({ message: 'No reservation found.' });
+        res.status(404).json({ message: 'Reservation not found.' });
         return;
       }
 
