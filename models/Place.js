@@ -65,6 +65,14 @@ const PlaceSchema = mongoose.Schema({
   photos: {
     type: Array,
     default: []
+  },
+  reservations: {
+    type: Array,
+    default: []
+  },
+  reviews: {
+    type: Array,
+    default: []
   }
 });
 

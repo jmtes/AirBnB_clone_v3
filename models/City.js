@@ -26,6 +26,10 @@ const CitySchema = mongoose.Schema({
   photo: {
     type: String,
     required: true
+  },
+  places: {
+    type: Array,
+    default: []
   }
 });
 
