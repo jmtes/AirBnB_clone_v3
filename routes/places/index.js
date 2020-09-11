@@ -1,7 +1,8 @@
 const express = require('express');
 const { body, param } = require('express-validator');
 
-const authCheck = require('../../middleware/authCheck');
+const checkAuth = require('../middleware/checkAuth');
+const validateRequest = require('../middleware/validateRequest');
 
 const {
   getPlacesInCity,
@@ -18,7 +19,10 @@ const router = express.Router();
 // @access  Public
 router.get(
   '/in/:cityID',
-  param('cityID', 'Please provide a valid city ID.').isMongoId(),
+  [
+    param('cityID', 'Please provide a valid city ID.').isMongoId(),
+    validateRequest
+  ],
   getPlacesInCity
 );
 
@@ -27,7 +31,10 @@ router.get(
 // @access  Public
 router.get(
   '/:id',
-  param('id', 'Please provide a valid place ID.').isMongoId(),
+  [
+    param('id', 'Please provide a valid place ID.').isMongoId(),
+    validateRequest
+  ],
   getPlace
 );
 
@@ -37,7 +44,7 @@ router.get(
 router.post(
   '/',
   [
-    authCheck,
+    checkAuth,
     body('name', 'Please provide a name for your place.')
       .isString()
       .escape()
@@ -63,7 +70,8 @@ router.post(
       .isArray(),
     body('photos', 'Please provide an array of photo URLS.')
       .optional()
-      .isArray()
+      .isArray(),
+    validateRequest
   ],
   createPlace
 );
@@ -74,7 +82,7 @@ router.post(
 router.put(
   '/:id',
   [
-    authCheck,
+    checkAuth,
     param('id', 'Please provide a valid place ID.').isMongoId(),
     body('name', 'Please provide a valid name.')
       .optional()
@@ -111,7 +119,8 @@ router.put(
       .exists(),
     body('longitude', 'Cannot change the coordinates of a place.')
       .not()
-      .exists()
+      .exists(),
+    validateRequest
   ],
   editPlace
 );
@@ -121,7 +130,11 @@ router.put(
 // @access  Private
 router.delete(
   '/:id',
-  [authCheck, param('id', 'Please provide a valid place ID.').isMongoId()],
+  [
+    checkAuth,
+    param('id', 'Please provide a valid place ID.').isMongoId(),
+    validateRequest
+  ],
   removePlace
 );
 

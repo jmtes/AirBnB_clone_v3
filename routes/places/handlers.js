@@ -1,5 +1,3 @@
-const requestIsValid = require('../utils/requestIsValid');
-
 const City = require('../../models/City');
 const Place = require('../../models/Place');
 const Reservation = require('../../models/Reservation');
@@ -9,8 +7,6 @@ const createCity = require('../utils/createCity');
 const validateAddress = require('../utils/validateAddress');
 
 const getPlacesInCity = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { cityID } = req.params;
 
   try {
@@ -24,8 +20,6 @@ const getPlacesInCity = async (req, res) => {
 };
 
 const getPlace = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { id } = req.params;
 
   try {
@@ -44,8 +38,6 @@ const getPlace = async (req, res) => {
 };
 
 const createPlace = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const {
     name,
     desc,
@@ -124,8 +116,6 @@ const createPlace = async (req, res) => {
 };
 
 const editPlace = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { id } = req.params;
 
   try {
@@ -155,8 +145,6 @@ const editPlace = async (req, res) => {
 };
 
 const removePlace = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { id } = req.params;
 
   try {

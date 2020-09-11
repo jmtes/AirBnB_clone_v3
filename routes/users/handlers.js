@@ -1,8 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const requestIsValid = require('../utils/requestIsValid');
-
 const User = require('../../models/User');
 const Place = require('../../models/Place');
 const Reservation = require('../../models/Reservation');
@@ -10,8 +8,6 @@ const Reservation = require('../../models/Reservation');
 const keys = require('../../config/keys');
 
 const getUser = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { id } = req.params;
 
   try {
@@ -36,8 +32,6 @@ const getUser = async (req, res) => {
 };
 
 const registerUser = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { name, email, password } = req.body;
 
   let user;
@@ -79,8 +73,6 @@ const registerUser = async (req, res) => {
 };
 
 const editUser = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { id } = req.user;
 
   try {
@@ -143,8 +135,6 @@ const editUser = async (req, res) => {
 };
 
 const deactivateUser = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { id } = req.user;
 
   try {

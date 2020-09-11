@@ -1,7 +1,8 @@
 const express = require('express');
 const { body, param } = require('express-validator');
 
-const authCheck = require('../../middleware/authCheck');
+const checkAuth = require('../middleware/checkAuth');
+const validateRequest = require('../middleware/validateRequest');
 
 const {
   getReservationsForPlace,
@@ -20,7 +21,11 @@ const router = express.Router();
 // @access  Private
 router.get(
   '/for/:placeID',
-  [authCheck, param('placeID', 'Please provide a valid place ID.').isMongoId()],
+  [
+    checkAuth,
+    param('placeID', 'Please provide a valid place ID.').isMongoId(),
+    validateRequest
+  ],
   getReservationsForPlace
 );
 
@@ -30,8 +35,9 @@ router.get(
 router.get(
   '/:id',
   [
-    authCheck,
-    param('id', 'Please provide a valid reservation ID.').isMongoId()
+    checkAuth,
+    param('id', 'Please provide a valid reservation ID.').isMongoId(),
+    validateRequest
   ],
   getReservation
 );
@@ -42,10 +48,11 @@ router.get(
 router.post(
   '/for/:placeID',
   [
-    authCheck,
+    checkAuth,
     param('placeID', 'Please provide a valid place ID.').isMongoId(),
     body('checkin', 'Please specify a valid check-in date.').isISO8601(),
-    body('checkout', 'Please specify a valid check-out date.').isISO8601()
+    body('checkout', 'Please specify a valid check-out date.').isISO8601(),
+    validateRequest
   ],
   makeReservation
 );
@@ -53,7 +60,7 @@ router.post(
 // @route   PUT /api/reservations/confirm/:id
 // @desc    Confirm reservation
 // @access  Private
-router.put('/confirm/:id', authCheck, async (req, res) => {
+router.put('/confirm/:id', checkAuth, async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -88,7 +95,7 @@ router.put('/confirm/:id', authCheck, async (req, res) => {
 router.put(
   '/:id',
   [
-    authCheck,
+    checkAuth,
     param('id', 'Please provide a valid reservation ID.').isMongoId(),
     body('checkin', 'Please specify a valid check-in date.')
       .optional()
@@ -108,7 +115,8 @@ router.put(
       .exists(),
     body('confirmed', 'Cannot change the confirmation status of a reservation.')
       .not()
-      .exists()
+      .exists(),
+    validateRequest
   ],
   editReservation
 );
@@ -119,8 +127,9 @@ router.put(
 router.delete(
   '/:id',
   [
-    authCheck,
-    param('id', 'Please provide a valid reservation ID.').isMongoId()
+    checkAuth,
+    param('id', 'Please provide a valid reservation ID.').isMongoId(),
+    validateRequest
   ],
   cancelReservation
 );

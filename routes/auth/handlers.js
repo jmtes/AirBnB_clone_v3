@@ -1,8 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const requestIsValid = require('../utils/requestIsValid');
-
 const User = require('../../models/User');
 const Place = require('../../models/Place');
 const Reservation = require('../../models/Reservation');
@@ -31,8 +29,6 @@ const getMe = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { email, password } = req.body;
 
   try {

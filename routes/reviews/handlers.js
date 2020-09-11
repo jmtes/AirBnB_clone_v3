@@ -1,11 +1,7 @@
-const requestIsValid = require('../utils/requestIsValid');
-
 const Place = require('../../models/Place');
 const Review = require('../../models/Review');
 
 const getReview = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { id } = req.params;
 
   try {
@@ -24,8 +20,6 @@ const getReview = async (req, res) => {
 };
 
 const getReviewsForPlace = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { placeID } = req.params;
 
   try {
@@ -45,8 +39,6 @@ const getReviewsForPlace = async (req, res) => {
 };
 
 const postReview = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { placeID } = req.params;
 
   try {
@@ -92,8 +84,6 @@ const postReview = async (req, res) => {
 };
 
 const editReview = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { id } = req.params;
 
   try {
@@ -123,8 +113,6 @@ const editReview = async (req, res) => {
 };
 
 const deleteReview = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { id } = req.params;
 
   try {

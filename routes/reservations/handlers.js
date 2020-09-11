@@ -1,11 +1,7 @@
-const requestIsValid = require('../utils/requestIsValid');
-
 const Place = require('../../models/Place');
 const Reservation = require('../../models/Reservation');
 
 const getReservationsForPlace = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { placeID } = req.params;
 
   try {
@@ -31,8 +27,6 @@ const getReservationsForPlace = async (req, res) => {
 };
 
 const getReservation = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { id } = req.params;
 
   try {
@@ -61,8 +55,6 @@ const getReservation = async (req, res) => {
 };
 
 const makeReservation = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { placeID } = req.params;
 
   try {
@@ -115,8 +107,6 @@ const makeReservation = async (req, res) => {
 };
 
 const editReservation = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { id } = req.params;
 
   try {
@@ -157,8 +147,6 @@ const editReservation = async (req, res) => {
 };
 
 const cancelReservation = async (req, res) => {
-  if (!requestIsValid(req, res)) return;
-
   const { id } = req.params;
 
   try {

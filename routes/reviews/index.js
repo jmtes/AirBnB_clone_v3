@@ -1,7 +1,8 @@
 const express = require('express');
 const { body, param } = require('express-validator');
 
-const authCheck = require('../../middleware/authCheck');
+const checkAuth = require('../middleware/checkAuth');
+const validateRequest = require('../middleware/validateRequest');
 
 const {
   getReview,
@@ -18,7 +19,10 @@ const router = express.Router();
 // @access  Public
 router.get(
   '/:id',
-  param('id', 'Please provide a valid review ID.').isMongoId(),
+  [
+    param('id', 'Please provide a valid review ID.').isMongoId(),
+    validateRequest
+  ],
   getReview
 );
 
@@ -27,7 +31,10 @@ router.get(
 // @access  Public
 router.get(
   '/for/:placeID',
-  param('placeID', 'Please provide a valid place ID.').isMongoId(),
+  [
+    param('placeID', 'Please provide a valid place ID.').isMongoId(),
+    validateRequest
+  ],
   getReviewsForPlace
 );
 
@@ -37,7 +44,7 @@ router.get(
 router.post(
   '/for/:placeID',
   [
-    authCheck,
+    checkAuth,
     param('placeID', 'Please provide a valid place ID.').isMongoId(),
     body('userName', 'Please provide a valid user name.')
       .optional()
@@ -55,7 +62,8 @@ router.post(
       .isString()
       .escape()
       .trim()
-      .isLength({ min: 1, max: 1000 })
+      .isLength({ min: 1, max: 1000 }),
+    validateRequest
   ],
   postReview
 );
@@ -66,7 +74,7 @@ router.post(
 router.put(
   '/:id',
   [
-    authCheck,
+    checkAuth,
     param('id', 'Please provide a valid review ID.').isMongoId(),
     body('stars', 'Please provide a valid rating.')
       .optional()
@@ -89,7 +97,8 @@ router.put(
     body('userID', 'Cannot change the user attributed to a review.')
       .not()
       .exists(),
-    body('placeID', 'Cannot change the place a review is for.').not().exists()
+    body('placeID', 'Cannot change the place a review is for.').not().exists(),
+    validateRequest
   ],
   editReview
 );
@@ -99,7 +108,11 @@ router.put(
 // @access  Private
 router.delete(
   '/:id',
-  [authCheck, param('id', 'Please provide a valid review ID.').isMongoId()],
+  [
+    checkAuth,
+    param('id', 'Please provide a valid review ID.').isMongoId(),
+    validateRequest
+  ],
   deleteReview
 );
 

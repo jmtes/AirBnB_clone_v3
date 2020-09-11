@@ -1,7 +1,8 @@
 const express = require('express');
 const { body, param } = require('express-validator');
 
-const authCheck = require('../../middleware/authCheck');
+const checkAuth = require('../middleware/checkAuth');
+const validateRequest = require('../middleware/validateRequest');
 
 const {
   getUser,
@@ -17,7 +18,7 @@ const router = express.Router();
 // @access  Public
 router.get(
   '/:id',
-  param('id', 'Please provide a valid user ID.').isMongoId(),
+  [param('id', 'Please provide a valid user ID.').isMongoId(), validateRequest],
   getUser
 );
 
@@ -35,7 +36,8 @@ router.post(
     body('email', 'Please provide a valid email.').isEmail().normalizeEmail(),
     body('password', 'Please enter a password with 8 or more characters.')
       .isString()
-      .isLength({ min: 8 })
+      .isLength({ min: 8 }),
+    validateRequest
   ],
   registerUser
 );
@@ -46,7 +48,7 @@ router.post(
 router.put(
   '/',
   [
-    authCheck,
+    checkAuth,
     body('name', 'Please provide a name that is 32 characters or less.')
       .optional()
       .isString()
@@ -71,7 +73,8 @@ router.put(
     body('_id', 'Cannot change the ID of a user.').not().exists(),
     body('places', 'Cannot modify user listings.').not().exists(),
     body('reservations', 'Cannot modify user reservations.').not().exists(),
-    body('reviews', 'Cannot modify user reviews.').not().exists()
+    body('reviews', 'Cannot modify user reviews.').not().exists(),
+    validateRequest
   ],
   editUser
 );
@@ -82,8 +85,9 @@ router.put(
 router.post(
   '/deactivate',
   [
-    authCheck,
-    body('password', 'Password required for deactivation.').isString()
+    checkAuth,
+    body('password', 'Password required for deactivation.').isString(),
+    validateRequest
   ],
   deactivateUser
 );
