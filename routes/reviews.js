@@ -189,7 +189,7 @@ router.put(
       }
 
       if (review.userID !== req.user.id) {
-        res.status(403).json({ message: 'Access forbidden.' });
+        res.status(403).json({ message: 'Invalid credentials.' });
         return;
       }
 
@@ -229,7 +229,7 @@ router.delete(
       }
 
       if (review.userID !== req.user.id) {
-        res.status(403).json({ message: 'Access forbidden.' });
+        res.status(403).json({ message: 'Invalid credentials.' });
         return;
       }
 

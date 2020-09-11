@@ -30,7 +30,7 @@ router.get(
       }
 
       if (place.ownerID !== req.user.id) {
-        res.status(403).json({ message: 'Access forbidden.' });
+        res.status(403).json({ message: 'Invalid credentials.' });
         return;
       }
 
@@ -74,7 +74,7 @@ router.get(
           reservation.ownerID === req.user.id
         )
       ) {
-        res.status(403).json({ message: 'Access forbidden.' });
+        res.status(403).json({ message: 'Invalid credentials.' });
         return;
       }
 
@@ -180,7 +180,7 @@ router.put('/confirm/:id', authCheck, async (req, res) => {
     }
 
     if (reservation.ownerID !== req.user.id) {
-      res.status(403).json({ message: 'Access forbidden.' });
+      res.status(403).json({ message: 'Invalid credentials.' });
       return;
     }
 
@@ -247,7 +247,7 @@ router.put(
       }
 
       if (reservation.userID !== req.user.id) {
-        res.status(403).json({ message: 'Access forbidden.' });
+        res.status(403).json({ message: 'Invalid credentials.' });
         return;
       }
 
@@ -309,7 +309,7 @@ router.delete(
       }
 
       if (reservation.userID !== req.user.id) {
-        res.status(403).json({ message: 'Access forbidden.' });
+        res.status(403).json({ message: 'Invalid credentials.' });
         return;
       }
 
