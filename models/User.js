@@ -38,11 +38,6 @@ const UserSchema = mongoose.Schema({
     // Array of reservation IDs
     type: Array,
     default: []
-  },
-  inbox: {
-    // Array of message objects
-    type: Array,
-    default: []
   }
 });
 

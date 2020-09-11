@@ -20,11 +20,7 @@ const ReservationSchema = mongoose.Schema({
   checkout: {
     type: Date,
     required: true,
-    expires: '15h'
-  },
-  confirmed: {
-    type: Boolean,
-    default: false
+    expires: 7200
   }
 });
 
