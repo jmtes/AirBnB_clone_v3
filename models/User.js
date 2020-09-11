@@ -25,17 +25,14 @@ const UserSchema = mongoose.Schema({
     maxlength: 200
   },
   places: {
-    // Array of place IDs
     type: Array,
     default: []
   },
   reviews: {
-    // Array of review IDs
     type: Array,
     default: []
   },
   reservations: {
-    // Array of reservation IDs
     type: Array,
     default: []
   }
