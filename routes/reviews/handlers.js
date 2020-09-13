@@ -1,6 +1,8 @@
 const Place = require('../../models/Place');
 const Review = require('../../models/Review');
 
+const { updateRating } = require('../utils/updateRating');
+
 const getReview = async (req, res) => {
   const { id } = req.params;
 
@@ -13,25 +15,6 @@ const getReview = async (req, res) => {
     }
 
     res.json(review);
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: 'Something went wrong. Try again later.' });
-  }
-};
-
-const getReviewsForPlace = async (req, res) => {
-  const { placeID } = req.params;
-
-  try {
-    const place = await Place.findById(placeID);
-
-    if (!place) {
-      res.status(404).json({ message: `Place not found.` });
-      return;
-    }
-
-    const reviews = await Review.find({ placeID }, { __v: 0 });
-    res.json(reviews);
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ message: 'Something went wrong. Try again later.' });
@@ -76,6 +59,8 @@ const postReview = async (req, res) => {
 
     review = await newReview.save();
 
+    await updateRating(placeID);
+
     res.json(review);
   } catch (err) {
     console.log(err.message);
@@ -105,6 +90,8 @@ const editReview = async (req, res) => {
       { new: true, fields: { __v: 0 } }
     );
 
+    await updateRating(review.placeID);
+
     res.json(review);
   } catch (err) {
     console.log(err);
@@ -130,6 +117,8 @@ const deleteReview = async (req, res) => {
 
     review = await Review.findByIdAndRemove(id);
 
+    await updateRating(review.placeID);
+
     res.json({ message: 'Successfully deleted review.' });
   } catch (err) {
     console.log(err);
@@ -139,7 +128,6 @@ const deleteReview = async (req, res) => {
 
 module.exports = {
   getReview,
-  getReviewsForPlace,
   postReview,
   editReview,
   deleteReview
