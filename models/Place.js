@@ -73,6 +73,9 @@ const PlaceSchema = mongoose.Schema({
   reviews: {
     type: Array,
     default: []
+  },
+  rating: {
+    type: Number
   }
 });
 
