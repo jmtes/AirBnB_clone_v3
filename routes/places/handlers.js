@@ -30,6 +30,15 @@ const getPlace = async (req, res) => {
       return;
     }
 
+    const reservations = await Reservation.find(
+      { placeID: id },
+      { checkin: 1, checkout: 1 }
+    );
+    const reviews = await Review.find({ placeID: id });
+
+    place.reservations = reservations;
+    place.reviews = reviews;
+
     res.json({ place });
   } catch (err) {
     console.log(err.message);
