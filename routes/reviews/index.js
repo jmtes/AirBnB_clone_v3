@@ -6,7 +6,6 @@ const validateRequest = require('../middleware/validateRequest');
 
 const {
   getReview,
-  getReviewsForPlace,
   postReview,
   editReview,
   deleteReview
@@ -24,18 +23,6 @@ router.get(
     validateRequest
   ],
   getReview
-);
-
-// @route   GET /api/reviews/for/:placeID
-// @desc    Get all reviews for a place
-// @access  Public
-router.get(
-  '/for/:placeID',
-  [
-    param('placeID', 'Please provide a valid place ID.').isMongoId(),
-    validateRequest
-  ],
-  getReviewsForPlace
 );
 
 // @route   POST /api/reviews/for/:placeID

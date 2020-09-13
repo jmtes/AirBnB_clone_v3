@@ -19,25 +19,6 @@ const getReview = async (req, res) => {
   }
 };
 
-const getReviewsForPlace = async (req, res) => {
-  const { placeID } = req.params;
-
-  try {
-    const place = await Place.findById(placeID);
-
-    if (!place) {
-      res.status(404).json({ message: `Place not found.` });
-      return;
-    }
-
-    const reviews = await Review.find({ placeID }, { __v: 0 });
-    res.json(reviews);
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: 'Something went wrong. Try again later.' });
-  }
-};
-
 const postReview = async (req, res) => {
   const { placeID } = req.params;
 
@@ -139,7 +120,6 @@ const deleteReview = async (req, res) => {
 
 module.exports = {
   getReview,
-  getReviewsForPlace,
   postReview,
   editReview,
   deleteReview
