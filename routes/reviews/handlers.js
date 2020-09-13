@@ -1,6 +1,8 @@
 const Place = require('../../models/Place');
 const Review = require('../../models/Review');
 
+const { updateRating } = require('../utils/updateRating');
+
 const getReview = async (req, res) => {
   const { id } = req.params;
 
@@ -57,6 +59,8 @@ const postReview = async (req, res) => {
 
     review = await newReview.save();
 
+    await updateRating(placeID);
+
     res.json(review);
   } catch (err) {
     console.log(err.message);
@@ -86,6 +90,8 @@ const editReview = async (req, res) => {
       { new: true, fields: { __v: 0 } }
     );
 
+    await updateRating(review.placeID);
+
     res.json(review);
   } catch (err) {
     console.log(err);
@@ -110,6 +116,8 @@ const deleteReview = async (req, res) => {
     }
 
     review = await Review.findByIdAndRemove(id);
+
+    await updateRating(review.placeID);
 
     res.json({ message: 'Successfully deleted review.' });
   } catch (err) {
