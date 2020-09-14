@@ -3,8 +3,7 @@ import Place from '../../models/Place';
 import Reservation from '../../models/Reservation';
 import Review from '../../models/Review';
 
-import createCity from '../utils/createCity';
-import validateAddress from '../utils/validateAddress';
+import { createCity, validateAddress } from './utils';
 
 export const getPlacesInCity = async (req, res) => {
   const { cityID } = req.params;

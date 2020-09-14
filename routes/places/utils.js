@@ -4,7 +4,7 @@ import keys from '../../config/keys';
 
 import City from '../../models/City';
 
-export default async (city, state, region, country) => {
+export const createCity = async (city, state, region, country) => {
   // Get city coordinates
   const cityRes = await axios.get('https://us1.locationiq.com/v1/search.php', {
     params: {
@@ -48,4 +48,31 @@ export default async (city, state, region, country) => {
 
   newCity = await newCity.save();
   return newCity;
+};
+
+export const validateAddress = async (address) => {
+  // Make sure address starts with building number
+  const buildingNumber = address.split(' ', 1)[0];
+  if (Number.isNaN(parseInt(buildingNumber, 10)))
+    throw Error('Not a valid street address');
+
+  // Validate address with Location IQ
+  const locRes = await axios.get('https://us1.locationiq.com/v1/search.php', {
+    params: {
+      q: address,
+      format: 'json',
+      addressdetails: 1,
+      limit: 1,
+      key: keys.locationIQAPIKey
+    }
+  });
+
+  const locData = locRes.data[0];
+
+  // Sometimes the LocationIQ response will not include a house number.
+  // This sets the house number to the previously parsed building number.
+  if (!locData.address.house_number)
+    locData.address.house_number = buildingNumber;
+
+  return locData;
 };

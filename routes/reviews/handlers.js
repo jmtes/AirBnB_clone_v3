@@ -1,7 +1,7 @@
 import Place from '../../models/Place';
 import Review from '../../models/Review';
 
-import { updateRating } from '../utils/updateRating';
+import updateRating from './utils';
 
 export const getReview = async (req, res) => {
   const { id } = req.params;
