@@ -1,13 +1,13 @@
-const express = require('express');
-const connectDB = require('./config/db');
+import express from 'express';
+import connectDB from './config/db';
 
 // Import routes
-const cityRoutes = require('./routes/cities');
-const placeRoutes = require('./routes/places');
-const reviewRoutes = require('./routes/reviews');
-const reservationRoutes = require('./routes/reservations');
-const userRoutes = require('./routes/users');
-const authRoutes = require('./routes/auth');
+import cityRoutes from './routes/cities';
+import placeRoutes from './routes/places';
+import reviewRoutes from './routes/reviews';
+import reservationRoutes from './routes/reservations';
+import userRoutes from './routes/users';
+import authRoutes from './routes/auth';
 
 const app = express();
 

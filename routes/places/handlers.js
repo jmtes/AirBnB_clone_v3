@@ -1,12 +1,11 @@
-const City = require('../../models/City');
-const Place = require('../../models/Place');
-const Reservation = require('../../models/Reservation');
-const Review = require('../../models/Review');
+import City from '../../models/City';
+import Place from '../../models/Place';
+import Reservation from '../../models/Reservation';
+import Review from '../../models/Review';
 
-const createCity = require('../utils/createCity');
-const validateAddress = require('../utils/validateAddress');
+import { createCity, validateAddress } from './utils';
 
-const getPlacesInCity = async (req, res) => {
+export const getPlacesInCity = async (req, res) => {
   const { cityID } = req.params;
 
   try {
@@ -19,7 +18,7 @@ const getPlacesInCity = async (req, res) => {
   }
 };
 
-const getPlace = async (req, res) => {
+export const getPlace = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -46,7 +45,7 @@ const getPlace = async (req, res) => {
   }
 };
 
-const createPlace = async (req, res) => {
+export const createPlace = async (req, res) => {
   const {
     name,
     desc,
@@ -124,7 +123,7 @@ const createPlace = async (req, res) => {
   }
 };
 
-const editPlace = async (req, res) => {
+export const editPlace = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -153,7 +152,7 @@ const editPlace = async (req, res) => {
   }
 };
 
-const removePlace = async (req, res) => {
+export const removePlace = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -179,12 +178,4 @@ const removePlace = async (req, res) => {
     console.log(err.message);
     res.status(500).json({ message: 'Something went wrong. Try again later.' });
   }
-};
-
-module.exports = {
-  getPlacesInCity,
-  getPlace,
-  createPlace,
-  editPlace,
-  removePlace
 };

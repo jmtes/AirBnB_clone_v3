@@ -1,8 +1,9 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
+import { validationResult } from 'express-validator';
 
-const keys = require('../../config/keys');
+import keys from '../../config/keys';
 
-module.exports = function (req, res, next) {
+export const checkAuth = (req, res, next) => {
   // Get token from header
   const token = req.header('Auth-Token');
 
@@ -20,4 +21,15 @@ module.exports = function (req, res, next) {
   } catch (err) {
     res.status(401).json({ message: 'Invalid token.' });
   }
+};
+
+export const validateRequest = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.status(400).json({ errors: errors.array() });
+    return;
+  }
+
+  next();
 };

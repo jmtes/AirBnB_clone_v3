@@ -1,7 +1,7 @@
-const Review = require('../../models/Review');
-const Place = require('../../models/Place');
+import Review from '../../models/Review';
+import Place from '../../models/Place';
 
-const updateRating = async (placeID) => {
+export default async (placeID) => {
   const reviews = await Review.find({ placeID });
 
   const reducer = (sum, current) => {
@@ -15,5 +15,3 @@ const updateRating = async (placeID) => {
 
   await Place.findByIdAndUpdate(placeID, { rating: avg });
 };
-
-module.exports = { updateRating };

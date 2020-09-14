@@ -1,7 +1,7 @@
-const City = require('../../models/City');
-const Place = require('../../models/Place');
+import City from '../../models/City';
+import Place from '../../models/Place';
 
-const getCity = async (req, res) => {
+export const getCity = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -22,7 +22,7 @@ const getCity = async (req, res) => {
   }
 };
 
-const getCities = async (req, res) => {
+export const getCities = async (req, res) => {
   try {
     const cities = await City.find({}, { __v: 0 });
 
@@ -32,5 +32,3 @@ const getCities = async (req, res) => {
     res.status(500).json({ message: 'Something went wrong. Try again later.' });
   }
 };
-
-module.exports = { getCity, getCities };
