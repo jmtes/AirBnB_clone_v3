@@ -1,8 +1,7 @@
 import express from 'express';
 import { check } from 'express-validator';
 
-import checkAuth from '../middleware/checkAuth';
-import validateRequest from '../middleware/validateRequest';
+import { checkAuth, validateRequest } from '../middleware';
 
 import { getMe, loginUser } from './handlers';
 

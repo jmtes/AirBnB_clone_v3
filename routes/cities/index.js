@@ -1,7 +1,7 @@
 import express from 'express';
 import { param } from 'express-validator';
 
-import validateRequest from '../middleware/validateRequest';
+import { validateRequest } from '../middleware';
 
 import { getCity, getCities } from './handlers';
 
