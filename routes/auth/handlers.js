@@ -1,14 +1,14 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-const User = require('../../models/User');
-const Place = require('../../models/Place');
-const Reservation = require('../../models/Reservation');
-const Review = require('../../models/Review');
+import User from '../../models/User';
+import Place from '../../models/Place';
+import Reservation from '../../models/Reservation';
+import Review from '../../models/Review';
 
-const keys = require('../../config/keys');
+import keys from '../../config/keys';
 
-const getMe = async (req, res) => {
+export const getMe = async (req, res) => {
   try {
     const { id } = req.user;
     const user = await User.findById(id, { password: 0, __v: 0 });
@@ -28,7 +28,7 @@ const getMe = async (req, res) => {
   }
 };
 
-const loginUser = async (req, res) => {
+export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -61,5 +61,3 @@ const loginUser = async (req, res) => {
     res.status(500).json({ message: 'Something went wrong. Try again later.' });
   }
 };
-
-module.exports = { getMe, loginUser };

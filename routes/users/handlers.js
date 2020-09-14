@@ -1,13 +1,13 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-const User = require('../../models/User');
-const Place = require('../../models/Place');
-const Reservation = require('../../models/Reservation');
+import User from '../../models/User';
+import Place from '../../models/Place';
+import Reservation from '../../models/Reservation';
 
-const keys = require('../../config/keys');
+import keys from '../../config/keys';
 
-const getUser = async (req, res) => {
+export const getUser = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -31,7 +31,7 @@ const getUser = async (req, res) => {
   }
 };
 
-const registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   let user;
@@ -72,7 +72,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-const editUser = async (req, res) => {
+export const editUser = async (req, res) => {
   const { id } = req.user;
 
   try {
@@ -134,7 +134,7 @@ const editUser = async (req, res) => {
   }
 };
 
-const deactivateUser = async (req, res) => {
+export const deactivateUser = async (req, res) => {
   const { id } = req.user;
 
   try {
@@ -167,5 +167,3 @@ const deactivateUser = async (req, res) => {
     res.status(500).json({ message: 'Something went wrong. Try again later.' });
   }
 };
-
-module.exports = { getUser, registerUser, editUser, deactivateUser };

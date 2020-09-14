@@ -1,8 +1,8 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
-const keys = require('../../config/keys');
+import keys from '../../config/keys';
 
-module.exports = function (req, res, next) {
+export default (req, res, next) => {
   // Get token from header
   const token = req.header('Auth-Token');
 

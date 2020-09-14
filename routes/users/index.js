@@ -1,15 +1,10 @@
-const express = require('express');
-const { body, param } = require('express-validator');
+import express from 'express';
+import { body, param } from 'express-validator';
 
-const checkAuth = require('../middleware/checkAuth');
-const validateRequest = require('../middleware/validateRequest');
+import checkAuth from '../middleware/checkAuth';
+import validateRequest from '../middleware/validateRequest';
 
-const {
-  getUser,
-  registerUser,
-  editUser,
-  deactivateUser
-} = require('./handlers');
+import { getUser, registerUser, editUser, deactivateUser } from './handlers';
 
 const router = express.Router();
 
@@ -92,4 +87,4 @@ router.post(
   deactivateUser
 );
 
-module.exports = router;
+export default router;

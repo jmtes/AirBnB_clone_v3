@@ -1,8 +1,8 @@
-const axios = require('axios');
+import axios from 'axios';
 
-const keys = require('../../config/keys');
+import keys from '../../config/keys';
 
-module.exports = async (address) => {
+export default async (address) => {
   // Make sure address starts with building number
   const buildingNumber = address.split(' ', 1)[0];
   if (Number.isNaN(parseInt(buildingNumber, 10)))

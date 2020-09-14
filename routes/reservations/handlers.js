@@ -1,7 +1,7 @@
-const Place = require('../../models/Place');
-const Reservation = require('../../models/Reservation');
+import Place from '../../models/Place';
+import Reservation from '../../models/Reservation';
 
-const getReservationsForPlace = async (req, res) => {
+export const getReservationsForPlace = async (req, res) => {
   const { placeID } = req.params;
 
   try {
@@ -26,7 +26,7 @@ const getReservationsForPlace = async (req, res) => {
   }
 };
 
-const getReservation = async (req, res) => {
+export const getReservation = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -54,7 +54,7 @@ const getReservation = async (req, res) => {
   }
 };
 
-const makeReservation = async (req, res) => {
+export const makeReservation = async (req, res) => {
   const { placeID } = req.params;
 
   try {
@@ -106,7 +106,7 @@ const makeReservation = async (req, res) => {
   }
 };
 
-const editReservation = async (req, res) => {
+export const editReservation = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -138,7 +138,7 @@ const editReservation = async (req, res) => {
   }
 };
 
-const cancelReservation = async (req, res) => {
+export const cancelReservation = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -161,12 +161,4 @@ const cancelReservation = async (req, res) => {
     console.log(err.message);
     res.status(500).json({ message: 'Something went wrong. Try again later.' });
   }
-};
-
-module.exports = {
-  getReservationsForPlace,
-  getReservation,
-  makeReservation,
-  editReservation,
-  cancelReservation
 };

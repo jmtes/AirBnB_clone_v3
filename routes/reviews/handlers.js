@@ -1,9 +1,9 @@
-const Place = require('../../models/Place');
-const Review = require('../../models/Review');
+import Place from '../../models/Place';
+import Review from '../../models/Review';
 
-const { updateRating } = require('../utils/updateRating');
+import { updateRating } from '../utils/updateRating';
 
-const getReview = async (req, res) => {
+export const getReview = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -21,7 +21,7 @@ const getReview = async (req, res) => {
   }
 };
 
-const postReview = async (req, res) => {
+export const postReview = async (req, res) => {
   const { placeID } = req.params;
 
   try {
@@ -68,7 +68,7 @@ const postReview = async (req, res) => {
   }
 };
 
-const editReview = async (req, res) => {
+export const editReview = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -99,7 +99,7 @@ const editReview = async (req, res) => {
   }
 };
 
-const deleteReview = async (req, res) => {
+export const deleteReview = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -124,11 +124,4 @@ const deleteReview = async (req, res) => {
     console.log(err);
     res.status(500).json({ message: 'Something went wrong. Try again later.' });
   }
-};
-
-module.exports = {
-  getReview,
-  postReview,
-  editReview,
-  deleteReview
 };

@@ -1,10 +1,10 @@
-const axios = require('axios');
+import axios from 'axios';
 
-const keys = require('../../config/keys');
+import keys from '../../config/keys';
 
-const City = require('../../models/City');
+import City from '../../models/City';
 
-module.exports = async (city, state, region, country) => {
+export default async (city, state, region, country) => {
   // Get city coordinates
   const cityRes = await axios.get('https://us1.locationiq.com/v1/search.php', {
     params: {

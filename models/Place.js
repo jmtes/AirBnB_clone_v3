@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const PlaceSchema = mongoose.Schema({
   name: {
@@ -79,4 +79,4 @@ const PlaceSchema = mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('place', PlaceSchema);
+export default mongoose.model('place', PlaceSchema);

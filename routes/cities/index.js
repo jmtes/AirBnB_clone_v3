@@ -1,9 +1,9 @@
-const express = require('express');
-const { param } = require('express-validator');
+import express from 'express';
+import { param } from 'express-validator';
 
-const validateRequest = require('../middleware/validateRequest');
+import validateRequest from '../middleware/validateRequest';
 
-const { getCity, getCities } = require('./handlers');
+import { getCity, getCities } from './handlers';
 
 const router = express.Router();
 
@@ -21,4 +21,4 @@ router.get(
 // @access  Public
 router.get('/', getCities);
 
-module.exports = router;
+export default router;
