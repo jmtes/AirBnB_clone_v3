@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/index.js --exec babel-node --presets @babel/preset-env",
+    "get-schema": "env-cmd -f ./config/dev.env graphql get-schema -p prisma",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
