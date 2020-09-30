@@ -1,13 +1,13 @@
 import express from 'express';
-import connectDB from './config/db';
+import connectDB from '../config/db';
 
 // Import routes
-import cityRoutes from './routes/cities';
-import placeRoutes from './routes/places';
-import reviewRoutes from './routes/reviews';
-import reservationRoutes from './routes/reservations';
-import userRoutes from './routes/users';
-import authRoutes from './routes/auth';
+import cityRoutes from '../routes/cities';
+import placeRoutes from '../routes/places';
+import reviewRoutes from '../routes/reviews';
+import reservationRoutes from '../routes/reservations';
+import userRoutes from '../routes/users';
+import authRoutes from '../routes/auth';
 
 const app = express();
 
