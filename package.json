@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "env-cmd -f ./config/dev.env nodemon src/index.js --ext js,graphql --exec babel-node --presets @babel/preset-env",
     "get-schema": "env-cmd -f ./config/dev.env graphql get-schema -p prisma",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "env-cmd -f ./config/test.env jest --watch"
   },
   "repository": {
     "type": "git",
@@ -63,5 +63,10 @@
     "prisma-binding": "^2.3.16",
     "regenerator-runtime": "^0.13.7",
     "ws": "^7.3.1"
+  },
+  "jest": {
+    "globalSetup": "./tests/config/globalSetup.js",
+    "globalTeardown": "./tests/config/globalTeardown.js",
+    "testURL": "http://localhost/"
   }
 }
