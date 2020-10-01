@@ -7,7 +7,8 @@
     "func-names": "off",
     "no-process-exit": "off",
     "node/no-unsupported-features/es-syntax": "off",
-    "no-underscore-dangle": "off"
+    "no-underscore-dangle": "off",
+    "no-param-reassign": ["warn", { "props": false }]
   },
   "parser": "babel-eslint",
   "parserOptions": {
