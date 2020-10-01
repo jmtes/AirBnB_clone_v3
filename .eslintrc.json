@@ -13,5 +13,8 @@
   "parser": "babel-eslint",
   "parserOptions": {
     "sourceType": "module"
+  },
+  "env": {
+    "jest": true
   }
 }
