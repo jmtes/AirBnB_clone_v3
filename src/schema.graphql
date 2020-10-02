@@ -1,5 +1,3 @@
-# import UserOrderByInput, PostOrderByInput, CommentOrderByInput from './generated/prisma.graphql'
-
 type Query {
   user(id: ID!): User!
   me: User!
