@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import validator from 'validator';
 
 import getUserId from './utils/getUserId';
 import generateToken from './utils/generateToken';
@@ -6,6 +7,14 @@ import hashPassword from './utils/hashPassword';
 
 const Mutation = {
   async createUser(_parent, { data }, { prisma }) {
+    const emailIsValid = validator.isEmail(data.email);
+    if (!emailIsValid) throw Error('Invalid email provided.');
+
+    data.email = validator.normalizeEmail(data.email);
+
+    const emailTaken = await prisma.exists.User({ email: data.email });
+    if (emailTaken) throw Error('Email is already in use.');
+
     const hashedPassword = await hashPassword(data.password);
 
     const user = await prisma.mutation.createUser({
