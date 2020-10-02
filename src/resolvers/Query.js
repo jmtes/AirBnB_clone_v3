@@ -1,17 +1,11 @@
 import getUserId from './utils/getUserId';
 
 const Query = {
-  users: (
-    _parent,
-    { query, first, skip, after, orderBy },
-    { prisma },
-    info
-  ) => {
-    const opArgs = { first, skip, after, orderBy };
+  user: async (_parent, { id }, { prisma }, info) => {
+    const user = await prisma.query.user({ where: { id } }, info);
 
-    if (query) opArgs.where = { name_contains: query };
-
-    return prisma.query.users(opArgs, info);
+    if (user) return user;
+    throw Error('User not found.');
   },
   me: (_parent, _args, { req, prisma }, info) => {
     const userId = getUserId(req);

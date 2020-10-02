@@ -23,12 +23,16 @@ export const loginUser = gql`
   }
 `;
 
-export const getUsers = gql`
-  query {
-    users {
+export const getUser = gql`
+  query($id: ID!) {
+    user(id: $id) {
       id
       name
       email
+      password
+      reservations {
+        id
+      }
     }
   }
 `;

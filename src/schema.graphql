@@ -1,13 +1,7 @@
 # import UserOrderByInput, PostOrderByInput, CommentOrderByInput from './generated/prisma.graphql'
 
 type Query {
-  users(
-    query: String
-    first: Int
-    skip: Int
-    after: String
-    orderBy: UserOrderByInput
-  ): [User!]!
+  user(id: ID!): User!
   me: User!
 }
 
@@ -45,11 +39,14 @@ input UpdateUserInput {
 
 type User {
   id: ID!
-  name: String!
   email: String
   password: String
-  updatedAt: String!
-  createdAt: String!
+  name: String!
+  avatar: String
+  bio: String
+  listings: [Listing!]!
+  reviews: [Review!]!
+  reservations: [Reservation!]
 }
 
 enum MutationType {
