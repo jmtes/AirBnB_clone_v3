@@ -96,75 +96,135 @@ describe('User', () => {
     });
   });
 
-  test.skip('New user should be created in DB upon registration', async () => {
-    const variables = {
-      data: {
-        name: 'Kate Page',
-        email: 'kate@domain.tld',
-        password: 'QhzuCsao'
-      }
-    };
+  describe('Mutations', () => {
+    describe('createUser', () => {
+      test('New user should be created in DB upon registration', async () => {
+        const variables = {
+          data: {
+            name: 'Kate Page',
+            email: 'kate@domain.tld',
+            password: 'QhzuCsao'
+          }
+        };
 
-    const { data } = await defaultClient.mutate({
-      mutation: createUser,
-      variables
+        const { data } = await defaultClient.mutate({
+          mutation: createUser,
+          variables
+        });
+
+        const userExists = await prisma.exists.User({
+          id: data.createUser.user.id
+        });
+
+        expect(userExists).toBe(true);
+
+        await prisma.mutation.deleteUser({
+          where: { id: data.createUser.user.id }
+        });
+      });
+
+      test('Error is thrown if invalid email is provided', async () => {
+        const variables = {
+          data: {
+            name: 'Kate Page',
+            email: 'invalid@mail',
+            password: 'gecgecgec'
+          }
+        };
+
+        await expect(
+          defaultClient.mutate({ mutation: createUser, variables })
+        ).rejects.toThrow('Invalid email provided.');
+      });
+
+      test('Error is thrown is email is already in use', async () => {
+        const variables = {
+          data: {
+            name: userOne.user.name,
+            email: userOne.user.email,
+            password: 'password'
+          }
+        };
+
+        await expect(
+          defaultClient.mutate({ mutation: createUser, variables })
+        ).rejects.toThrow('Email is already in use.');
+      });
+
+      test('Email should be normalized', async () => {
+        const variables = {
+          data: {
+            name: 'Kate Page',
+            email: 'KATE.PAGE@gmail.com',
+            password: 'gecgecgec'
+          }
+        };
+
+        await defaultClient.mutate({
+          mutation: createUser,
+          variables
+        });
+
+        const userExists = await prisma.exists.User({
+          email: 'katepage@gmail.com'
+        });
+
+        expect(userExists).toBe(true);
+
+        await prisma.mutation.deleteUser({
+          where: { email: 'katepage@gmail.com' }
+        });
+      });
+
+      test('Error should be thrown if password is too short', async () => {
+        const variables = {
+          data: {
+            name: 'Kate Page',
+            email: 'kate@domain.tld',
+            password: '2short'
+          }
+        };
+
+        await expect(
+          defaultClient.mutate({ mutation: createUser, variables })
+        ).rejects.toThrow('Password must contain at least 8 characters.');
+      });
     });
 
-    const userExists = await prisma.exists.User({
-      id: data.createUser.user.id
+    describe('loginUser', () => {
+      test('Should succeed with valid credentials', async () => {
+        const variables = {
+          data: { email: 'emma@domain.tld', password: 'LFdx1ZZnXju6' }
+        };
+        const { data } = await defaultClient.mutate({
+          mutation: loginUser,
+          variables
+        });
+
+        expect(data.loginUser.token).toBeTruthy();
+        expect(data.loginUser.user.id).toBe(userOne.user.id);
+        expect(data.loginUser.user.name).toBe('Emma Thomas');
+      });
+
+      test('Login should fail with nonexistent email', async () => {
+        const variables = {
+          data: { email: 'doesntexist@domain.tld', password: 'akdasjlsafj' }
+        };
+
+        await expect(
+          defaultClient.mutate({ mutation: loginUser, variables })
+        ).rejects.toThrow('Account does not exist.');
+      });
+
+      test('Login should fail with incorrect password', async () => {
+        const variables = {
+          data: { email: 'emma@domain.tld', password: 'incorrect' }
+        };
+
+        await expect(
+          defaultClient.mutate({ mutation: loginUser, variables })
+        ).rejects.toThrow('Incorrect password.');
+      });
     });
-
-    expect(userExists).toBe(true);
-
-    await prisma.mutation.deleteUser({
-      where: { id: data.createUser.user.id }
-    });
-  });
-
-  test.skip('User registration should fail if password is too short', async () => {
-    const variables = {
-      data: {
-        name: 'Kate Page',
-        email: 'kate@domain.tld',
-        password: '2short'
-      }
-    };
-
-    await expect(
-      defaultClient.mutate({ mutation: createUser, variables })
-    ).rejects.toThrow('Password must contain at least 8 characters.');
-  });
-
-  test.skip('Login should succeed with valid credentials', async () => {
-    const variables = {
-      data: { email: 'emma@domain.tld', password: 'LFdx1ZZnXju6' }
-    };
-    const { data } = await defaultClient.mutate({
-      mutation: loginUser,
-      variables
-    });
-
-    expect(data.loginUser.token).toBeTruthy();
-    expect(data.loginUser.user.name).toBe('Emma Thomas');
-  });
-
-  test.skip('Login should fail with nonexistent email', async () => {
-    const variables = {
-      data: { email: 'doesntexist@domain.tld', password: 'akdasjlsafj' }
-    };
-
-    await expect(
-      defaultClient.mutate({ mutation: loginUser, variables })
-    ).rejects.toThrow('Account does not exist.');
-  });
-
-  test.skip('Login should fail with incorrect password', async () => {
-    const variables = {
-      data: { email: 'emma@domain.tld', password: 'incorrect' }
-    };
-
-    await expect(
-      defaultClient.mutate({ mutation: loginUser, variables })
-    ).rejects.toThrow('Incorrect password.');
   });
 });
