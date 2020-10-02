@@ -16,50 +16,68 @@ describe('User', () => {
   beforeAll(seedDatabase);
 
   describe('Queries', () => {
-    test('Returns correct user', async () => {
-      const variables = { id: userOne.user.id };
-      const { data } = await defaultClient.query({ query: getUser, variables });
+    describe('user', () => {
+      test('Returns correct user', async () => {
+        const variables = { id: userOne.user.id };
+        const { data } = await defaultClient.query({
+          query: getUser,
+          variables
+        });
 
-      expect(data.user.id).toBe(userOne.user.id);
+        expect(data.user.id).toBe(userOne.user.id);
+      });
+
+      test('Private fields are nulled on public profile', async () => {
+        const variables = { id: userOne.user.id };
+        const { data } = await defaultClient.query({
+          query: getUser,
+          variables
+        });
+
+        expect(data.user.email).toBe(null);
+        expect(data.user.password).toBe(null);
+        expect(data.user.reservations).toBe(null);
+      });
+
+      test('Private fields are nulled if authenticated but not user in question', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = { id: userOne.user.id };
+        const { data } = await client.query({ query: getUser, variables });
+
+        expect(data.user.email).toBe(null);
+        expect(data.user.password).toBe(null);
+        expect(data.user.reservations).toBe(null);
+      });
+
+      test('Private fields other than password are visible if authenticated and user in question', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = { id: userOne.user.id };
+        const { data } = await client.query({ query: getUser, variables });
+
+        expect(data.user.email).toBe(userOne.user.email);
+        expect(data.user.password).toBe(null);
+        expect(data.user.reservations).toBeTruthy();
+      });
+
+      test('Error is thrown if user does not exist', async () => {
+        const variables = { id: 'hasdlkshdflkj' };
+
+        await expect(
+          defaultClient.query({ query: getUser, variables })
+        ).rejects.toThrow('User not found');
+      });
     });
 
-    test('Private fields are nulled on public profile', async () => {
-      const variables = { id: userOne.user.id };
-      const { data } = await defaultClient.query({ query: getUser, variables });
+    describe('me', () => {
+      test('Querying me returns correct info for logged-in user', async () => {
+        const client = getClient(userOne.jwt);
 
-      expect(data.user.email).toBe(null);
-      expect(data.user.password).toBe(null);
-      expect(data.user.reservations).toBe(null);
-    });
+        const { data } = await client.query({ query: getMe });
 
-    test('Private fields are nulled if authenticated but not user in question', async () => {
-      const client = getClient(userTwo.jwt);
-
-      const variables = { id: userOne.user.id };
-      const { data } = await client.query({ query: getUser, variables });
-
-      expect(data.user.email).toBe(null);
-      expect(data.user.password).toBe(null);
-      expect(data.user.reservations).toBe(null);
-    });
-
-    test('Private fields other than password are visible if authenticated and user in question', async () => {
-      const client = getClient(userOne.jwt);
-
-      const variables = { id: userOne.user.id };
-      const { data } = await client.query({ query: getUser, variables });
-
-      expect(data.user.email).toBe(userOne.user.email);
-      expect(data.user.password).toBe(null);
-      expect(data.user.reservations).toBeTruthy();
-    });
-
-    test('Error is thrown if user does not exist', async () => {
-      const variables = { id: 'hasdlkshdflkj' };
-
-      await expect(
-        defaultClient.query({ query: getUser, variables })
-      ).rejects.toThrow('User not found');
+        expect(data.me.email).toBe(userOne.user.email);
+      });
     });
   });
 
@@ -133,13 +151,5 @@ describe('User', () => {
     await expect(
       defaultClient.mutate({ mutation: loginUser, variables })
     ).rejects.toThrow('Incorrect password.');
-  });
-
-  test.skip('Querying me returns correct info for logged-in user', async () => {
-    const client = getClient(userOne.jwt);
-
-    const { data } = await client.query({ query: getMe });
-
-    expect(data.me.email).toBe(userOne.user.email);
   });
 });
