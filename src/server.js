@@ -8,7 +8,10 @@ const server = new GraphQLServer({
   typeDefs: './src/schema.graphql',
   resolvers,
   context: (req) => ({ req, prisma }),
-  fragmentReplacements
+  fragmentReplacements,
+  resolverValidationOptions: {
+    requireResolversForResolveType: false
+  }
 });
 
 export default server;
