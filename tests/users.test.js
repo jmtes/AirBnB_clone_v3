@@ -3,6 +3,8 @@ import 'regenerator-runtime/runtime';
 
 import 'cross-fetch/polyfill';
 
+import jwt from 'jsonwebtoken';
+
 import prisma from '../src/prisma';
 
 import getClient from './utils/getClient';
@@ -66,17 +68,30 @@ describe('User', () => {
 
         await expect(
           defaultClient.query({ query: getUser, variables })
-        ).rejects.toThrow('User not found');
+        ).rejects.toThrow('User not found.');
       });
     });
 
     describe('me', () => {
-      test('Querying me returns correct info for logged-in user', async () => {
+      test('Returns correct info for logged-in user', async () => {
         const client = getClient(userOne.jwt);
 
         const { data } = await client.query({ query: getMe });
 
         expect(data.me.email).toBe(userOne.user.email);
+      });
+
+      test('Error is thrown if user does not exist (accounts for deactivation)', async () => {
+        const token = jwt.sign(
+          { userId: 'aslkdjlaskfd' },
+          process.env.JWT_SECRET
+        );
+
+        const client = getClient(token);
+
+        await expect(client.query({ query: getMe })).rejects.toThrow(
+          'User not found.'
+        );
       });
     });
   });

@@ -4,13 +4,16 @@ const Query = {
   user: async (_parent, { id }, { prisma }, info) => {
     const user = await prisma.query.user({ where: { id } }, info);
 
-    if (user) return user;
-    throw Error('User not found.');
+    if (!user) throw Error('User not found.');
+    return user;
   },
-  me: (_parent, _args, { req, prisma }, info) => {
+  me: async (_parent, _args, { req, prisma }, info) => {
     const userId = getUserId(req);
 
-    return prisma.query.user({ where: { id: userId } }, info);
+    const user = await prisma.query.user({ where: { id: userId } }, info);
+
+    if (!user) throw Error('User not found.');
+    return user;
   }
 };
 
