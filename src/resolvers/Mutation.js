@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import validator from 'validator';
+import xss from 'xss';
 
 import getUserId from './utils/getUserId';
 import generateToken from './utils/generateToken';
@@ -16,6 +17,10 @@ const Mutation = {
     if (emailTaken) throw Error('Email is already in use.');
 
     const hashedPassword = await hashPassword(data.password);
+
+    data.name = xss(validator.trim(data.name));
+    if (data.name.length < 2 || data.name.length > 32)
+      throw Error('Name must contain 2-32 characters.');
 
     const user = await prisma.mutation.createUser({
       data: { ...data, password: hashedPassword }

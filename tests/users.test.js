@@ -176,6 +176,55 @@ describe('User', () => {
         });
       });
 
+      test('Name input should be sanitized', async () => {
+        const variables = {
+          data: {
+            name: '     <Kate Page>     ',
+            email: 'kate@domain.tld',
+            password: 'gecgecgec'
+          }
+        };
+
+        const { data } = await defaultClient.mutate({
+          mutation: createUser,
+          variables
+        });
+
+        expect(data.createUser.user.name).toBe('&lt;Kate Page&gt;');
+
+        await prisma.mutation.deleteUser({
+          where: { email: 'kate@domain.tld' }
+        });
+      });
+
+      test('Error should be thrown if name is too short', async () => {
+        const variables = {
+          data: {
+            name: 'K',
+            email: 'kate@domain.tld',
+            password: 'gecgecgec'
+          }
+        };
+
+        await expect(
+          defaultClient.mutate({ mutation: createUser, variables })
+        ).rejects.toThrow('Name must contain 2-32 characters.');
+      });
+
+      test('Error should be thrown if name is too long', async () => {
+        const variables = {
+          data: {
+            name: 'Kate Page........................',
+            email: 'kate@domain.tld',
+            password: 'gecgecgec'
+          }
+        };
+
+        await expect(
+          defaultClient.mutate({ mutation: createUser, variables })
+        ).rejects.toThrow('Name must contain 2-32 characters.');
+      });
+
       test('Error should be thrown if password is too short', async () => {
         const variables = {
           data: {

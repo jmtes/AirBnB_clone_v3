@@ -63,7 +63,8 @@
     "prisma-binding": "^2.3.16",
     "regenerator-runtime": "^0.13.7",
     "validator": "^13.1.17",
-    "ws": "^7.3.1"
+    "ws": "^7.3.1",
+    "xss": "^1.0.8"
   },
   "jest": {
     "globalSetup": "./tests/config/globalSetup.js",
