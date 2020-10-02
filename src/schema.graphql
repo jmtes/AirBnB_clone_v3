@@ -47,6 +47,63 @@ type User {
   reservations: [Reservation!]
 }
 
+type City {
+  id: ID!
+  name: String!
+  state: String
+  region: String
+  country: String!
+  latitude: Float!
+  longitude: Float!
+  photo: String!
+  listings: [Listing!]!
+}
+
+type Listing {
+  id: ID!
+  createdAt: String!
+  updatedAt: String!
+  name: String!
+  desc: String!
+  owner: User!
+  city: City!
+  address: String!
+  latitude: Float!
+  longitude: Float!
+  beds: Int!
+  baths: Int!
+  maxGuests: Int
+  price: Float!
+  amenities: [String!]!
+  photos: [String!]!
+  reservations: [Reservation!]!
+
+  reviews: [Review!]!
+  rating: Float
+}
+
+type Reservation {
+  id: ID!
+  createdAt: String!
+  updatedAt: String!
+  user: User!
+  listing: Listing!
+  checkin: String!
+  checkout: String!
+}
+
+type Review {
+  id: ID!
+  createdAt: String!
+  updatedAt: String!
+  author: User
+  listing: Listing!
+  rating: Int!
+  title: String
+  body: String
+  date: String!
+}
+
 enum MutationType {
   CREATED
   UPDATED
