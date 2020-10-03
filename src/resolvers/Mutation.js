@@ -1,10 +1,12 @@
 import bcrypt from 'bcryptjs';
 import validator from 'validator';
-import xss from 'xss';
 
 import getUserId from './utils/getUserId';
 import generateToken from './utils/generateToken';
 import hashPassword from './utils/hashPassword';
+import validation from './utils/validation';
+
+const { validateName, validateAvatar, validateBio } = validation;
 
 const Mutation = {
   async createUser(_parent, { data }, { prisma }) {
@@ -18,9 +20,7 @@ const Mutation = {
 
     const hashedPassword = await hashPassword(data.password);
 
-    data.name = xss(validator.trim(data.name));
-    if (data.name.length < 2 || data.name.length > 32)
-      throw Error('Name must contain 2-32 characters.');
+    data.name = validateName(data.name);
 
     const user = await prisma.mutation.createUser({
       data: { ...data, password: hashedPassword }
@@ -41,10 +41,12 @@ const Mutation = {
 
     return { token, user };
   },
-  async updateUser(_parent, { data }, { req, prisma }, info) {
+  async updateUserProfile(_parent, { data }, { req, prisma }, info) {
     const id = getUserId(req);
 
-    if (data.password) data.password = await hashPassword(data.password);
+    if (data.name) data.name = validateName(data.name);
+    if (data.avatar) data.avatar = validateAvatar(data.avatar);
+    if (data.bio !== undefined) data.bio = validateBio(data.bio);
 
     return prisma.mutation.updateUser({ where: { id }, data }, info);
   },

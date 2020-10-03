@@ -10,14 +10,20 @@ import prisma from '../src/prisma';
 import getClient from './utils/getClient';
 import seedDatabase, { userOne, userTwo } from './utils/seedDatabase';
 
-import { createUser, loginUser, getUser, getMe } from './operations/user';
+import {
+  createUser,
+  loginUser,
+  updateProfile,
+  getUser,
+  getMe
+} from './operations/user';
 
 describe('User', () => {
   const defaultClient = getClient();
 
   beforeAll(seedDatabase);
 
-  describe('Queries', () => {
+  describe.skip('Queries', () => {
     describe('user', () => {
       test('Returns correct user', async () => {
         const variables = { id: userOne.user.id };
@@ -97,7 +103,7 @@ describe('User', () => {
   });
 
   describe('Mutations', () => {
-    describe('createUser', () => {
+    describe.skip('createUser', () => {
       test('New user should be created in DB upon registration', async () => {
         const variables = {
           data: {
@@ -240,7 +246,7 @@ describe('User', () => {
       });
     });
 
-    describe('loginUser', () => {
+    describe.skip('loginUser', () => {
       test('Should succeed with valid credentials', async () => {
         const variables = {
           data: { email: 'emma@domain.tld', password: 'LFdx1ZZnXju6' }
@@ -273,6 +279,163 @@ describe('User', () => {
         await expect(
           defaultClient.mutate({ mutation: loginUser, variables })
         ).rejects.toThrow('Incorrect password.');
+      });
+    });
+
+    describe('updateUser', () => {
+      test('Should update user info in DB', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: {
+            name: 'Emma T.',
+            avatar: 'emma-selfie.png',
+            bio: 'I love to travel!'
+          }
+        };
+
+        const {
+          data: {
+            updateUserProfile: { name, avatar, bio }
+          }
+        } = await client.mutate({
+          mutation: updateProfile,
+          variables
+        });
+
+        // Check returned data
+        expect(name).toBe('Emma T.');
+        expect(avatar).toBe('emma-selfie.png');
+        expect(bio).toBe('I love to travel!');
+
+        // Check Prisma record
+        const userUpdated = await prisma.exists.User({
+          name: 'Emma T.',
+          avatar: 'emma-selfie.png',
+          bio: 'I love to travel!'
+        });
+
+        expect(userUpdated).toBe(true);
+      });
+
+      test('Name should be sanitized', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: {
+            name: '     <Emma Thomas>      '
+          }
+        };
+
+        const {
+          data: {
+            updateUserProfile: { name }
+          }
+        } = await client.mutate({ mutation: updateProfile, variables });
+
+        expect(name).toBe('&lt;Emma Thomas&gt;');
+      });
+
+      test('Error is thrown if name is too long', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: { name: 'Kate Page........................' }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateProfile, variables })
+        ).rejects.toThrow('Name must contain 2-32 characters.');
+      });
+
+      test('Error is thrown if name is too short', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: { name: 'Kate Page........................' }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateProfile, variables })
+        ).rejects.toThrow('Name must contain 2-32 characters.');
+      });
+
+      test('Error is thrown if avatar is not valid URL', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: {
+            avatar: 'not a url'
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateProfile, variables })
+        ).rejects.toThrow('Avatar must be a valid image URL.');
+      });
+
+      test('Error is thrown if avatar is not a PNG or JPG', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: {
+            avatar: 'me.gif'
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateProfile, variables })
+        ).rejects.toThrow('Avatar must be either a PNG or JP(E)G.');
+      });
+
+      test('Bio should be sanitized', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: {
+            bio: '    I love to travel <3   '
+          }
+        };
+
+        const {
+          data: {
+            updateUserProfile: { bio }
+          }
+        } = await client.mutate({ mutation: updateProfile, variables });
+
+        expect(bio).toBe('I love to travel &lt;3');
+      });
+
+      test('Error is thrown if bio is too long', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: {
+            bio:
+              'arPSEv0x3L7nCvykarNcHUpHhdNyVHtU3OuTYEfu7tNEzGfWJcyFwhx0lWBpIoM3JijLNetAn17aIMT5phd249TnbuI1oMFWPI1vzEYwY1dKSJOgo8poAbYyqVUOsvZXK6FjgdOIHvKH6JgIeQIskWoDPPqeABftTkZdPvq3EqLSJwBBw70JcgIJOctCV5lrMpOKY7FmtdrQQaFTLQnQMAzAwizGI1K4hbvKjQnU9oeKnYS4qXT3Ja24htU07lHKLKVdWsJZCwEL0hAOVYAZKQNPIj65RPXafLJLHEu1NEHeuuiMYcsyIr4d2zHhMIKCh'
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateProfile, variables })
+        ).rejects.toThrow('Bio may not exceed 320 characters.');
+      });
+
+      test('Should allow bio to be blank', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: {
+            bio: ''
+          }
+        };
+
+        const {
+          data: {
+            updateUserProfile: { bio }
+          }
+        } = await client.mutate({ mutation: updateProfile, variables });
+        expect(bio).toBe('');
       });
     });
   });
