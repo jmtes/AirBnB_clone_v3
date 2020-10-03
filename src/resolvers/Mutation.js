@@ -49,6 +49,25 @@ const Mutation = {
 
     return prisma.mutation.updateUser({ where: { id }, data }, info);
   },
+  updateUserEmail: async (_parent, { data }, { req, prisma }, info) => {
+    const id = getUserId(req);
+
+    const user = await prisma.query.user({ where: { id } });
+    if (!user) throw Error('Account does not exist.');
+
+    data.email = validateEmail(data.email);
+
+    const emailTaken = await prisma.exists.User({ email: data.email });
+    if (emailTaken) throw Error('Email is already in use.');
+
+    const isMatch = await bcrypt.compare(data.password, user.password);
+    if (!isMatch) throw Error('Incorrect password.');
+
+    return prisma.mutation.updateUser(
+      { where: { id }, data: { email: data.email } },
+      info
+    );
+  },
   deleteUser(_parent, _args, { req, prisma }, info) {
     const id = getUserId(req);
 

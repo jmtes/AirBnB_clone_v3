@@ -34,6 +34,14 @@ export const updateProfile = gql`
   }
 `;
 
+export const updateEmail = gql`
+  mutation($data: UpdateUserEmailInput!) {
+    updateUserEmail(data: $data) {
+      email
+    }
+  }
+`;
+
 export const getUser = gql`
   query($id: ID!) {
     user(id: $id) {

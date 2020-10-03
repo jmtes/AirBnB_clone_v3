@@ -14,6 +14,7 @@ import {
   createUser,
   loginUser,
   updateProfile,
+  updateEmail,
   getUser,
   getMe
 } from './operations/user';
@@ -282,7 +283,7 @@ describe('User', () => {
       });
     });
 
-    describe('updateUserProfile', () => {
+    describe.skip('updateUserProfile', () => {
       test('Should update user info in DB', async () => {
         const client = getClient(userOne.jwt);
 
@@ -467,6 +468,124 @@ describe('User', () => {
           }
         } = await client.mutate({ mutation: updateProfile, variables });
         expect(bio).toBe('');
+      });
+    });
+
+    describe('updateUserEmail', () => {
+      test('Email change is reflected in DB', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: {
+            email: '123emma@domain.tld',
+            password: 'LFdx1ZZnXju6'
+          }
+        };
+
+        await client.mutate({ mutation: updateEmail, variables });
+
+        const updated = await prisma.exists.User({
+          email: '123emma@domain.tld'
+        });
+
+        expect(updated).toBe(true);
+      });
+
+      test('Email should be normalized', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: {
+            email: 'EMMA.THOMAS@gmail.com',
+            password: 'LFdx1ZZnXju6'
+          }
+        };
+
+        const {
+          data: {
+            updateUserEmail: { email }
+          }
+        } = await client.mutate({ mutation: updateEmail, variables });
+
+        expect(email).toBe('emmathomas@gmail.com');
+      });
+
+      test('Error is thrown if not authenticated', async () => {
+        const variables = {
+          data: {
+            email: 'newemail@domain.tld',
+            password: 'gecgecgec'
+          }
+        };
+
+        await expect(
+          defaultClient.mutate({ mutation: updateEmail, variables })
+        ).rejects.toThrow('Authentication required.');
+      });
+
+      test('Error is thrown if invalid email is provided', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: {
+            email: 'emma@domain',
+            password: 'LFdx1ZZnXju6'
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateEmail, variables })
+        ).rejects.toThrow('Invalid email provided.');
+      });
+
+      test('Error is thrown if email is already taken', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: {
+            email: userTwo.user.email,
+            password: 'LFdx1ZZnXju6'
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateEmail, variables })
+        ).rejects.toThrow('Email is already in use.');
+      });
+
+      test('Error is thrown if account does not exist', async () => {
+        const token = jwt.sign(
+          { userId: 'aksljdasld' },
+          process.env.JWT_SECRET
+        );
+
+        const client = getClient(token);
+
+        const variables = {
+          data: {
+            email: 'deactivated@domain.tld',
+            password: 'LFdx1ZZnXju6'
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateEmail, variables })
+        ).rejects.toThrow('Account does not exist.');
+      });
+
+      test('Error is thrown if incorrect password is given', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: {
+            email: 'emma@domain.tld',
+            password: 'incorrect'
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateEmail, variables })
+        ).rejects.toThrow('Incorrect password.');
       });
     });
   });
