@@ -282,7 +282,7 @@ describe('User', () => {
       });
     });
 
-    describe('updateUser', () => {
+    describe('updateUserProfile', () => {
       test('Should update user info in DB', async () => {
         const client = getClient(userOne.jwt);
 
@@ -316,6 +316,37 @@ describe('User', () => {
         });
 
         expect(userUpdated).toBe(true);
+      });
+
+      test('Error is thrown if not authenticated', async () => {
+        const variables = {
+          data: {
+            name: 'Unauthenticated'
+          }
+        };
+
+        await expect(
+          defaultClient.mutate({ mutation: updateProfile, variables })
+        ).rejects.toThrow('Authentication required.');
+      });
+
+      test('Error is thrown if account does not exist', async () => {
+        const token = jwt.sign(
+          { userId: 'adjksafKhdskjf' },
+          process.env.JWT_SECRET
+        );
+
+        const client = getClient(token);
+
+        const variables = {
+          data: {
+            name: 'Just deactivated'
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateProfile, variables })
+        ).rejects.toThrow('Account does not exist.');
       });
 
       test('Name should be sanitized', async () => {

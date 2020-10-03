@@ -44,6 +44,9 @@ const Mutation = {
   async updateUserProfile(_parent, { data }, { req, prisma }, info) {
     const id = getUserId(req);
 
+    const userExists = await prisma.exists.User({ id });
+    if (!userExists) throw Error('Account does not exist.');
+
     if (data.name) data.name = validateName(data.name);
     if (data.avatar) data.avatar = validateAvatar(data.avatar);
     if (data.bio !== undefined) data.bio = validateBio(data.bio);
