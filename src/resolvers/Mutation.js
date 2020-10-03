@@ -1,5 +1,4 @@
 import bcrypt from 'bcryptjs';
-import validator from 'validator';
 
 import getUserId from './utils/getUserId';
 import generateToken from './utils/generateToken';
