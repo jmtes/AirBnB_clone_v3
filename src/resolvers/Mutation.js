@@ -6,14 +6,11 @@ import generateToken from './utils/generateToken';
 import hashPassword from './utils/hashPassword';
 import validation from './utils/validation';
 
-const { validateName, validateAvatar, validateBio } = validation;
+const { validateEmail, validateName, validateAvatar, validateBio } = validation;
 
 const Mutation = {
   async createUser(_parent, { data }, { prisma }) {
-    const emailIsValid = validator.isEmail(data.email);
-    if (!emailIsValid) throw Error('Invalid email provided.');
-
-    data.email = validator.normalizeEmail(data.email);
+    data.email = validateEmail(data.email);
 
     const emailTaken = await prisma.exists.User({ email: data.email });
     if (emailTaken) throw Error('Email is already in use.');

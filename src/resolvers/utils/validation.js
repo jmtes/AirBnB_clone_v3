@@ -1,6 +1,13 @@
 import validator from 'validator';
 import xss from 'xss';
 
+const validateEmail = async (email) => {
+  const emailIsValid = validator.isEmail(email);
+  if (!emailIsValid) throw Error('Invalid email provided.');
+
+  return validator.normalizeEmail(email);
+};
+
 const validateName = (name) => {
   // Trim extra whitespace and escape HTML entities
   const sanitizedName = xss(validator.trim(name));
@@ -36,6 +43,7 @@ const validateBio = (bio) => {
 };
 
 export default {
+  validateEmail,
   validateName,
   validateAvatar,
   validateBio
