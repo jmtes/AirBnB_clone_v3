@@ -1,7 +1,7 @@
 import validator from 'validator';
 import xss from 'xss';
 
-const validateEmail = async (email) => {
+const validateEmail = (email) => {
   const emailIsValid = validator.isEmail(email);
   if (!emailIsValid) throw Error('Invalid email provided.');
 
