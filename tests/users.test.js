@@ -15,6 +15,7 @@ import {
   loginUser,
   updateProfile,
   updateEmail,
+  updatePassword,
   getUser,
   getMe
 } from './operations/user';
@@ -24,7 +25,7 @@ describe('User', () => {
 
   beforeAll(seedDatabase);
 
-  describe.skip('Queries', () => {
+  describe('Queries', () => {
     describe('user', () => {
       test('Returns correct user', async () => {
         const variables = { id: userOne.user.id };
@@ -104,7 +105,7 @@ describe('User', () => {
   });
 
   describe('Mutations', () => {
-    describe.skip('createUser', () => {
+    describe('createUser', () => {
       test('New user should be created in DB upon registration', async () => {
         const variables = {
           data: {
@@ -247,7 +248,7 @@ describe('User', () => {
       });
     });
 
-    describe.skip('loginUser', () => {
+    describe('loginUser', () => {
       test('Should succeed with valid credentials', async () => {
         const variables = {
           data: { email: 'emma@domain.tld', password: 'LFdx1ZZnXju6' }
@@ -283,7 +284,7 @@ describe('User', () => {
       });
     });
 
-    describe.skip('updateUserProfile', () => {
+    describe('updateUserProfile', () => {
       test('Should update user info in DB', async () => {
         const client = getClient(userOne.jwt);
 
@@ -586,6 +587,92 @@ describe('User', () => {
         await expect(
           client.mutate({ mutation: updateEmail, variables })
         ).rejects.toThrow('Incorrect password.');
+      });
+    });
+
+    describe('updateUserPassword', () => {
+      test('Error is thrown if not authenticated', async () => {
+        const variables = {
+          data: {
+            oldPassword: 'aksfjksldj',
+            newPassword: 'jasflkjskl'
+          }
+        };
+
+        await expect(
+          defaultClient.mutate({ mutation: updatePassword, variables })
+        ).rejects.toThrow('Authentication required.');
+      });
+
+      test('Error is thrown if account does not exist', async () => {
+        const token = jwt.sign({ userId: 'asjdklsah' }, process.env.JWT_SECRET);
+
+        const client = getClient(token);
+
+        const variables = {
+          data: {
+            oldPassword: 'aksfjksldj',
+            newPassword: 'jasflkjskl'
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: updatePassword, variables })
+        ).rejects.toThrow('Account does not exist.');
+      });
+
+      test('Error is thrown if old password does not match', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: {
+            oldPassword: 'incorrect!',
+            newPassword: 'newpassword'
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: updatePassword, variables })
+        ).rejects.toThrow('Incorrect password.');
+      });
+
+      test('Error is thrown if new password is too short', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: {
+            oldPassword: 'LFdx1ZZnXju6',
+            newPassword: '2short'
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: updatePassword, variables })
+        ).rejects.toThrow('Password must contain at least 8 characters.');
+      });
+
+      test('Change is reflected in the DB', async () => {
+        // Get old password
+        let user = await prisma.query.user({ where: { id: userOne.user.id } });
+        const oldPassword = user.password;
+
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: {
+            oldPassword: 'LFdx1ZZnXju6',
+            newPassword: 'gecgecgec'
+          }
+        };
+
+        await client.mutate({ mutation: updatePassword, variables });
+
+        user = await prisma.query.user({
+          where: { id: userOne.user.id }
+        });
+        const newPassword = user.password;
+
+        expect(newPassword).not.toBe(oldPassword);
       });
     });
   });
