@@ -17,7 +17,7 @@ export const userTwo = {
   input: {
     name: 'Parvana Khan',
     email: 'parvana@domain.tld',
-    password: bcrypt.hashSync('LFdx1ZZnXju6')
+    password: bcrypt.hashSync('LFdx1ZZnXju7')
   },
   user: null,
   jwt: null
