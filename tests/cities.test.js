@@ -10,7 +10,7 @@ import seedDatabase, {
   cityThree
 } from './utils/seedDatabase';
 
-import { getCities } from './operations/city';
+import { getCities, getCity } from './operations/city';
 
 describe('City', () => {
   const defaultClient = getClient();
@@ -110,6 +110,26 @@ describe('City', () => {
 
         expect(cities[0].name).toBe('Quezon City');
         expect(cities[2].name).toBe('Chula Vista');
+      });
+    });
+
+    describe('city', () => {
+      test('Error is thrown if city does not exist', async () => {
+        const variables = { id: 'kasdhskljj' };
+
+        await expect(
+          defaultClient.query({ query: getCity, variables })
+        ).rejects.toThrow('City not found.');
+      });
+
+      test('Correct city is returned', async () => {
+        const variables = { id: cityTwo.city.id };
+
+        const {
+          data: { city }
+        } = await defaultClient.query({ query: getCity, variables });
+
+        expect(city.name).toBe(cityTwo.city.name);
       });
     });
   });

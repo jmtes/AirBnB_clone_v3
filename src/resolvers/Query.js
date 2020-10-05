@@ -34,6 +34,12 @@ const Query = {
       };
 
     return prisma.query.cities(opArgs, info);
+  },
+  city: async (_parent, { id }, { prisma }, info) => {
+    const city = await prisma.query.city({ where: { id } }, info);
+    if (!city) throw Error('City not found.');
+
+    return city;
   }
 };
 

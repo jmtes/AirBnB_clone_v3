@@ -1,6 +1,5 @@
 import { gql } from 'apollo-boost';
 
-// eslint-disable-next-line import/prefer-default-export
 export const getCities = gql`
   query(
     $query: String
@@ -19,6 +18,15 @@ export const getCities = gql`
       id
       name
       country
+    }
+  }
+`;
+
+export const getCity = gql`
+  query($id: ID!) {
+    city(id: $id) {
+      id
+      name
     }
   }
 `;

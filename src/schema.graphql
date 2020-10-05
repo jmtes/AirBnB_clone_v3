@@ -10,6 +10,7 @@ type Query {
     after: String
     orderBy: CityOrderByInput
   ): [City!]!
+  city(id: ID!): City!
 }
 
 type Mutation {
