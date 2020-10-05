@@ -1,6 +1,15 @@
+# import CityOrderByInput from './generated/prisma.graphql'
+
 type Query {
   user(id: ID!): User!
   me: User!
+  cities(
+    query: String
+    first: Int
+    skip: Int
+    after: String
+    orderBy: CityOrderByInput
+  ): [City!]!
 }
 
 type Mutation {

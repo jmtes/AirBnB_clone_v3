@@ -14,6 +14,26 @@ const Query = {
 
     if (!user) throw Error('User not found.');
     return user;
+  },
+  cities: (
+    _parent,
+    { query, first, skip, after, orderBy },
+    { prisma },
+    info
+  ) => {
+    const opArgs = { first, skip, after, orderBy };
+
+    if (query)
+      opArgs.where = {
+        OR: [
+          { name_contains: query },
+          { state_contains: query },
+          { region_contains: query },
+          { country_contains: query }
+        ]
+      };
+
+    return prisma.query.cities(opArgs, info);
   }
 };
 
