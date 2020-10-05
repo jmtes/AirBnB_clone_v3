@@ -50,6 +50,14 @@ export const updatePassword = gql`
   }
 `;
 
+export const deleteUser = gql`
+  mutation {
+    deleteUser {
+      id
+    }
+  }
+`;
+
 export const getUser = gql`
   query($id: ID!) {
     user(id: $id) {

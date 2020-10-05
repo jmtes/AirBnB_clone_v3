@@ -16,6 +16,7 @@ import {
   updateProfile,
   updateEmail,
   updatePassword,
+  deleteUser,
   getUser,
   getMe
 } from './operations/user';
@@ -673,6 +674,38 @@ describe('User', () => {
         const newPassword = user.password;
 
         expect(newPassword).not.toBe(oldPassword);
+      });
+    });
+
+    describe('deleteUser', () => {
+      test('Error is thrown if not authenticated', async () => {
+        await expect(
+          defaultClient.mutate({ mutation: deleteUser })
+        ).rejects.toThrow('Authentication required.');
+      });
+
+      test('Error is thrown if account does not exist', async () => {
+        const token = jwt.sign(
+          { userId: 'ajslkdhsaldf' },
+          process.env.JWT_SECRET
+        );
+
+        const client = getClient(token);
+
+        await expect(client.mutate({ mutation: deleteUser })).rejects.toThrow(
+          'Account does not exist'
+        );
+      });
+
+      test('User is deleted from DB', async () => {
+        const client = getClient(userOne.jwt);
+
+        await client.mutate({ mutation: deleteUser });
+
+        const userStillExists = await prisma.exists.User({
+          id: userOne.user.id
+        });
+        expect(userStillExists).toBe(false);
       });
     });
   });

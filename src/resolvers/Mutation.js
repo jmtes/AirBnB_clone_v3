@@ -85,8 +85,12 @@ const Mutation = {
       info
     );
   },
-  deleteUser(_parent, _args, { req, prisma }, info) {
+  deleteUser: async (_parent, _args, { req, prisma }, info) => {
+    // Make sure user is authenticated
     const id = getUserId(req);
+
+    const userExists = await prisma.exists.User({ id });
+    if (!userExists) throw Error('Account does not exist.');
 
     return prisma.mutation.deleteUser({ where: { id } }, info);
   }
