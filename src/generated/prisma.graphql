@@ -1,5 +1,9 @@
 # source: http://localhost:4466/bearbnb/dev
-# timestamp: Wed Sep 30 2020 22:27:19 GMT-0700 (Pacific Daylight Time)
+# timestamp: Mon Oct 05 2020 16:16:41 GMT-0700 (Pacific Daylight Time)
+
+type AggregateAmenity {
+  count: Int!
+}
 
 type AggregateCity {
   count: Int!
@@ -19,6 +23,320 @@ type AggregateReview {
 
 type AggregateUser {
   count: Int!
+}
+
+type Amenity implements Node {
+  id: ID!
+  name: String!
+}
+
+"""A connection to a list of items."""
+type AmenityConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [AmenityEdge]!
+  aggregate: AggregateAmenity!
+}
+
+input AmenityCreateInput {
+  id: ID
+  name: String!
+}
+
+input AmenityCreateManyInput {
+  create: [AmenityCreateInput!]
+  connect: [AmenityWhereUniqueInput!]
+}
+
+"""An edge in a connection."""
+type AmenityEdge {
+  """The item at the end of the edge."""
+  node: Amenity!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum AmenityOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+}
+
+type AmenityPreviousValues {
+  id: ID!
+  name: String!
+}
+
+input AmenityScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AmenityScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AmenityScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AmenityScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+}
+
+type AmenitySubscriptionPayload {
+  mutation: MutationType!
+  node: Amenity
+  updatedFields: [String!]
+  previousValues: AmenityPreviousValues
+}
+
+input AmenitySubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AmenitySubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AmenitySubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AmenitySubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: AmenityWhereInput
+}
+
+input AmenityUpdateDataInput {
+  name: String
+}
+
+input AmenityUpdateInput {
+  name: String
+}
+
+input AmenityUpdateManyDataInput {
+  name: String
+}
+
+input AmenityUpdateManyInput {
+  create: [AmenityCreateInput!]
+  connect: [AmenityWhereUniqueInput!]
+  set: [AmenityWhereUniqueInput!]
+  disconnect: [AmenityWhereUniqueInput!]
+  delete: [AmenityWhereUniqueInput!]
+  update: [AmenityUpdateWithWhereUniqueNestedInput!]
+  updateMany: [AmenityUpdateManyWithWhereNestedInput!]
+  deleteMany: [AmenityScalarWhereInput!]
+  upsert: [AmenityUpsertWithWhereUniqueNestedInput!]
+}
+
+input AmenityUpdateManyMutationInput {
+  name: String
+}
+
+input AmenityUpdateManyWithWhereNestedInput {
+  where: AmenityScalarWhereInput!
+  data: AmenityUpdateManyDataInput!
+}
+
+input AmenityUpdateWithWhereUniqueNestedInput {
+  where: AmenityWhereUniqueInput!
+  data: AmenityUpdateDataInput!
+}
+
+input AmenityUpsertWithWhereUniqueNestedInput {
+  where: AmenityWhereUniqueInput!
+  update: AmenityUpdateDataInput!
+  create: AmenityCreateInput!
+}
+
+input AmenityWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AmenityWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AmenityWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AmenityWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+}
+
+input AmenityWhereUniqueInput {
+  id: ID
+  name: String
 }
 
 type BatchPayload {
@@ -514,7 +832,7 @@ type Listing implements Node {
   baths: Int!
   maxGuests: Int
   price: Float!
-  amenities: [String!]!
+  amenities(where: AmenityWhereInput, orderBy: AmenityOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Amenity!]
   photos: [String!]!
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
   reviews(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Review!]
@@ -531,10 +849,6 @@ type ListingConnection {
   aggregate: AggregateListing!
 }
 
-input ListingCreateamenitiesInput {
-  set: [String!]
-}
-
 input ListingCreateInput {
   id: ID
   name: String!
@@ -547,10 +861,10 @@ input ListingCreateInput {
   maxGuests: Int
   price: Float!
   rating: Float
-  amenities: ListingCreateamenitiesInput
   photos: ListingCreatephotosInput
   owner: UserCreateOneWithoutListingsInput!
   city: CityCreateOneWithoutListingsInput!
+  amenities: AmenityCreateManyInput
   reservations: ReservationCreateManyWithoutListingInput
   reviews: ReviewCreateManyWithoutListingInput
 }
@@ -591,9 +905,9 @@ input ListingCreateWithoutCityInput {
   maxGuests: Int
   price: Float!
   rating: Float
-  amenities: ListingCreateamenitiesInput
   photos: ListingCreatephotosInput
   owner: UserCreateOneWithoutListingsInput!
+  amenities: AmenityCreateManyInput
   reservations: ReservationCreateManyWithoutListingInput
   reviews: ReviewCreateManyWithoutListingInput
 }
@@ -610,9 +924,9 @@ input ListingCreateWithoutOwnerInput {
   maxGuests: Int
   price: Float!
   rating: Float
-  amenities: ListingCreateamenitiesInput
   photos: ListingCreatephotosInput
   city: CityCreateOneWithoutListingsInput!
+  amenities: AmenityCreateManyInput
   reservations: ReservationCreateManyWithoutListingInput
   reviews: ReviewCreateManyWithoutListingInput
 }
@@ -629,10 +943,10 @@ input ListingCreateWithoutReservationsInput {
   maxGuests: Int
   price: Float!
   rating: Float
-  amenities: ListingCreateamenitiesInput
   photos: ListingCreatephotosInput
   owner: UserCreateOneWithoutListingsInput!
   city: CityCreateOneWithoutListingsInput!
+  amenities: AmenityCreateManyInput
   reviews: ReviewCreateManyWithoutListingInput
 }
 
@@ -648,10 +962,10 @@ input ListingCreateWithoutReviewsInput {
   maxGuests: Int
   price: Float!
   rating: Float
-  amenities: ListingCreateamenitiesInput
   photos: ListingCreatephotosInput
   owner: UserCreateOneWithoutListingsInput!
   city: CityCreateOneWithoutListingsInput!
+  amenities: AmenityCreateManyInput
   reservations: ReservationCreateManyWithoutListingInput
 }
 
@@ -706,7 +1020,6 @@ type ListingPreviousValues {
   baths: Int!
   maxGuests: Int
   price: Float!
-  amenities: [String!]!
   photos: [String!]!
   rating: Float
 }
@@ -1117,10 +1430,6 @@ input ListingSubscriptionWhereInput {
   node: ListingWhereInput
 }
 
-input ListingUpdateamenitiesInput {
-  set: [String!]
-}
-
 input ListingUpdateInput {
   name: String
   desc: String
@@ -1132,10 +1441,10 @@ input ListingUpdateInput {
   maxGuests: Int
   price: Float
   rating: Float
-  amenities: ListingUpdateamenitiesInput
   photos: ListingUpdatephotosInput
   owner: UserUpdateOneRequiredWithoutListingsInput
   city: CityUpdateOneRequiredWithoutListingsInput
+  amenities: AmenityUpdateManyInput
   reservations: ReservationUpdateManyWithoutListingInput
   reviews: ReviewUpdateManyWithoutListingInput
 }
@@ -1151,7 +1460,6 @@ input ListingUpdateManyDataInput {
   maxGuests: Int
   price: Float
   rating: Float
-  amenities: ListingUpdateamenitiesInput
   photos: ListingUpdatephotosInput
 }
 
@@ -1166,7 +1474,6 @@ input ListingUpdateManyMutationInput {
   maxGuests: Int
   price: Float
   rating: Float
-  amenities: ListingUpdateamenitiesInput
   photos: ListingUpdatephotosInput
 }
 
@@ -1228,9 +1535,9 @@ input ListingUpdateWithoutCityDataInput {
   maxGuests: Int
   price: Float
   rating: Float
-  amenities: ListingUpdateamenitiesInput
   photos: ListingUpdatephotosInput
   owner: UserUpdateOneRequiredWithoutListingsInput
+  amenities: AmenityUpdateManyInput
   reservations: ReservationUpdateManyWithoutListingInput
   reviews: ReviewUpdateManyWithoutListingInput
 }
@@ -1246,9 +1553,9 @@ input ListingUpdateWithoutOwnerDataInput {
   maxGuests: Int
   price: Float
   rating: Float
-  amenities: ListingUpdateamenitiesInput
   photos: ListingUpdatephotosInput
   city: CityUpdateOneRequiredWithoutListingsInput
+  amenities: AmenityUpdateManyInput
   reservations: ReservationUpdateManyWithoutListingInput
   reviews: ReviewUpdateManyWithoutListingInput
 }
@@ -1264,10 +1571,10 @@ input ListingUpdateWithoutReservationsDataInput {
   maxGuests: Int
   price: Float
   rating: Float
-  amenities: ListingUpdateamenitiesInput
   photos: ListingUpdatephotosInput
   owner: UserUpdateOneRequiredWithoutListingsInput
   city: CityUpdateOneRequiredWithoutListingsInput
+  amenities: AmenityUpdateManyInput
   reviews: ReviewUpdateManyWithoutListingInput
 }
 
@@ -1282,10 +1589,10 @@ input ListingUpdateWithoutReviewsDataInput {
   maxGuests: Int
   price: Float
   rating: Float
-  amenities: ListingUpdateamenitiesInput
   photos: ListingUpdatephotosInput
   owner: UserUpdateOneRequiredWithoutListingsInput
   city: CityUpdateOneRequiredWithoutListingsInput
+  amenities: AmenityUpdateManyInput
   reservations: ReservationUpdateManyWithoutListingInput
 }
 
@@ -1690,6 +1997,9 @@ input ListingWhereInput {
   rating_gte: Float
   owner: UserWhereInput
   city: CityWhereInput
+  amenities_every: AmenityWhereInput
+  amenities_some: AmenityWhereInput
+  amenities_none: AmenityWhereInput
   reservations_every: ReservationWhereInput
   reservations_some: ReservationWhereInput
   reservations_none: ReservationWhereInput
@@ -1714,31 +2024,37 @@ type Mutation {
   createListing(data: ListingCreateInput!): Listing!
   createReservation(data: ReservationCreateInput!): Reservation!
   createReview(data: ReviewCreateInput!): Review!
+  createAmenity(data: AmenityCreateInput!): Amenity!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateCity(data: CityUpdateInput!, where: CityWhereUniqueInput!): City
   updateListing(data: ListingUpdateInput!, where: ListingWhereUniqueInput!): Listing
   updateReservation(data: ReservationUpdateInput!, where: ReservationWhereUniqueInput!): Reservation
   updateReview(data: ReviewUpdateInput!, where: ReviewWhereUniqueInput!): Review
+  updateAmenity(data: AmenityUpdateInput!, where: AmenityWhereUniqueInput!): Amenity
   deleteUser(where: UserWhereUniqueInput!): User
   deleteCity(where: CityWhereUniqueInput!): City
   deleteListing(where: ListingWhereUniqueInput!): Listing
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
   deleteReview(where: ReviewWhereUniqueInput!): Review
+  deleteAmenity(where: AmenityWhereUniqueInput!): Amenity
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertCity(where: CityWhereUniqueInput!, create: CityCreateInput!, update: CityUpdateInput!): City!
   upsertListing(where: ListingWhereUniqueInput!, create: ListingCreateInput!, update: ListingUpdateInput!): Listing!
   upsertReservation(where: ReservationWhereUniqueInput!, create: ReservationCreateInput!, update: ReservationUpdateInput!): Reservation!
   upsertReview(where: ReviewWhereUniqueInput!, create: ReviewCreateInput!, update: ReviewUpdateInput!): Review!
+  upsertAmenity(where: AmenityWhereUniqueInput!, create: AmenityCreateInput!, update: AmenityUpdateInput!): Amenity!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   updateManyCities(data: CityUpdateManyMutationInput!, where: CityWhereInput): BatchPayload!
   updateManyListings(data: ListingUpdateManyMutationInput!, where: ListingWhereInput): BatchPayload!
   updateManyReservations(data: ReservationUpdateManyMutationInput!, where: ReservationWhereInput): BatchPayload!
   updateManyReviews(data: ReviewUpdateManyMutationInput!, where: ReviewWhereInput): BatchPayload!
+  updateManyAmenities(data: AmenityUpdateManyMutationInput!, where: AmenityWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyCities(where: CityWhereInput): BatchPayload!
   deleteManyListings(where: ListingWhereInput): BatchPayload!
   deleteManyReservations(where: ReservationWhereInput): BatchPayload!
   deleteManyReviews(where: ReviewWhereInput): BatchPayload!
+  deleteManyAmenities(where: AmenityWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -1774,16 +2090,19 @@ type Query {
   listings(where: ListingWhereInput, orderBy: ListingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Listing]!
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation]!
   reviews(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Review]!
+  amenities(where: AmenityWhereInput, orderBy: AmenityOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Amenity]!
   user(where: UserWhereUniqueInput!): User
   city(where: CityWhereUniqueInput!): City
   listing(where: ListingWhereUniqueInput!): Listing
   reservation(where: ReservationWhereUniqueInput!): Reservation
   review(where: ReviewWhereUniqueInput!): Review
+  amenity(where: AmenityWhereUniqueInput!): Amenity
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   citiesConnection(where: CityWhereInput, orderBy: CityOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CityConnection!
   listingsConnection(where: ListingWhereInput, orderBy: ListingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ListingConnection!
   reservationsConnection(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationConnection!
   reviewsConnection(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReviewConnection!
+  amenitiesConnection(where: AmenityWhereInput, orderBy: AmenityOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AmenityConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -3056,6 +3375,7 @@ type Subscription {
   listing(where: ListingSubscriptionWhereInput): ListingSubscriptionPayload
   reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
   review(where: ReviewSubscriptionWhereInput): ReviewSubscriptionPayload
+  amenity(where: AmenitySubscriptionWhereInput): AmenitySubscriptionPayload
 }
 
 type User implements Node {

@@ -38,12 +38,17 @@ type Listing {
   baths: Int!
   maxGuests: Int
   price: Float!
-  amenities: [String!]! @scalarList(strategy: RELATION)
+  amenities: [Amenity!]!
   photos: [String!]! @scalarList(strategy: RELATION)
   reservations: [Reservation!]!
     @relation(name: "ReservationToListing", onDelete: CASCADE)
   reviews: [Review!]! @relation(name: "ReviewToListing", onDelete: CASCADE)
   rating: Float
+}
+
+type Amenity {
+  id: ID! @unique @id
+  name: String! @unique
 }
 
 type Reservation {
