@@ -40,6 +40,12 @@ const Query = {
     if (!city) throw Error('City not found.');
 
     return city;
+  },
+  listing: async (_parent, { id }, { prisma }, info) => {
+    const listing = await prisma.query.listing({ where: { id } }, info);
+    if (!listing) throw Error('Listing not found.');
+
+    return listing;
   }
 };
 
