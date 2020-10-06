@@ -1,5 +1,5 @@
 # source: http://localhost:4466/bearbnb/dev
-# timestamp: Mon Oct 05 2020 16:16:41 GMT-0700 (Pacific Daylight Time)
+# timestamp: Tue Oct 06 2020 01:11:32 GMT-0700 (Pacific Daylight Time)
 
 type AggregateAmenity {
   count: Int!
@@ -28,6 +28,7 @@ type AggregateUser {
 type Amenity implements Node {
   id: ID!
   name: String!
+  enum: String!
 }
 
 """A connection to a list of items."""
@@ -43,6 +44,7 @@ type AmenityConnection {
 input AmenityCreateInput {
   id: ID
   name: String!
+  enum: String!
 }
 
 input AmenityCreateManyInput {
@@ -64,11 +66,14 @@ enum AmenityOrderByInput {
   id_DESC
   name_ASC
   name_DESC
+  enum_ASC
+  enum_DESC
 }
 
 type AmenityPreviousValues {
   id: ID!
   name: String!
+  enum: String!
 }
 
 input AmenityScalarWhereInput {
@@ -160,6 +165,46 @@ input AmenityScalarWhereInput {
 
   """All values not ending with the given string."""
   name_not_ends_with: String
+  enum: String
+
+  """All values that are not equal to given value."""
+  enum_not: String
+
+  """All values that are contained in given list."""
+  enum_in: [String!]
+
+  """All values that are not contained in given list."""
+  enum_not_in: [String!]
+
+  """All values less than the given value."""
+  enum_lt: String
+
+  """All values less than or equal the given value."""
+  enum_lte: String
+
+  """All values greater than the given value."""
+  enum_gt: String
+
+  """All values greater than or equal the given value."""
+  enum_gte: String
+
+  """All values containing the given string."""
+  enum_contains: String
+
+  """All values not containing the given string."""
+  enum_not_contains: String
+
+  """All values starting with the given string."""
+  enum_starts_with: String
+
+  """All values not starting with the given string."""
+  enum_not_starts_with: String
+
+  """All values ending with the given string."""
+  enum_ends_with: String
+
+  """All values not ending with the given string."""
+  enum_not_ends_with: String
 }
 
 type AmenitySubscriptionPayload {
@@ -201,14 +246,17 @@ input AmenitySubscriptionWhereInput {
 
 input AmenityUpdateDataInput {
   name: String
+  enum: String
 }
 
 input AmenityUpdateInput {
   name: String
+  enum: String
 }
 
 input AmenityUpdateManyDataInput {
   name: String
+  enum: String
 }
 
 input AmenityUpdateManyInput {
@@ -225,6 +273,7 @@ input AmenityUpdateManyInput {
 
 input AmenityUpdateManyMutationInput {
   name: String
+  enum: String
 }
 
 input AmenityUpdateManyWithWhereNestedInput {
@@ -332,11 +381,52 @@ input AmenityWhereInput {
 
   """All values not ending with the given string."""
   name_not_ends_with: String
+  enum: String
+
+  """All values that are not equal to given value."""
+  enum_not: String
+
+  """All values that are contained in given list."""
+  enum_in: [String!]
+
+  """All values that are not contained in given list."""
+  enum_not_in: [String!]
+
+  """All values less than the given value."""
+  enum_lt: String
+
+  """All values less than or equal the given value."""
+  enum_lte: String
+
+  """All values greater than the given value."""
+  enum_gt: String
+
+  """All values greater than or equal the given value."""
+  enum_gte: String
+
+  """All values containing the given string."""
+  enum_contains: String
+
+  """All values not containing the given string."""
+  enum_not_contains: String
+
+  """All values starting with the given string."""
+  enum_starts_with: String
+
+  """All values not starting with the given string."""
+  enum_not_starts_with: String
+
+  """All values ending with the given string."""
+  enum_ends_with: String
+
+  """All values not ending with the given string."""
+  enum_not_ends_with: String
 }
 
 input AmenityWhereUniqueInput {
   id: ID
   name: String
+  enum: String
 }
 
 type BatchPayload {

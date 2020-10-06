@@ -49,6 +49,7 @@ type Listing {
 type Amenity {
   id: ID! @unique @id
   name: String! @unique
+  enum: String! @unique
 }
 
 type Reservation {

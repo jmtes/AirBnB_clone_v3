@@ -63,17 +63,17 @@ export const cityThree = {
 };
 
 const amenityOne = {
-  input: { name: 'Wifi' },
+  input: { name: 'Wifi', enum: 'WIFI' },
   amenity: null
 };
 
 const amenityTwo = {
-  input: { name: 'Air conditioning' },
+  input: { name: 'Air conditioning', enum: 'AIR_CONDITIONING' },
   amenity: null
 };
 
 const amenityThree = {
-  input: { name: 'Kitchen' },
+  input: { name: 'Kitchen', enum: 'KITCHEN' },
   amenity: null
 };
 
