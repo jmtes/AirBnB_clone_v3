@@ -8,7 +8,12 @@ import jwt from 'jsonwebtoken';
 import prisma from '../src/prisma';
 
 import getClient from './utils/getClient';
-import seedDatabase, { listingOne, listingTwo } from './utils/seedDatabase';
+import seedDatabase, {
+  userOne,
+  userTwo,
+  listingOne,
+  listingTwo
+} from './utils/seedDatabase';
 
 import { getListing } from './operations/listing';
 
@@ -35,6 +40,74 @@ describe('User', () => {
         } = await defaultClient.query({ query: getListing, variables });
 
         expect(listing.name).toBe(listingOne.listing.name);
+      });
+
+      test('Address is hidden if not authenticated', async () => {
+        const variables = { id: listingOne.listing.id };
+
+        const {
+          data: { listing }
+        } = await defaultClient.query({ query: getListing, variables });
+
+        expect(listing.address).toBe(null);
+      });
+
+      test('Address is hidden if authenticated but not owner', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = { id: listingOne.listing.id };
+
+        const {
+          data: { listing }
+        } = await client.query({ query: getListing, variables });
+
+        expect(listing.address).toBe(null);
+      });
+
+      test('Address is visible if authenticated and owner', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = { id: listingOne.listing.id };
+
+        const {
+          data: { listing }
+        } = await client.query({ query: getListing, variables });
+
+        expect(listing.address).toBe(listingOne.listing.address);
+      });
+
+      test('Reservations are hidden if not authenticated', async () => {
+        const variables = { id: listingOne.listing.id };
+
+        const {
+          data: { listing }
+        } = await defaultClient.query({ query: getListing, variables });
+
+        expect(listing.reservations).toBe(null);
+      });
+
+      test('Reservations are hidden if authenticated but not owner', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = { id: listingOne.listing.id };
+
+        const {
+          data: { listing }
+        } = await client.query({ query: getListing, variables });
+
+        expect(listing.reservations).toBe(null);
+      });
+
+      test('Reservations are visible if authenticated and owner', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = { id: listingOne.listing.id };
+
+        const {
+          data: { listing }
+        } = await client.query({ query: getListing, variables });
+
+        expect(listing.reservations).toEqual([]);
       });
     });
   });

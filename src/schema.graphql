@@ -90,7 +90,7 @@ type Listing {
   desc: String!
   owner: User!
   city: City!
-  address: String!
+  address: String
   latitude: Float!
   longitude: Float!
   beds: Int!
@@ -99,7 +99,7 @@ type Listing {
   price: Float!
   amenities: [String!]!
   photos: [String!]!
-  reservations: [Reservation!]!
+  reservations: [Reservation!]
   reviews: [Review!]!
   rating: Float
 }

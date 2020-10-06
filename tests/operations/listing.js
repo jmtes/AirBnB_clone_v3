@@ -6,6 +6,10 @@ export const getListing = gql`
     listing(id: $id) {
       id
       name
+      address
+      reservations {
+        id
+      }
     }
   }
 `;
