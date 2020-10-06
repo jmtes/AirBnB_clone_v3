@@ -21,6 +21,7 @@ type Mutation {
   updateUserEmail(data: UpdateUserEmailInput!): User!
   updateUserPassword(data: UpdateUserPasswordInput!): User!
   deleteUser: User!
+  createListing(data: CreateListingInput!): Listing!
 }
 
 # type Subscription {
@@ -56,6 +57,20 @@ input UpdateUserEmailInput {
 input UpdateUserPasswordInput {
   oldPassword: String!
   newPassword: String!
+}
+
+input CreateListingInput {
+  name: String!
+  desc: String!
+  address: String!
+  latitude: Float!
+  longitude: Float!
+  beds: Int!
+  baths: Int!
+  maxGuests: Int
+  price: Float!
+  photos: [String!]!
+  amenities: [AmenityName!]!
 }
 
 type User {
@@ -130,4 +145,36 @@ enum MutationType {
   CREATED
   UPDATED
   DELETED
+}
+
+enum AmenityName {
+  KITCHEN
+  SHAMPOO
+  HEATING
+  AIR_CONDITIONING
+  WASHER
+  DRYER
+  WIFI
+  BREAKFAST
+  INDOOR_FIREPLACE
+  HANGERS
+  IRON
+  HAIR_DRYER
+  LAPTOP_FRIENDLY_WORKSPACE
+  TV
+  CRIB
+  HIGH_CHAIR
+  SELF_CHECK_IN
+  SMOKE_ALARM
+  CARBON_MONOXIDE_ALARM
+  PRIVATE_BATHROOM
+  PIANO
+  BEACHFRONT
+  WATERFRONT
+  FREE_PARKING
+  HOT_TUB
+  GYM
+  POOL
+  PETS_ALLOWED
+  SMOKING_ALLOWED
 }

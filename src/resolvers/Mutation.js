@@ -4,8 +4,17 @@ import getUserId from './utils/getUserId';
 import generateToken from './utils/generateToken';
 import hashPassword from './utils/hashPassword';
 import validation from './utils/validation';
+import getCityId from './utils/getCityId';
 
-const { validateEmail, validateName, validateAvatar, validateBio } = validation;
+const {
+  validateEmail,
+  validateName,
+  validateAvatar,
+  validateBio,
+  validateDesc,
+  validateAddress,
+  validatePhoto
+} = validation;
 
 const Mutation = {
   async createUser(_parent, { data }, { prisma }) {
@@ -93,6 +102,45 @@ const Mutation = {
     if (!userExists) throw Error('Account does not exist.');
 
     return prisma.mutation.deleteUser({ where: { id } }, info);
+  },
+  createListing: async (_parent, { data }, { req, prisma }, info) => {
+    // Make sure user is authenticated
+    const userId = getUserId(req);
+
+    // Make sure user actually exists
+    const userExists = await prisma.exists.User({ id: userId });
+    if (!userExists) throw Error('User account does not exist.');
+
+    // Validate name and description
+    data.name = validateName(data.name);
+    data.desc = validateDesc(data.desc);
+
+    // Make sure all items in photos array are valid image URLs
+    data.photos.forEach((photo) => validatePhoto(photo));
+    data.photos = { set: data.photos };
+
+    data.amenities = {
+      connect: data.amenities.map((amenity) => ({ enum: amenity }))
+    };
+
+    // Validate address
+    const locationData = await validateAddress(data.address);
+    data.latitude = parseInt(locationData.lat, 10);
+    data.longitude = parseInt(locationData.lon, 10);
+
+    // Get city id
+    const cityId = await getCityId(locationData, prisma);
+
+    return prisma.mutation.createListing(
+      {
+        data: {
+          ...data,
+          owner: { connect: { id: userId } },
+          city: { connect: { id: cityId } }
+        }
+      },
+      info
+    );
   }
 };
 

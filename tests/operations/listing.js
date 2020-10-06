@@ -1,6 +1,5 @@
 import { gql } from 'apollo-boost';
 
-// eslint-disable-next-line import/prefer-default-export
 export const getListing = gql`
   query($id: ID!) {
     listing(id: $id) {
@@ -10,6 +9,14 @@ export const getListing = gql`
       reservations {
         id
       }
+    }
+  }
+`;
+
+export const createListing = gql`
+  mutation($data: CreateListingInput!) {
+    createListing(data: $data) {
+      id
     }
   }
 `;
