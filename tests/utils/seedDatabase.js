@@ -62,8 +62,61 @@ export const cityThree = {
   city: null
 };
 
+const amenityOne = {
+  input: { name: 'Wifi' },
+  amenity: null
+};
+
+const amenityTwo = {
+  input: { name: 'Air conditioning' },
+  amenity: null
+};
+
+const amenityThree = {
+  input: { name: 'Kitchen' },
+  amenity: null
+};
+
+export const listingOne = {
+  input: {
+    name: 'Waterfront with Great View',
+    desc:
+      'Relax in the sun on this private waterfront terrace with an unobstructed view of the San Diego Bay',
+    address: '907 Marina Way',
+    latitude: 32.619707,
+    longitude: -117.098772,
+    beds: 3,
+    baths: 2,
+    maxGuests: 6,
+    price: 398,
+    amenities: { connect: [{ name: 'Air conditioning' }, { name: 'Wifi' }] },
+    photos: { set: [] }
+  },
+  listing: null
+};
+
+export const listingTwo = {
+  input: {
+    name: 'Romantic Cabana',
+    desc:
+      'A charming cabana located on the beach with a great view. A place to relax and unwind.',
+    address: '5940 N Bay Road',
+    latitude: 25.841604,
+    longitude: -80.132435,
+    beds: 2,
+    baths: 1,
+    maxGuests: 2,
+    price: 370,
+    amenities: { connect: [{ name: 'Kitchen' }, { name: 'Air conditioning' }] },
+    photos: { set: [] }
+  },
+  listing: null
+};
+
 const seedDatabase = async () => {
   // Wipe database
+  await prisma.mutation.deleteManyListings();
+  await prisma.mutation.deleteManyAmenities();
   await prisma.mutation.deleteManyCities();
   await prisma.mutation.deleteManyUsers();
 
@@ -78,6 +131,33 @@ const seedDatabase = async () => {
   cityOne.city = await prisma.mutation.createCity({ data: cityOne.input });
   cityTwo.city = await prisma.mutation.createCity({ data: cityTwo.input });
   cityThree.city = await prisma.mutation.createCity({ data: cityThree.input });
+
+  // Create dummy amenities
+  amenityOne.amenity = await prisma.mutation.createAmenity({
+    data: amenityOne.input
+  });
+  amenityTwo.amenity = await prisma.mutation.createAmenity({
+    data: amenityTwo.input
+  });
+  amenityThree.amenity = await prisma.mutation.createAmenity({
+    data: amenityThree.input
+  });
+
+  // Create dummy listings
+  listingOne.listing = await prisma.mutation.createListing({
+    data: {
+      ...listingOne.input,
+      owner: { connect: { id: userOne.user.id } },
+      city: { connect: { id: cityOne.city.id } }
+    }
+  });
+  listingTwo.listing = await prisma.mutation.createListing({
+    data: {
+      ...listingTwo.input,
+      owner: { connect: { id: userTwo.user.id } },
+      city: { connect: { id: cityTwo.city.id } }
+    }
+  });
 };
 
 export default seedDatabase;
