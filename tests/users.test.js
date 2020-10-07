@@ -697,7 +697,7 @@ describe('User', () => {
         );
       });
 
-      test('User is deleted from DB', async () => {
+      test('User deletion cascades', async () => {
         const client = getClient(userOne.jwt);
 
         await client.mutate({ mutation: deleteUser });
@@ -706,6 +706,12 @@ describe('User', () => {
           id: userOne.user.id
         });
         expect(userStillExists).toBe(false);
+
+        // Make sure user listings have been deleted
+        const userListingsExist = await prisma.exists.Listing({
+          owner: { id: userOne.user.id }
+        });
+        expect(userListingsExist).toBe(false);
       });
     });
   });
