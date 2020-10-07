@@ -58,8 +58,8 @@ type Reservation {
   updatedAt: DateTime! @updatedAt
   user: User! @relation(name: "ReservationToUser", onDelete: SET_NULL)
   listing: Listing! @relation(name: "ReservationToListing", onDelete: SET_NULL)
-  checkin: String!
-  checkout: String!
+  checkin: DateTime!
+  checkout: DateTime!
 }
 
 type Review {

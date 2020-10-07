@@ -1,5 +1,5 @@
 # source: http://localhost:4466/bearbnb/dev
-# timestamp: Tue Oct 06 2020 01:11:32 GMT-0700 (Pacific Daylight Time)
+# timestamp: Wed Oct 07 2020 15:07:49 GMT-0700 (Pacific Daylight Time)
 
 type AggregateAmenity {
   count: Int!
@@ -2207,8 +2207,8 @@ type Reservation implements Node {
   updatedAt: DateTime!
   user: User!
   listing: Listing!
-  checkin: String!
-  checkout: String!
+  checkin: DateTime!
+  checkout: DateTime!
 }
 
 """A connection to a list of items."""
@@ -2223,8 +2223,8 @@ type ReservationConnection {
 
 input ReservationCreateInput {
   id: ID
-  checkin: String!
-  checkout: String!
+  checkin: DateTime!
+  checkout: DateTime!
   user: UserCreateOneWithoutReservationsInput!
   listing: ListingCreateOneWithoutReservationsInput!
 }
@@ -2241,15 +2241,15 @@ input ReservationCreateManyWithoutUserInput {
 
 input ReservationCreateWithoutListingInput {
   id: ID
-  checkin: String!
-  checkout: String!
+  checkin: DateTime!
+  checkout: DateTime!
   user: UserCreateOneWithoutReservationsInput!
 }
 
 input ReservationCreateWithoutUserInput {
   id: ID
-  checkin: String!
-  checkout: String!
+  checkin: DateTime!
+  checkout: DateTime!
   listing: ListingCreateOneWithoutReservationsInput!
 }
 
@@ -2279,8 +2279,8 @@ type ReservationPreviousValues {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  checkin: String!
-  checkout: String!
+  checkin: DateTime!
+  checkout: DateTime!
 }
 
 input ReservationScalarWhereInput {
@@ -2376,86 +2376,50 @@ input ReservationScalarWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
-  checkin: String
+  checkin: DateTime
 
   """All values that are not equal to given value."""
-  checkin_not: String
+  checkin_not: DateTime
 
   """All values that are contained in given list."""
-  checkin_in: [String!]
+  checkin_in: [DateTime!]
 
   """All values that are not contained in given list."""
-  checkin_not_in: [String!]
+  checkin_not_in: [DateTime!]
 
   """All values less than the given value."""
-  checkin_lt: String
+  checkin_lt: DateTime
 
   """All values less than or equal the given value."""
-  checkin_lte: String
+  checkin_lte: DateTime
 
   """All values greater than the given value."""
-  checkin_gt: String
+  checkin_gt: DateTime
 
   """All values greater than or equal the given value."""
-  checkin_gte: String
-
-  """All values containing the given string."""
-  checkin_contains: String
-
-  """All values not containing the given string."""
-  checkin_not_contains: String
-
-  """All values starting with the given string."""
-  checkin_starts_with: String
-
-  """All values not starting with the given string."""
-  checkin_not_starts_with: String
-
-  """All values ending with the given string."""
-  checkin_ends_with: String
-
-  """All values not ending with the given string."""
-  checkin_not_ends_with: String
-  checkout: String
+  checkin_gte: DateTime
+  checkout: DateTime
 
   """All values that are not equal to given value."""
-  checkout_not: String
+  checkout_not: DateTime
 
   """All values that are contained in given list."""
-  checkout_in: [String!]
+  checkout_in: [DateTime!]
 
   """All values that are not contained in given list."""
-  checkout_not_in: [String!]
+  checkout_not_in: [DateTime!]
 
   """All values less than the given value."""
-  checkout_lt: String
+  checkout_lt: DateTime
 
   """All values less than or equal the given value."""
-  checkout_lte: String
+  checkout_lte: DateTime
 
   """All values greater than the given value."""
-  checkout_gt: String
+  checkout_gt: DateTime
 
   """All values greater than or equal the given value."""
-  checkout_gte: String
-
-  """All values containing the given string."""
-  checkout_contains: String
-
-  """All values not containing the given string."""
-  checkout_not_contains: String
-
-  """All values starting with the given string."""
-  checkout_starts_with: String
-
-  """All values not starting with the given string."""
-  checkout_not_starts_with: String
-
-  """All values ending with the given string."""
-  checkout_ends_with: String
-
-  """All values not ending with the given string."""
-  checkout_not_ends_with: String
+  checkout_gte: DateTime
 }
 
 type ReservationSubscriptionPayload {
@@ -2496,20 +2460,20 @@ input ReservationSubscriptionWhereInput {
 }
 
 input ReservationUpdateInput {
-  checkin: String
-  checkout: String
+  checkin: DateTime
+  checkout: DateTime
   user: UserUpdateOneRequiredWithoutReservationsInput
   listing: ListingUpdateOneRequiredWithoutReservationsInput
 }
 
 input ReservationUpdateManyDataInput {
-  checkin: String
-  checkout: String
+  checkin: DateTime
+  checkout: DateTime
 }
 
 input ReservationUpdateManyMutationInput {
-  checkin: String
-  checkout: String
+  checkin: DateTime
+  checkout: DateTime
 }
 
 input ReservationUpdateManyWithoutListingInput {
@@ -2542,14 +2506,14 @@ input ReservationUpdateManyWithWhereNestedInput {
 }
 
 input ReservationUpdateWithoutListingDataInput {
-  checkin: String
-  checkout: String
+  checkin: DateTime
+  checkout: DateTime
   user: UserUpdateOneRequiredWithoutReservationsInput
 }
 
 input ReservationUpdateWithoutUserDataInput {
-  checkin: String
-  checkout: String
+  checkin: DateTime
+  checkout: DateTime
   listing: ListingUpdateOneRequiredWithoutReservationsInput
 }
 
@@ -2668,86 +2632,50 @@ input ReservationWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
-  checkin: String
+  checkin: DateTime
 
   """All values that are not equal to given value."""
-  checkin_not: String
+  checkin_not: DateTime
 
   """All values that are contained in given list."""
-  checkin_in: [String!]
+  checkin_in: [DateTime!]
 
   """All values that are not contained in given list."""
-  checkin_not_in: [String!]
+  checkin_not_in: [DateTime!]
 
   """All values less than the given value."""
-  checkin_lt: String
+  checkin_lt: DateTime
 
   """All values less than or equal the given value."""
-  checkin_lte: String
+  checkin_lte: DateTime
 
   """All values greater than the given value."""
-  checkin_gt: String
+  checkin_gt: DateTime
 
   """All values greater than or equal the given value."""
-  checkin_gte: String
-
-  """All values containing the given string."""
-  checkin_contains: String
-
-  """All values not containing the given string."""
-  checkin_not_contains: String
-
-  """All values starting with the given string."""
-  checkin_starts_with: String
-
-  """All values not starting with the given string."""
-  checkin_not_starts_with: String
-
-  """All values ending with the given string."""
-  checkin_ends_with: String
-
-  """All values not ending with the given string."""
-  checkin_not_ends_with: String
-  checkout: String
+  checkin_gte: DateTime
+  checkout: DateTime
 
   """All values that are not equal to given value."""
-  checkout_not: String
+  checkout_not: DateTime
 
   """All values that are contained in given list."""
-  checkout_in: [String!]
+  checkout_in: [DateTime!]
 
   """All values that are not contained in given list."""
-  checkout_not_in: [String!]
+  checkout_not_in: [DateTime!]
 
   """All values less than the given value."""
-  checkout_lt: String
+  checkout_lt: DateTime
 
   """All values less than or equal the given value."""
-  checkout_lte: String
+  checkout_lte: DateTime
 
   """All values greater than the given value."""
-  checkout_gt: String
+  checkout_gt: DateTime
 
   """All values greater than or equal the given value."""
-  checkout_gte: String
-
-  """All values containing the given string."""
-  checkout_contains: String
-
-  """All values not containing the given string."""
-  checkout_not_contains: String
-
-  """All values starting with the given string."""
-  checkout_starts_with: String
-
-  """All values not starting with the given string."""
-  checkout_not_starts_with: String
-
-  """All values ending with the given string."""
-  checkout_ends_with: String
-
-  """All values not ending with the given string."""
-  checkout_not_ends_with: String
+  checkout_gte: DateTime
   user: UserWhereInput
   listing: ListingWhereInput
 }
