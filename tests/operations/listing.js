@@ -22,3 +22,21 @@ export const createListing = gql`
     }
   }
 `;
+
+export const updateListing = gql`
+  mutation($id: ID!, $data: UpdateListingInput!) {
+    updateListing(id: $id, data: $data) {
+      id
+      name
+      desc
+      beds
+      baths
+      maxGuests
+      price
+      photos
+      amenities {
+        name
+      }
+    }
+  }
+`;

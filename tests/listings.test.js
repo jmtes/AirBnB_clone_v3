@@ -15,15 +15,15 @@ import seedDatabase, {
   listingTwo
 } from './utils/seedDatabase';
 
-import { getListing, createListing } from './operations/listing';
+import { getListing, createListing, updateListing } from './operations/listing';
 
 describe('User', () => {
   const defaultClient = getClient();
 
   beforeAll(seedDatabase);
 
-  describe.skip('Queries', () => {
-    describe.skip('listing', () => {
+  describe('Queries', () => {
+    describe('listing', () => {
       test('Error is thrown if listing does not exist', async () => {
         const variables = { id: 'sklfjdsklf' };
 
@@ -113,21 +113,21 @@ describe('User', () => {
   });
 
   describe('Mutations', () => {
-    const defaultData = {
-      name: 'Luxury Penthouse',
-      desc: 'A penthouse suite with a great view of the skyline',
-      address: '905 Brickell Bay Dr Miami Florida',
-      latitude: 25.773277,
-      longitude: -80.231365,
-      beds: 2,
-      baths: 2,
-      maxGuests: 4,
-      price: 462,
-      photos: ['https://i.imgur.com/N1WLg.jpeg'],
-      amenities: ['KITCHEN', 'AIR_CONDITIONING', 'WIFI']
-    };
-
     describe('createListing', () => {
+      const defaultData = {
+        name: 'Luxury Penthouse',
+        desc: 'A penthouse suite with a great view of the skyline',
+        address: '905 Brickell Bay Dr Miami Florida',
+        latitude: 25.773277,
+        longitude: -80.231365,
+        beds: 2,
+        baths: 2,
+        maxGuests: 4,
+        price: 462,
+        photos: ['https://i.imgur.com/N1WLg.jpeg'],
+        amenities: ['KITCHEN', 'AIR_CONDITIONING', 'WIFI']
+      };
+
       // Authentication
       test('Error is thrown if not authenticated', async () => {
         const variables = { data: { ...defaultData } };
@@ -343,6 +343,257 @@ describe('User', () => {
         } = await client.mutate({ mutation: createListing, variables });
 
         expect(desc).toBe('&lt;Luxury penthouse overlooking the water&gt;');
+      });
+    });
+
+    describe('updateListing', () => {
+      const defaultData = {
+        name: 'Beautiful Beachside Cabana',
+        desc:
+          'Relax and unwind in this intimate bamboo cabana set in a tropical paradise or whatever idk what these descriptions usually say. Recently renovated with an extra bedroom and bathroom!',
+        beds: 3,
+        baths: 2,
+        maxGuests: 6,
+        price: 400,
+        amenities: ['KITCHEN', 'AIR_CONDITIONING', 'WIFI'],
+        photos: [
+          'https://i.imgur.com/bQVjVhl.jpg',
+          'https://i.imgur.com/1b3EAti.jpg'
+        ]
+      };
+
+      // Authentication and Resource Existence
+      test('Error is thrown if not authenticated', async () => {
+        const variables = {
+          id: listingTwo.listing.id,
+          data: { ...defaultData }
+        };
+
+        await expect(
+          defaultClient.mutate({ mutation: updateListing, variables })
+        ).rejects.toThrow('Authentication required.');
+      });
+
+      test('Error is thrown if user account does not exist', async () => {
+        const token = jwt.sign(
+          { userId: 'jaskfhdsjflka' },
+          process.env.JWT_SECRET
+        );
+
+        const client = getClient(token);
+
+        const variables = {
+          id: listingTwo.listing.id,
+          data: { ...defaultData }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateListing, variables })
+        ).rejects.toThrow('User account does not exist.');
+      });
+
+      test('Error is thrown if listing does not exist', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = { id: 'askdhkasjf', data: { ...defaultData } };
+
+        await expect(
+          client.mutate({ mutation: updateListing, variables })
+        ).rejects.toThrow('Unable to update listing.');
+      });
+
+      test('Error is thrown if authenticated user is not listing owner', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          id: listingTwo.listing.id,
+          data: { ...defaultData }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateListing, variables })
+        ).rejects.toThrow('Unable to update listing.');
+      });
+
+      // Input Validation
+      test('Error is thrown if name is too short', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = {
+          id: listingTwo.listing.id,
+          data: { ...defaultData, name: 'C' }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateListing, variables })
+        ).rejects.toThrow('Name must contain 2-32 characters.');
+      });
+
+      test('Error is thrown if name is too long', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = {
+          id: listingTwo.listing.id,
+          data: {
+            ...defaultData,
+            name: 'Beautiful Cabana with Amazing View!!!!!!!!!'
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateListing, variables })
+        ).rejects.toThrow('Name must contain 2-32 characters.');
+      });
+
+      test('Error is thrown if description is empty', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = {
+          id: listingTwo.listing.id,
+          data: {
+            ...defaultData,
+            desc: ''
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateListing, variables })
+        ).rejects.toThrow('Description may not be empty.');
+      });
+
+      test('Error is thrown if description exceeds 250 words', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = {
+          id: listingTwo.listing.id,
+          data: {
+            ...defaultData,
+            desc: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vitae congue odio, sed blandit eros. In ac velit varius, facilisis tortor ac, sagittis leo. Morbi urna urna, vestibulum et porttitor eu, congue quis quam. Curabitur dignissim eget nisl vel venenatis. Vestibulum nec vulputate dui. Sed vitae mattis purus. In hac habitasse platea dictumst. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Phasellus commodo diam lectus, non accumsan quam vulputate ac. Fusce enim velit, varius sed lobortis iaculis, vulputate ac mi. 
+              
+            Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam pharetra est sit amet iaculis dignissim. Curabitur semper a massa quis tristique. Proin velit purus, dapibus non justo vitae, facilisis porta eros. Integer vitae tempor diam. Integer quis velit sit amet velit facilisis posuere sit amet quis quam. Sed sed sollicitudin risus, ac placerat massa. Sed euismod eleifend quam, vitae condimentum ex gravida quis. Suspendisse potenti. Duis gravida, arcu eget commodo maximus, nunc felis semper orci, ac consectetur risus velit ac turpis. 
+              
+            Aliquam erat volutpat. Donec eu iaculis sapien. Aliquam consectetur ligula in ante rutrum, eu hendrerit nisi tincidunt. Mauris gravida erat libero, ac imperdiet odio volutpat at. Praesent sagittis nisi eu nisl ullamcorper mattis. Duis imperdiet, lorem in porta suscipit, turpis elit condimentum elit, rutrum rutrum orci nisi ut augue. Fusce dapibus odio dolor, quis sollicitudin erat tincidunt sit amet. Mauris malesuada non lacus id suscipit. Donec efficitur maximus metus ut vulputate. Praesent sit amet lacinia odio. Etiam quis iaculis tellus.`
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateListing, variables })
+        ).rejects.toThrow('Description may not exceed 250 words.');
+      });
+
+      test('Error is thrown if photos contains invalid image URLs', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = {
+          id: listingTwo.listing.id,
+          data: {
+            ...defaultData,
+            photos: [...defaultData.photos, 'not_a_valid_url']
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateListing, variables })
+        ).rejects.toThrow('Photos must be valid image URLs.');
+      });
+
+      test('Error is thrown if photos contain images that are not PNGs or JP(E)Gs', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = {
+          id: listingTwo.listing.id,
+          data: {
+            ...defaultData,
+            photos: [...defaultData.photos, 'bedroom.gif']
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateListing, variables })
+        ).rejects.toThrow('Photos must be either PNGs or JP(E)Gs.');
+      });
+
+      // DB Changes
+      test('Changes are reflected in the DB', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = {
+          id: listingTwo.listing.id,
+          data: { ...defaultData }
+        };
+
+        const {
+          data: {
+            updateListing: {
+              name,
+              desc,
+              beds,
+              baths,
+              maxGuests,
+              price,
+              amenities,
+              photos
+            }
+          }
+        } = await client.mutate({ mutation: updateListing, variables });
+
+        const dbListing = await prisma.query.listing(
+          { where: { id: listingTwo.listing.id } },
+          '{ name desc beds baths maxGuests price photos amenities { name } }'
+        );
+
+        expect(dbListing.name).toBe(name);
+        expect(dbListing.desc).toBe(desc);
+        expect(dbListing.beds).toBe(beds);
+        expect(dbListing.baths).toBe(baths);
+        expect(dbListing.maxGuests).toBe(maxGuests);
+        expect(dbListing.price).toBe(price);
+        expect(dbListing.photos).toEqual(photos);
+
+        // Remove typename property from amenities returned by client
+        const returnedAmenities = amenities.map((obj) => ({
+          name: obj.name
+        }));
+
+        expect(dbListing.amenities).toEqual(returnedAmenities);
+      });
+
+      // Input Sanitization
+      test('Name should be sanitized', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = {
+          id: listingTwo.listing.id,
+          data: { ...defaultData, name: '     <Beautiful Cabana>   ' }
+        };
+
+        const {
+          data: {
+            updateListing: { name }
+          }
+        } = await client.mutate({ mutation: updateListing, variables });
+
+        expect(name).toBe('&lt;Beautiful Cabana&gt;');
+      });
+
+      test('Description should be sanitized', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = {
+          id: listingTwo.listing.id,
+          data: {
+            ...defaultData,
+            desc: '      <Bamboo cabana located right on the beach>       '
+          }
+        };
+
+        const {
+          data: {
+            updateListing: { desc }
+          }
+        } = await client.mutate({ mutation: updateListing, variables });
+
+        expect(desc).toBe('&lt;Bamboo cabana located right on the beach&gt;');
       });
     });
   });

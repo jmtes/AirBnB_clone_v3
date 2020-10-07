@@ -118,6 +118,7 @@ const Mutation = {
     data.photos.forEach((photo) => validatePhoto(photo));
     data.photos = { set: data.photos };
 
+    // Map amenities
     data.amenities = {
       connect: data.amenities.map((amenity) => ({ enum: amenity }))
     };
@@ -140,6 +141,40 @@ const Mutation = {
       },
       info
     );
+  },
+  updateListing: async (_parent, { id, data }, { req, prisma }, info) => {
+    // Make sure user is authenticated
+    const userId = getUserId(req);
+
+    // Make sure user exists
+    const userExists = await prisma.exists.User({ id: userId });
+    if (!userExists) throw Error('User account does not exist.');
+
+    // Make sure user owns listing
+    const userOwnsListing = await prisma.exists.Listing({
+      id,
+      owner: { id: userId }
+    });
+    if (!userOwnsListing) throw Error('Unable to update listing.');
+
+    // Validate and sanitize name and description
+    if (data.name !== undefined) data.name = validateName(data.name);
+    if (data.desc !== undefined) data.desc = validateDesc(data.desc);
+
+    // Make sure all items in photos array are valid image URLs
+    if (data.photos) {
+      data.photos.forEach((photo) => validatePhoto(photo));
+      data.photos = { set: data.photos };
+    }
+
+    // Map amenities for connection
+    if (data.amenities) {
+      data.amenities = {
+        set: data.amenities.map((amenity) => ({ enum: amenity }))
+      };
+    }
+
+    return prisma.mutation.updateListing({ where: { id }, data }, info);
   }
 };
 
