@@ -58,14 +58,10 @@ const validateDesc = (desc) => {
 };
 
 const validateAddress = async (address) => {
-  console.log(address);
-
   try {
     // Make sure address contains building number
     const [buildingNumber] = address.split(' ', 1);
     if (Number.isNaN(parseInt(buildingNumber, 10))) throw Error();
-
-    console.log('Address contains building number');
 
     // Validate address with Location IQ
     const { data } = await axios.get(
@@ -76,6 +72,7 @@ const validateAddress = async (address) => {
           format: 'json',
           addressdetails: 1,
           limit: 1,
+          extratags: 1,
           key: process.env.LOCATION_IQ_API_KEY
         }
       }
