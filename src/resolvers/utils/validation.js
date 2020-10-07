@@ -1,6 +1,5 @@
 import validator from 'validator';
 import xss from 'xss';
-import axios from 'axios';
 
 const validateEmail = (email) => {
   const emailIsValid = validator.isEmail(email);
