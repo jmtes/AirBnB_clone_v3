@@ -175,6 +175,23 @@ const Mutation = {
     }
 
     return prisma.mutation.updateListing({ where: { id }, data }, info);
+  },
+  deleteListing: async (_parent, { id }, { req, prisma }, info) => {
+    // Make sure user is authenticated
+    const userId = getUserId(req);
+
+    // Make sure user account exists
+    const userExists = await prisma.exists.User({ id: userId });
+    if (!userExists) throw Error('User account does not exist.');
+
+    // Make sure listing exists and is owned by user
+    const userOwnsListing = await prisma.exists.Listing({
+      id,
+      owner: { id: userId }
+    });
+    if (!userOwnsListing) throw Error('Unable to remove listing.');
+
+    return prisma.mutation.deleteListing({ where: { id } }, info);
   }
 };
 

@@ -40,3 +40,11 @@ export const updateListing = gql`
     }
   }
 `;
+
+export const deleteListing = gql`
+  mutation($id: ID!) {
+    deleteListing(id: $id) {
+      id
+    }
+  }
+`;

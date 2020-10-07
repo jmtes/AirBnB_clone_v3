@@ -23,6 +23,7 @@ type Mutation {
   deleteUser: User!
   createListing(data: CreateListingInput!): Listing!
   updateListing(id: ID!, data: UpdateListingInput!): Listing!
+  deleteListing(id: ID!): Listing!
 }
 
 # type Subscription {

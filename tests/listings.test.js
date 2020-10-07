@@ -15,9 +15,14 @@ import seedDatabase, {
   listingTwo
 } from './utils/seedDatabase';
 
-import { getListing, createListing, updateListing } from './operations/listing';
+import {
+  getListing,
+  createListing,
+  updateListing,
+  deleteListing
+} from './operations/listing';
 
-describe('User', () => {
+describe('Listing', () => {
   const defaultClient = getClient();
 
   beforeAll(seedDatabase);
@@ -599,6 +604,65 @@ describe('User', () => {
         } = await client.mutate({ mutation: updateListing, variables });
 
         expect(desc).toBe('&lt;Bamboo cabana located right on the beach&gt;');
+      });
+    });
+
+    describe('deleteListing', () => {
+      // Authentication and Resource Existence
+      test('Error is thrown if not authenticated', async () => {
+        const variables = { id: listingTwo.listing.id };
+
+        await expect(
+          defaultClient.mutate({ mutation: deleteListing, variables })
+        ).rejects.toThrow('Authentication required.');
+      });
+
+      test('Error is thrown if user account does not exist', async () => {
+        const token = jwt.sign({ userId: 'ashfjklsd' }, process.env.JWT_SECRET);
+
+        const client = getClient(token);
+
+        const variables = { id: listingTwo.listing.id };
+
+        await expect(
+          client.mutate({ mutation: deleteListing, variables })
+        ).rejects.toThrow('User account does not exist.');
+      });
+
+      test('Error is thrown if listing does not exist', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = { id: 'jaskhksdfhdskl' };
+
+        await expect(
+          client.mutate({ mutation: deleteListing, variables })
+        ).rejects.toThrow('Unable to remove listing.');
+      });
+
+      test('Error is thrown if user is not listing owner', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = { id: listingOne.listing.id };
+
+        await expect(
+          client.mutate({ mutation: deleteListing, variables })
+        ).rejects.toThrow('Unable to remove listing.');
+      });
+
+      // DB Changes
+      test('Listing is removed from DB', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = { id: listingTwo.listing.id };
+
+        const {
+          data: {
+            deleteListing: { id }
+          }
+        } = await client.mutate({ mutation: deleteListing, variables });
+
+        const listingStillExists = await prisma.exists.Listing({ id });
+        expect(listingStillExists).toBe(false);
       });
     });
   });
