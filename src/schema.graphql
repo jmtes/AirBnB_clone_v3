@@ -22,6 +22,7 @@ type Mutation {
   updateUserPassword(data: UpdateUserPasswordInput!): User!
   deleteUser: User!
   createListing(data: CreateListingInput!): Listing!
+  updateListing(id: ID!, data: UpdateListingInput!): Listing!
 }
 
 # type Subscription {
@@ -73,6 +74,17 @@ input CreateListingInput {
   amenities: [AmenityName!]!
 }
 
+input UpdateListingInput {
+  name: String
+  desc: String
+  beds: Int
+  baths: Int
+  maxGuests: Int
+  price: Float
+  photos: [String!]
+  amenities: [AmenityName!]
+}
+
 type User {
   id: ID!
   email: String
@@ -112,11 +124,17 @@ type Listing {
   baths: Int!
   maxGuests: Int
   price: Float!
-  amenities: [String!]!
+  amenities: [Amenity!]!
   photos: [String!]!
   reservations: [Reservation!]
   reviews: [Review!]!
   rating: Float
+}
+
+type Amenity {
+  id: ID!
+  name: String!
+  enum: String!
 }
 
 type Reservation {
