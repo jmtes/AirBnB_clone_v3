@@ -57,40 +57,6 @@ const validateDesc = (desc) => {
   return sanitizedDesc;
 };
 
-const validateAddress = async (address) => {
-  try {
-    // Make sure address contains building number
-    const [buildingNumber] = address.split(' ', 1);
-    if (Number.isNaN(parseInt(buildingNumber, 10))) throw Error();
-
-    // Validate address with Location IQ
-    const { data } = await axios.get(
-      'https://us1.locationiq.com/v1/search.php',
-      {
-        params: {
-          q: address,
-          format: 'json',
-          addressdetails: 1,
-          limit: 1,
-          extratags: 1,
-          key: process.env.LOCATION_IQ_API_KEY
-        }
-      }
-    );
-
-    const [location] = data;
-
-    // Sometimes, the LocationIQ response will not include a house number.
-    // This sets the house number to the previously parsed building number.
-    if (!location.address.house_number)
-      location.address.house_number = buildingNumber;
-
-    return location;
-  } catch {
-    throw Error('Invalid street address.');
-  }
-};
-
 const validatePhoto = (photo) => {
   // Make sure photo is a URL
   if (!validator.isURL(photo)) throw Error('Photos must be valid image URLs.');
@@ -106,6 +72,5 @@ export default {
   validateAvatar,
   validateBio,
   validateDesc,
-  validateAddress,
   validatePhoto
 };
