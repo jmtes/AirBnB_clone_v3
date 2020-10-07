@@ -8,13 +8,13 @@ const validateEmail = (email) => {
   return validator.normalizeEmail(email);
 };
 
-const validateName = (name) => {
+const validateName = (name, maxLength) => {
   // Trim extra whitespace and escape HTML entities
   const sanitizedName = xss(validator.trim(name));
 
   // Check name length
-  if (sanitizedName.length < 2 || sanitizedName.length > 32)
-    throw Error('Name must contain 2-32 characters.');
+  if (sanitizedName.length < 2 || sanitizedName.length > maxLength)
+    throw Error(`Name must contain 2-${maxLength} characters.`);
 
   return sanitizedName;
 };

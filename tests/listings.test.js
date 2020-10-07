@@ -160,19 +160,23 @@ describe('User', () => {
 
         await expect(
           client.mutate({ mutation: createListing, variables })
-        ).rejects.toThrow('Name must contain 2-32 characters.');
+        ).rejects.toThrow('Name must contain 2-50 characters.');
       });
 
       test('Error is thrown if name is too long', async () => {
         const client = getClient(userOne.jwt);
 
         const variables = {
-          data: { ...defaultData, name: 'Luxury Penthouse!!!!!!!!!!!!!!!!!' }
+          data: {
+            ...defaultData,
+            name:
+              'Luxury Penthouse with an Amazing View! Hot Listing! Book fast!'
+          }
         };
 
         await expect(
           client.mutate({ mutation: createListing, variables })
-        ).rejects.toThrow('Name must contain 2-32 characters.');
+        ).rejects.toThrow('Name must contain 2-50 characters.');
       });
 
       test('Error is thrown if description is empty', async () => {
@@ -426,7 +430,7 @@ describe('User', () => {
 
         await expect(
           client.mutate({ mutation: updateListing, variables })
-        ).rejects.toThrow('Name must contain 2-32 characters.');
+        ).rejects.toThrow('Name must contain 2-50 characters.');
       });
 
       test('Error is thrown if name is too long', async () => {
@@ -436,13 +440,14 @@ describe('User', () => {
           id: listingTwo.listing.id,
           data: {
             ...defaultData,
-            name: 'Beautiful Cabana with Amazing View!!!!!!!!!'
+            name:
+              'Beautiful Cabana with Amazing View!!!!!!!!! You dont want to miss out on this one! Book fast! Go go go!'
           }
         };
 
         await expect(
           client.mutate({ mutation: updateListing, variables })
-        ).rejects.toThrow('Name must contain 2-32 characters.');
+        ).rejects.toThrow('Name must contain 2-50 characters.');
       });
 
       test('Error is thrown if description is empty', async () => {

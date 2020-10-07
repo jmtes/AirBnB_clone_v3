@@ -24,7 +24,7 @@ const Mutation = {
 
     const hashedPassword = await hashPassword(data.password);
 
-    data.name = validateName(data.name);
+    data.name = validateName(data.name, 32);
 
     const user = await prisma.mutation.createUser({
       data: { ...data, password: hashedPassword }
@@ -51,7 +51,7 @@ const Mutation = {
     const userExists = await prisma.exists.User({ id });
     if (!userExists) throw Error('Account does not exist.');
 
-    if (data.name) data.name = validateName(data.name);
+    if (data.name) data.name = validateName(data.name, 32);
     if (data.avatar) data.avatar = validateAvatar(data.avatar);
     if (data.bio !== undefined) data.bio = validateBio(data.bio);
 
@@ -111,7 +111,7 @@ const Mutation = {
     if (!userExists) throw Error('User account does not exist.');
 
     // Validate name and description
-    data.name = validateName(data.name);
+    data.name = validateName(data.name, 50);
     data.desc = validateDesc(data.desc);
 
     // Make sure all items in photos array are valid image URLs
@@ -158,7 +158,7 @@ const Mutation = {
     if (!userOwnsListing) throw Error('Unable to update listing.');
 
     // Validate and sanitize name and description
-    if (data.name !== undefined) data.name = validateName(data.name);
+    if (data.name !== undefined) data.name = validateName(data.name, 50);
     if (data.desc !== undefined) data.desc = validateDesc(data.desc);
 
     // Make sure all items in photos array are valid image URLs
