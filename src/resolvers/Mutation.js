@@ -4,7 +4,7 @@ import getUserId from './utils/getUserId';
 import generateToken from './utils/generateToken';
 import hashPassword from './utils/hashPassword';
 import validation from './utils/validation';
-import getCityId from './utils/getCityId';
+import { getLocationData, getCityId } from './utils/location';
 
 const {
   validateEmail,
@@ -12,7 +12,6 @@ const {
   validateAvatar,
   validateBio,
   validateDesc,
-  validateAddress,
   validatePhoto
 } = validation;
 
@@ -124,7 +123,7 @@ const Mutation = {
     };
 
     // Validate address
-    const locationData = await validateAddress(data.address);
+    const locationData = await getLocationData(data.address);
     data.latitude = parseInt(locationData.lat, 10);
     data.longitude = parseInt(locationData.lon, 10);
 

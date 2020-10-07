@@ -284,15 +284,31 @@ describe('User', () => {
         expect(newListingExists).toBe(true);
       });
 
-      test.skip('New city is created if it does not exist in DB', () => {
+      test('New city is created if it does not exist in DB', async () => {
         const client = getClient(userOne.jwt);
 
         const variables = {
           data: {
             ...defaultData,
-            address: '4501 Lindell Blvd St Louis Missouri '
+            address: '4501 Lindell Blvd St Louis Missouri'
           }
         };
+
+        const cityExistsPrior = await prisma.exists.City({
+          name: 'Saint Louis',
+          state: 'Missouri',
+          country: 'United States of America'
+        });
+        expect(cityExistsPrior).toBe(false);
+
+        await client.mutate({ mutation: createListing, variables });
+
+        const cityExistsAfter = await prisma.exists.City({
+          name: 'Saint Louis',
+          state: 'Missouri',
+          country: 'United States of America'
+        });
+        expect(cityExistsAfter).toBe(true);
       });
     });
   });
