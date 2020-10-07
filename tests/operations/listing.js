@@ -17,6 +17,8 @@ export const createListing = gql`
   mutation($data: CreateListingInput!) {
     createListing(data: $data) {
       id
+      name
+      desc
     }
   }
 `;

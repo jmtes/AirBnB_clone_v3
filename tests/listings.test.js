@@ -266,8 +266,6 @@ describe('User', () => {
         ).rejects.toThrow('Photos must be either PNGs or JP(E)Gs.');
       });
 
-      // Input Sanitization
-
       // DB Changes
       test('New listing appears in the DB', async () => {
         const client = getClient(userOne.jwt);
@@ -309,6 +307,42 @@ describe('User', () => {
           country: 'United States of America'
         });
         expect(cityExistsAfter).toBe(true);
+      });
+
+      // Input Sanitization
+      test('Name should be sanitized', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: { ...defaultData, name: '      <Luxury Penthouse>       ' }
+        };
+
+        const {
+          data: {
+            createListing: { name }
+          }
+        } = await client.mutate({ mutation: createListing, variables });
+
+        expect(name).toBe('&lt;Luxury Penthouse&gt;');
+      });
+
+      test('Description should be sanitized', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          data: {
+            ...defaultData,
+            desc: '      <Luxury penthouse overlooking the water>       '
+          }
+        };
+
+        const {
+          data: {
+            createListing: { desc }
+          }
+        } = await client.mutate({ mutation: createListing, variables });
+
+        expect(desc).toBe('&lt;Luxury penthouse overlooking the water&gt;');
       });
     });
   });
