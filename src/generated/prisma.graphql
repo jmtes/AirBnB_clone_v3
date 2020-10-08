@@ -1,5 +1,5 @@
 # source: http://localhost:4466/bearbnb/dev
-# timestamp: Wed Oct 07 2020 15:07:49 GMT-0700 (Pacific Daylight Time)
+# timestamp: Thu Oct 08 2020 14:59:57 GMT-0700 (Pacific Daylight Time)
 
 type AggregateAmenity {
   count: Int!
@@ -2693,7 +2693,6 @@ type Review implements Node {
   rating: Int!
   title: String
   body: String
-  date: String!
 }
 
 """A connection to a list of items."""
@@ -2711,7 +2710,6 @@ input ReviewCreateInput {
   rating: Int!
   title: String
   body: String
-  date: String!
   author: UserCreateOneWithoutReviewsInput
   listing: ListingCreateOneWithoutReviewsInput!
 }
@@ -2731,7 +2729,6 @@ input ReviewCreateWithoutAuthorInput {
   rating: Int!
   title: String
   body: String
-  date: String!
   listing: ListingCreateOneWithoutReviewsInput!
 }
 
@@ -2740,7 +2737,6 @@ input ReviewCreateWithoutListingInput {
   rating: Int!
   title: String
   body: String
-  date: String!
   author: UserCreateOneWithoutReviewsInput
 }
 
@@ -2766,8 +2762,6 @@ enum ReviewOrderByInput {
   title_DESC
   body_ASC
   body_DESC
-  date_ASC
-  date_DESC
 }
 
 type ReviewPreviousValues {
@@ -2777,7 +2771,6 @@ type ReviewPreviousValues {
   rating: Int!
   title: String
   body: String
-  date: String!
 }
 
 input ReviewScalarWhereInput {
@@ -2975,46 +2968,6 @@ input ReviewScalarWhereInput {
 
   """All values not ending with the given string."""
   body_not_ends_with: String
-  date: String
-
-  """All values that are not equal to given value."""
-  date_not: String
-
-  """All values that are contained in given list."""
-  date_in: [String!]
-
-  """All values that are not contained in given list."""
-  date_not_in: [String!]
-
-  """All values less than the given value."""
-  date_lt: String
-
-  """All values less than or equal the given value."""
-  date_lte: String
-
-  """All values greater than the given value."""
-  date_gt: String
-
-  """All values greater than or equal the given value."""
-  date_gte: String
-
-  """All values containing the given string."""
-  date_contains: String
-
-  """All values not containing the given string."""
-  date_not_contains: String
-
-  """All values starting with the given string."""
-  date_starts_with: String
-
-  """All values not starting with the given string."""
-  date_not_starts_with: String
-
-  """All values ending with the given string."""
-  date_ends_with: String
-
-  """All values not ending with the given string."""
-  date_not_ends_with: String
 }
 
 type ReviewSubscriptionPayload {
@@ -3058,7 +3011,6 @@ input ReviewUpdateInput {
   rating: Int
   title: String
   body: String
-  date: String
   author: UserUpdateOneWithoutReviewsInput
   listing: ListingUpdateOneRequiredWithoutReviewsInput
 }
@@ -3067,14 +3019,12 @@ input ReviewUpdateManyDataInput {
   rating: Int
   title: String
   body: String
-  date: String
 }
 
 input ReviewUpdateManyMutationInput {
   rating: Int
   title: String
   body: String
-  date: String
 }
 
 input ReviewUpdateManyWithoutAuthorInput {
@@ -3110,7 +3060,6 @@ input ReviewUpdateWithoutAuthorDataInput {
   rating: Int
   title: String
   body: String
-  date: String
   listing: ListingUpdateOneRequiredWithoutReviewsInput
 }
 
@@ -3118,7 +3067,6 @@ input ReviewUpdateWithoutListingDataInput {
   rating: Int
   title: String
   body: String
-  date: String
   author: UserUpdateOneWithoutReviewsInput
 }
 
@@ -3339,46 +3287,6 @@ input ReviewWhereInput {
 
   """All values not ending with the given string."""
   body_not_ends_with: String
-  date: String
-
-  """All values that are not equal to given value."""
-  date_not: String
-
-  """All values that are contained in given list."""
-  date_in: [String!]
-
-  """All values that are not contained in given list."""
-  date_not_in: [String!]
-
-  """All values less than the given value."""
-  date_lt: String
-
-  """All values less than or equal the given value."""
-  date_lte: String
-
-  """All values greater than the given value."""
-  date_gt: String
-
-  """All values greater than or equal the given value."""
-  date_gte: String
-
-  """All values containing the given string."""
-  date_contains: String
-
-  """All values not containing the given string."""
-  date_not_contains: String
-
-  """All values starting with the given string."""
-  date_starts_with: String
-
-  """All values not starting with the given string."""
-  date_not_starts_with: String
-
-  """All values ending with the given string."""
-  date_ends_with: String
-
-  """All values not ending with the given string."""
-  date_not_ends_with: String
   author: UserWhereInput
   listing: ListingWhereInput
 }
