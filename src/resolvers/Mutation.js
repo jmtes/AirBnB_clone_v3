@@ -221,13 +221,16 @@ const Mutation = {
     // Validate checkin and checkout dates
     validateDates(data.checkin, data.checkout);
 
-    return prisma.mutation.createReservation({
-      data: {
-        ...data,
-        user: { connect: { id: userId } },
-        listing: { connect: { id: listing.id } }
-      }
-    });
+    return prisma.mutation.createReservation(
+      {
+        data: {
+          ...data,
+          user: { connect: { id: userId } },
+          listing: { connect: { id: listing.id } }
+        }
+      },
+      info
+    );
   }
 };
 

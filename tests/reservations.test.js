@@ -87,6 +87,25 @@ describe('Reservations', () => {
         ).rejects.toThrow('Cannot make reservation for your own listing.');
       });
 
+      // DB Changes
+      test('New reservation appears in DB', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          listingId: listingTwo.listing.id,
+          data: { ...defaultData }
+        };
+
+        const {
+          data: {
+            createReservation: { id }
+          }
+        } = await client.mutate({ mutation: createReservation, variables });
+
+        const reservationExists = await prisma.exists.Reservation({ id });
+        expect(reservationExists).toBe(true);
+      });
+
       // Input Validation
       test('Error is thrown if checkin is not a valid ISO string', async () => {
         const client = getClient(userOne.jwt);
