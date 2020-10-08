@@ -113,8 +113,21 @@ export const listingTwo = {
   listing: null
 };
 
+export const reservationOne = {
+  input: {
+    checkin: new Date(
+      new Date().getTime() + 1000 * 60 * 60 * 24 * 2
+    ).toISOString(),
+    checkout: new Date(
+      new Date().getTime() + 1000 * 60 * 60 * 24 * 7
+    ).toISOString()
+  },
+  reservation: null
+};
+
 const seedDatabase = async () => {
   // Wipe database
+  await prisma.mutation.deleteManyReservations();
   await prisma.mutation.deleteManyListings();
   await prisma.mutation.deleteManyAmenities();
   await prisma.mutation.deleteManyCities();
@@ -156,6 +169,15 @@ const seedDatabase = async () => {
       ...listingTwo.input,
       owner: { connect: { id: userTwo.user.id } },
       city: { connect: { id: cityTwo.city.id } }
+    }
+  });
+
+  // Create dummy reservation
+  reservationOne.reservation = await prisma.mutation.createReservation({
+    data: {
+      ...reservationOne.input,
+      user: { connect: { id: userTwo.user.id } },
+      listing: { connect: { id: listingOne.listing.id } }
     }
   });
 };
