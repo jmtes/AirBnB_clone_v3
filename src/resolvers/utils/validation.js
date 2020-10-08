@@ -65,11 +65,55 @@ const validatePhoto = (photo) => {
   if (!photo.match(re)) throw Error('Photos must be either PNGs or JP(E)Gs.');
 };
 
+const validateDates = (checkin, checkout) => {
+  // Make sure both are valid ISO strings
+  const validatorOptions = { strict: true };
+
+  const checkinIsISO = validator.isISO8601(checkin, validatorOptions);
+  const checkoutIsISO = validator.isISO8601(checkout, validatorOptions);
+
+  if (!checkinIsISO || !checkoutIsISO)
+    throw Error('Checkin and checkout must be valid ISO strings.');
+
+  const checkinDate = new Date(checkin);
+  const checkoutDate = new Date(checkout);
+
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const currentDate = new Date().getDate();
+
+  // Make sure checkin is not before today's date
+  if (
+    new Date(
+      checkinDate.getFullYear(),
+      checkinDate.getMonth(),
+      checkinDate.getDate()
+    ) < new Date(currentYear, currentMonth, currentDate)
+  )
+    throw Error("Checkin cannot be before today's date.");
+
+  // Make sure checkout is after checkin date
+  if (
+    new Date(
+      checkoutDate.getFullYear(),
+      checkoutDate.getMonth(),
+      checkoutDate.getDate()
+    ) <
+    new Date(
+      checkinDate.getFullYear(),
+      checkinDate.getMonth(),
+      checkinDate.getDate()
+    )
+  )
+    throw Error('Checkout cannot be before checkin date.');
+};
+
 export default {
   validateEmail,
   validateName,
   validateAvatar,
   validateBio,
   validateDesc,
-  validatePhoto
+  validatePhoto,
+  validateDates
 };
