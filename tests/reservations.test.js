@@ -28,7 +28,7 @@ describe('Reservations', () => {
   beforeAll(seedDatabase);
 
   describe('Mutations', () => {
-    describe.skip('createReservation', () => {
+    describe('createReservation', () => {
       const defaultData = {
         checkin: new Date().toISOString(),
         checkout: new Date(
@@ -185,7 +185,7 @@ describe('Reservations', () => {
       });
     });
 
-    describe.skip('updateReservation', () => {
+    describe('updateReservation', () => {
       const defaultData = {
         checkin: new Date(
           new Date().getTime() + 1000 * 60 * 60 * 24 * 4

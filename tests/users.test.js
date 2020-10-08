@@ -697,21 +697,29 @@ describe('User', () => {
         );
       });
 
-      test('User deletion cascades', async () => {
-        const client = getClient(userOne.jwt);
+      test('User and dependents are removed from DB', async () => {
+        const client = getClient(userTwo.jwt);
 
-        await client.mutate({ mutation: deleteUser });
+        const {
+          data: {
+            deleteUser: { id }
+          }
+        } = await client.mutate({ mutation: deleteUser });
 
-        const userStillExists = await prisma.exists.User({
-          id: userOne.user.id
-        });
+        const userStillExists = await prisma.exists.User({ id });
         expect(userStillExists).toBe(false);
 
         // Make sure user listings have been deleted
         const userListingsExist = await prisma.exists.Listing({
-          owner: { id: userOne.user.id }
+          owner: { id }
         });
         expect(userListingsExist).toBe(false);
+
+        // Make sure user reservations have been deleted
+        const userReservationsExist = await prisma.exists.Reservation({
+          user: { id }
+        });
+        expect(userReservationsExist).toBe(false);
       });
     });
   });
