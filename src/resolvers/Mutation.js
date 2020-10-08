@@ -12,7 +12,8 @@ const {
   validateAvatar,
   validateBio,
   validateDesc,
-  validatePhoto
+  validatePhoto,
+  validateDates
 } = validation;
 
 const Mutation = {
@@ -192,6 +193,41 @@ const Mutation = {
     if (!userOwnsListing) throw Error('Unable to remove listing.');
 
     return prisma.mutation.deleteListing({ where: { id } }, info);
+  },
+  createReservation: async (
+    _parent,
+    { listingId, data },
+    { req, prisma },
+    info
+  ) => {
+    // Make sure user is authenticated
+    const userId = getUserId(req);
+
+    // Make sure user exists
+    const userExists = await prisma.exists.User({ id: userId });
+    if (!userExists) throw Error('User account does not exist.');
+
+    // Make sure listing exists
+    const listing = await prisma.query.listing(
+      { where: { id: listingId } },
+      '{ id owner { id } }'
+    );
+    if (!listing) throw Error('Listing does not exist.');
+
+    // Make sure user is not listing owner
+    if (listing.owner.id === userId)
+      throw Error('Cannot make reservation for your own listing.');
+
+    // Validate checkin and checkout dates
+    validateDates(data.checkin, data.checkout);
+
+    return prisma.mutation.createReservation({
+      data: {
+        ...data,
+        user: { connect: { id: userId } },
+        listing: { connect: { id: listing.id } }
+      }
+    });
   }
 };
 
