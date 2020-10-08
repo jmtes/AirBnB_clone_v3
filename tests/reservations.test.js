@@ -12,10 +12,11 @@ import seedDatabase, {
   userOne,
   userTwo,
   listingOne,
-  listingTwo
+  listingTwo,
+  reservationOne
 } from './utils/seedDatabase';
 
-import { createReservation } from './operations/reservation';
+import { createReservation, updateReservation } from './operations/reservation';
 
 describe('Reservations', () => {
   const defaultClient = getClient();
@@ -23,14 +24,14 @@ describe('Reservations', () => {
   beforeAll(seedDatabase);
 
   describe('Mutations', () => {
-    const defaultData = {
-      checkin: new Date().toISOString(),
-      checkout: new Date(
-        new Date().getTime() + 1000 * 60 * 60 * 24 * 7
-      ).toISOString()
-    };
+    describe.skip('createReservation', () => {
+      const defaultData = {
+        checkin: new Date().toISOString(),
+        checkout: new Date(
+          new Date().getTime() + 1000 * 60 * 60 * 24 * 7
+        ).toISOString()
+      };
 
-    describe('createReservation', () => {
       // Authentication and Resource Existence
       test('Error is thrown if not authenticated', async () => {
         const variables = {
@@ -104,6 +105,174 @@ describe('Reservations', () => {
 
         const reservationExists = await prisma.exists.Reservation({ id });
         expect(reservationExists).toBe(true);
+      });
+
+      // Input Validation
+      test('Error is thrown if checkin is not a valid ISO string', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          listingId: listingTwo.listing.id,
+          data: { ...defaultData, checkin: 'October 7, 2020' }
+        };
+
+        await expect(
+          client.mutate({ mutation: createReservation, variables })
+        ).rejects.toThrow('Checkin and checkout must be valid ISO strings.');
+      });
+
+      test('Error is thrown if checkout is not a valid ISO string', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          listingId: listingTwo.listing.id,
+          data: { ...defaultData, checkout: 'October 7, 2020' }
+        };
+
+        await expect(
+          client.mutate({ mutation: createReservation, variables })
+        ).rejects.toThrow('Checkin and checkout must be valid ISO strings.');
+      });
+
+      test("Error is thrown if checkin is before today's date", async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          listingId: listingTwo.listing.id,
+          data: {
+            ...defaultData,
+            checkin: new Date('September 7, 2020').toISOString()
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: createReservation, variables })
+        ).rejects.toThrow("Checkin cannot be before today's date.");
+      });
+
+      test('Error is thrown if checkout is before checkin', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          listingId: listingTwo.listing.id,
+          data: {
+            ...defaultData,
+            checkout: new Date('September 7, 2020').toISOString()
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: createReservation, variables })
+        ).rejects.toThrow('Checkout cannot be before checkin date.');
+      });
+
+      test('Same day checkin and checkout should be allowed', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          listingId: listingTwo.listing.id,
+          data: {
+            ...defaultData,
+            checkout: defaultData.checkin
+          }
+        };
+
+        await client.mutate({ mutation: createReservation, variables });
+      });
+    });
+
+    describe('updateReservation', () => {
+      const defaultData = {
+        checkin: new Date(
+          new Date().getTime() + 1000 * 60 * 60 * 24 * 4
+        ).toISOString(),
+        checkout: new Date(
+          new Date().getTime() + 1000 * 60 * 60 * 24 * 6
+        ).toISOString()
+      };
+
+      // Authentication and Resource Existence
+      test('Error is thrown if not authenticated', async () => {
+        const variables = {
+          id: reservationOne.reservation.id,
+          data: { ...defaultData }
+        };
+
+        await expect(
+          defaultClient.mutate({ mutation: updateReservation, variables })
+        ).rejects.toThrow('Authentication required.');
+      });
+
+      test('Error is thrown if user account does not exist', async () => {
+        const token = jwt.sign(
+          { userId: 'hskjfhsldjkf' },
+          process.env.JWT_SECRET
+        );
+
+        const client = getClient(token);
+
+        const variables = {
+          id: reservationOne.reservation.id,
+          data: { ...defaultData }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateReservation, variables })
+        ).rejects.toThrow('User account does not exist.');
+      });
+
+      test('Error is thrown if reservation does not exist', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = {
+          id: 'kshflsd',
+          data: { ...defaultData }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateReservation, variables })
+        ).rejects.toThrow('Unable to edit reservation.');
+      });
+
+      test('Error is thrown if user does not own reservation', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          id: reservationOne.reservation.id,
+          data: { ...defaultData }
+        };
+
+        await expect(
+          client.mutate({ mutation: updateReservation, variables })
+        ).rejects.toThrow('Unable to edit reservation.');
+      });
+
+      // DB Changes
+      test('Reservation is updated in DB', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = {
+          id: reservationOne.reservation.id,
+          data: { ...defaultData }
+        };
+
+        const {
+          data: {
+            updateReservation: { id, checkin, checkout }
+          }
+        } = await client.mutate({ mutation: updateReservation, variables });
+
+        expect(id).toBe(reservationOne.reservation.id);
+        expect(checkin).toBe(defaultData.checkin);
+        expect(checkout).toBe(defaultData.checkout);
+
+        const dbWasUpdated = await prisma.exists.Reservation({
+          id,
+          checkin,
+          checkout
+        });
+
+        expect(dbWasUpdated).toBe(true);
       });
 
       // Input Validation

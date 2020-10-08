@@ -231,6 +231,26 @@ const Mutation = {
       },
       info
     );
+  },
+  updateReservation: async (_parent, { id, data }, { req, prisma }, info) => {
+    // Make sure user is authenticated
+    const userId = getUserId(req);
+
+    // Make sure user account exists
+    const userExists = await prisma.exists.User({ id: userId });
+    if (!userExists) throw Error('User account does not exist.');
+
+    // Make sure reservation exists and is attributed to user
+    const reservationExists = await prisma.exists.Reservation({
+      id,
+      user: { id: userId }
+    });
+    if (!reservationExists) throw Error('Unable to edit reservation.');
+
+    // Validate checkin and checkout
+    validateDates(data.checkin, data.checkout);
+
+    return prisma.mutation.updateReservation({ where: { id }, data }, info);
   }
 };
 

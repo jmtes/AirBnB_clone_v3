@@ -1,10 +1,19 @@
 import { gql } from 'apollo-boost';
 
-// eslint-disable-next-line import/prefer-default-export
 export const createReservation = gql`
-  mutation($listingId: ID!, $data: CreateReservationInput) {
+  mutation($listingId: ID!, $data: CreateReservationInput!) {
     createReservation(listingId: $listingId, data: $data) {
       id
+    }
+  }
+`;
+
+export const updateReservation = gql`
+  mutation($id: ID!, $data: UpdateReservationInput!) {
+    updateReservation(id: $id, data: $data) {
+      id
+      checkin
+      checkout
     }
   }
 `;
