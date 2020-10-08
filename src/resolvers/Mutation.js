@@ -251,6 +251,23 @@ const Mutation = {
     validateDates(data.checkin, data.checkout);
 
     return prisma.mutation.updateReservation({ where: { id }, data }, info);
+  },
+  deleteReservation: async (_parent, { id }, { req, prisma }, info) => {
+    // Make sure user is authenticated
+    const userId = getUserId(req);
+
+    // Make sure user account exists
+    const userExists = await prisma.exists.User({ id: userId });
+    if (!userExists) throw Error('User account does not exist.');
+
+    // Make sure reservation exists and is attributed to user
+    const reservationExists = await prisma.exists.Reservation({
+      id,
+      user: { id: userId }
+    });
+    if (!reservationExists) throw Error('Unable to cancel reservation.');
+
+    return prisma.mutation.deleteReservation({ where: { id } }, info);
   }
 };
 

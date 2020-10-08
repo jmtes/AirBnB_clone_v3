@@ -26,6 +26,7 @@ type Mutation {
   deleteListing(id: ID!): Listing!
   createReservation(listingId: ID!, data: CreateReservationInput): Reservation!
   updateReservation(id: ID!, data: UpdateReservationInput!): Reservation!
+  deleteReservation(id: ID!): Reservation!
 }
 
 # type Subscription {
