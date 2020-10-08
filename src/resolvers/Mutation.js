@@ -17,7 +17,7 @@ const {
 } = validation;
 
 const Mutation = {
-  async createUser(_parent, { data }, { prisma }) {
+  createUser: async (_parent, { data }, { prisma }) => {
     data.email = validateEmail(data.email);
 
     const emailTaken = await prisma.exists.User({ email: data.email });
@@ -35,7 +35,7 @@ const Mutation = {
 
     return { user, token };
   },
-  async loginUser(_parent, { data }, { prisma }) {
+  loginUser: async (_parent, { data }, { prisma }) => {
     const user = await prisma.query.user({ where: { email: data.email } });
     if (!user) throw Error('Account does not exist.');
 
@@ -46,7 +46,7 @@ const Mutation = {
 
     return { token, user };
   },
-  async updateUserProfile(_parent, { data }, { req, prisma }, info) {
+  updateUserProfile: async (_parent, { data }, { req, prisma }, info) => {
     const id = getUserId(req);
 
     const userExists = await prisma.exists.User({ id });
