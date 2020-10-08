@@ -112,7 +112,7 @@ describe('Listing', () => {
           data: { listing }
         } = await client.query({ query: getListing, variables });
 
-        expect(listing.reservations).toEqual([]);
+        expect(listing.reservations).toBeTruthy();
       });
     });
   });
@@ -650,7 +650,7 @@ describe('Listing', () => {
       });
 
       // DB Changes
-      test('Listing is removed from DB', async () => {
+      test('Listing and dependents are removed from DB', async () => {
         const client = getClient(userTwo.jwt);
 
         const variables = { id: listingTwo.listing.id };
@@ -663,6 +663,12 @@ describe('Listing', () => {
 
         const listingStillExists = await prisma.exists.Listing({ id });
         expect(listingStillExists).toBe(false);
+
+        // Make sure all reservations for listing are removed
+        const reservationsStillExist = await prisma.exists.Reservation({
+          listing: { id }
+        });
+        expect(reservationsStillExist).toBe(false);
       });
     });
   });
