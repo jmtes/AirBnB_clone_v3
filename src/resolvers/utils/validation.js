@@ -108,6 +108,28 @@ const validateDates = (checkin, checkout) => {
     throw Error('Checkout cannot be before checkin date.');
 };
 
+const validateTitle = (title) => {
+  // Trim extra whitespace and escape HTML entities
+  const sanitizedTitle = xss(validator.trim(title));
+
+  // Check name length
+  if (sanitizedTitle.length > 50)
+    throw Error(`Title may not exceed 50 characters.`);
+
+  return sanitizedTitle;
+};
+
+const validateBody = (body) => {
+  // Trim extra whitespace and escape HTML entities
+  const sanitizedBody = xss(validator.trim(body));
+
+  // Make sure word count does not exceed 250
+  const wordCount = sanitizedBody.split(/\s/).length;
+  if (wordCount > 250) throw Error('Body may not exceed 250 words.');
+
+  return sanitizedBody;
+};
+
 export default {
   validateEmail,
   validateName,
@@ -115,5 +137,7 @@ export default {
   validateBio,
   validateDesc,
   validatePhoto,
-  validateDates
+  validateDates,
+  validateTitle,
+  validateBody
 };
