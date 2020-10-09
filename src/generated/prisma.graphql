@@ -1,5 +1,5 @@
 # source: http://localhost:4466/bearbnb/dev
-# timestamp: Thu Oct 08 2020 14:59:57 GMT-0700 (Pacific Daylight Time)
+# timestamp: Thu Oct 08 2020 18:44:34 GMT-0700 (Pacific Daylight Time)
 
 type AggregateAmenity {
   count: Int!
@@ -926,7 +926,9 @@ type Listing implements Node {
   photos: [String!]!
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
   reviews(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Review!]
-  rating: Float
+  rating: Float!
+  reviewCount: Int!
+  ratingSum: Int!
 }
 
 """A connection to a list of items."""
@@ -951,6 +953,8 @@ input ListingCreateInput {
   maxGuests: Int
   price: Float!
   rating: Float
+  reviewCount: Int
+  ratingSum: Int
   photos: ListingCreatephotosInput
   owner: UserCreateOneWithoutListingsInput!
   city: CityCreateOneWithoutListingsInput!
@@ -995,6 +999,8 @@ input ListingCreateWithoutCityInput {
   maxGuests: Int
   price: Float!
   rating: Float
+  reviewCount: Int
+  ratingSum: Int
   photos: ListingCreatephotosInput
   owner: UserCreateOneWithoutListingsInput!
   amenities: AmenityCreateManyInput
@@ -1014,6 +1020,8 @@ input ListingCreateWithoutOwnerInput {
   maxGuests: Int
   price: Float!
   rating: Float
+  reviewCount: Int
+  ratingSum: Int
   photos: ListingCreatephotosInput
   city: CityCreateOneWithoutListingsInput!
   amenities: AmenityCreateManyInput
@@ -1033,6 +1041,8 @@ input ListingCreateWithoutReservationsInput {
   maxGuests: Int
   price: Float!
   rating: Float
+  reviewCount: Int
+  ratingSum: Int
   photos: ListingCreatephotosInput
   owner: UserCreateOneWithoutListingsInput!
   city: CityCreateOneWithoutListingsInput!
@@ -1052,6 +1062,8 @@ input ListingCreateWithoutReviewsInput {
   maxGuests: Int
   price: Float!
   rating: Float
+  reviewCount: Int
+  ratingSum: Int
   photos: ListingCreatephotosInput
   owner: UserCreateOneWithoutListingsInput!
   city: CityCreateOneWithoutListingsInput!
@@ -1095,6 +1107,10 @@ enum ListingOrderByInput {
   price_DESC
   rating_ASC
   rating_DESC
+  reviewCount_ASC
+  reviewCount_DESC
+  ratingSum_ASC
+  ratingSum_DESC
 }
 
 type ListingPreviousValues {
@@ -1111,7 +1127,9 @@ type ListingPreviousValues {
   maxGuests: Int
   price: Float!
   photos: [String!]!
-  rating: Float
+  rating: Float!
+  reviewCount: Int!
+  ratingSum: Int!
 }
 
 input ListingScalarWhereInput {
@@ -1481,6 +1499,50 @@ input ListingScalarWhereInput {
 
   """All values greater than or equal the given value."""
   rating_gte: Float
+  reviewCount: Int
+
+  """All values that are not equal to given value."""
+  reviewCount_not: Int
+
+  """All values that are contained in given list."""
+  reviewCount_in: [Int!]
+
+  """All values that are not contained in given list."""
+  reviewCount_not_in: [Int!]
+
+  """All values less than the given value."""
+  reviewCount_lt: Int
+
+  """All values less than or equal the given value."""
+  reviewCount_lte: Int
+
+  """All values greater than the given value."""
+  reviewCount_gt: Int
+
+  """All values greater than or equal the given value."""
+  reviewCount_gte: Int
+  ratingSum: Int
+
+  """All values that are not equal to given value."""
+  ratingSum_not: Int
+
+  """All values that are contained in given list."""
+  ratingSum_in: [Int!]
+
+  """All values that are not contained in given list."""
+  ratingSum_not_in: [Int!]
+
+  """All values less than the given value."""
+  ratingSum_lt: Int
+
+  """All values less than or equal the given value."""
+  ratingSum_lte: Int
+
+  """All values greater than the given value."""
+  ratingSum_gt: Int
+
+  """All values greater than or equal the given value."""
+  ratingSum_gte: Int
 }
 
 type ListingSubscriptionPayload {
@@ -1531,6 +1593,8 @@ input ListingUpdateInput {
   maxGuests: Int
   price: Float
   rating: Float
+  reviewCount: Int
+  ratingSum: Int
   photos: ListingUpdatephotosInput
   owner: UserUpdateOneRequiredWithoutListingsInput
   city: CityUpdateOneRequiredWithoutListingsInput
@@ -1550,6 +1614,8 @@ input ListingUpdateManyDataInput {
   maxGuests: Int
   price: Float
   rating: Float
+  reviewCount: Int
+  ratingSum: Int
   photos: ListingUpdatephotosInput
 }
 
@@ -1564,6 +1630,8 @@ input ListingUpdateManyMutationInput {
   maxGuests: Int
   price: Float
   rating: Float
+  reviewCount: Int
+  ratingSum: Int
   photos: ListingUpdatephotosInput
 }
 
@@ -1625,6 +1693,8 @@ input ListingUpdateWithoutCityDataInput {
   maxGuests: Int
   price: Float
   rating: Float
+  reviewCount: Int
+  ratingSum: Int
   photos: ListingUpdatephotosInput
   owner: UserUpdateOneRequiredWithoutListingsInput
   amenities: AmenityUpdateManyInput
@@ -1643,6 +1713,8 @@ input ListingUpdateWithoutOwnerDataInput {
   maxGuests: Int
   price: Float
   rating: Float
+  reviewCount: Int
+  ratingSum: Int
   photos: ListingUpdatephotosInput
   city: CityUpdateOneRequiredWithoutListingsInput
   amenities: AmenityUpdateManyInput
@@ -1661,6 +1733,8 @@ input ListingUpdateWithoutReservationsDataInput {
   maxGuests: Int
   price: Float
   rating: Float
+  reviewCount: Int
+  ratingSum: Int
   photos: ListingUpdatephotosInput
   owner: UserUpdateOneRequiredWithoutListingsInput
   city: CityUpdateOneRequiredWithoutListingsInput
@@ -1679,6 +1753,8 @@ input ListingUpdateWithoutReviewsDataInput {
   maxGuests: Int
   price: Float
   rating: Float
+  reviewCount: Int
+  ratingSum: Int
   photos: ListingUpdatephotosInput
   owner: UserUpdateOneRequiredWithoutListingsInput
   city: CityUpdateOneRequiredWithoutListingsInput
@@ -2085,6 +2161,50 @@ input ListingWhereInput {
 
   """All values greater than or equal the given value."""
   rating_gte: Float
+  reviewCount: Int
+
+  """All values that are not equal to given value."""
+  reviewCount_not: Int
+
+  """All values that are contained in given list."""
+  reviewCount_in: [Int!]
+
+  """All values that are not contained in given list."""
+  reviewCount_not_in: [Int!]
+
+  """All values less than the given value."""
+  reviewCount_lt: Int
+
+  """All values less than or equal the given value."""
+  reviewCount_lte: Int
+
+  """All values greater than the given value."""
+  reviewCount_gt: Int
+
+  """All values greater than or equal the given value."""
+  reviewCount_gte: Int
+  ratingSum: Int
+
+  """All values that are not equal to given value."""
+  ratingSum_not: Int
+
+  """All values that are contained in given list."""
+  ratingSum_in: [Int!]
+
+  """All values that are not contained in given list."""
+  ratingSum_not_in: [Int!]
+
+  """All values less than the given value."""
+  ratingSum_lt: Int
+
+  """All values less than or equal the given value."""
+  ratingSum_lte: Int
+
+  """All values greater than the given value."""
+  ratingSum_gt: Int
+
+  """All values greater than or equal the given value."""
+  ratingSum_gte: Int
   owner: UserWhereInput
   city: CityWhereInput
   amenities_every: AmenityWhereInput

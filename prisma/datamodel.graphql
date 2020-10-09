@@ -43,7 +43,9 @@ type Listing {
   reservations: [Reservation!]!
     @relation(name: "ReservationToListing", onDelete: CASCADE)
   reviews: [Review!]! @relation(name: "ReviewToListing", onDelete: CASCADE)
-  rating: Float
+  rating: Float! @default(value: 0)
+  reviewCount: Int! @default(value: 0)
+  ratingSum: Int! @default(value: 0)
 }
 
 type Amenity {
