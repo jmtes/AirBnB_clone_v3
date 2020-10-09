@@ -176,7 +176,7 @@ describe('Reviews', () => {
         // Remove review and reset listing rating
         await prisma.mutation.deleteReview({ where: { id } });
         await prisma.mutation.updateListing({
-          where: { id: listingOne.listing.id },
+          where: { id: listingThree.listing.id },
           data: {
             ratingSum: listingThree.input.ratingSum,
             reviewCount: listingThree.input.reviewCount,
@@ -223,7 +223,7 @@ describe('Reviews', () => {
         // Remove review and reset listing rating
         await prisma.mutation.deleteReview({ where: { id } });
         await prisma.mutation.updateListing({
-          where: { id: listingOne.listing.id },
+          where: { id: listingTwo.listing.id },
           data: {
             ratingSum: listingTwo.input.ratingSum,
             reviewCount: listingTwo.input.reviewCount,
@@ -246,7 +246,178 @@ describe('Reviews', () => {
         ).rejects.toThrow('Rating must be on a scale between 1 and 5.');
       });
 
+      test('Error is thrown if rating is greater than 5', async () => {
+        const client = getClient(userThree.jwt);
+
+        const variables = {
+          listingId: listingTwo.listing.id,
+          data: { ...defaultData, rating: 6 }
+        };
+
+        await expect(
+          client.mutate({ mutation: createReview, variables })
+        ).rejects.toThrow('Rating must be on a scale between 1 and 5.');
+      });
+
+      test('Error is thrown if title is too long', async () => {
+        const client = getClient(userThree.jwt);
+
+        const variables = {
+          listingId: listingTwo.listing.id,
+          data: {
+            ...defaultData,
+            title:
+              'Oh man this was such a good place to stay. It was sucha  lovely place. I had a wonderful time. Man!'
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: createReview, variables })
+        ).rejects.toThrow('Title may not exceed 50 characters.');
+      });
+
+      test('Empty title should be allowed', async () => {
+        const client = getClient(userThree.jwt);
+
+        const variables = {
+          listingId: listingTwo.listing.id,
+          data: {
+            ...defaultData,
+            title: ''
+          }
+        };
+
+        const {
+          data: {
+            createReview: { id }
+          }
+        } = await client.mutate({ mutation: createReview, variables });
+
+        // Remove review and reset listing rating
+        await prisma.mutation.deleteReview({ where: { id } });
+        await prisma.mutation.updateListing({
+          where: { id: listingTwo.listing.id },
+          data: {
+            ratingSum: listingTwo.input.ratingSum,
+            reviewCount: listingTwo.input.reviewCount,
+            rating: listingTwo.input.rating
+          }
+        });
+      });
+
+      test('Error is thrown if body exceeds 250 words', async () => {
+        const client = getClient(userThree.jwt);
+
+        const variables = {
+          listingId: listingTwo.listing.id,
+          data: {
+            ...defaultData,
+            body: `
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla efficitur ex a euismod blandit. Etiam semper bibendum tellus eget scelerisque. Aliquam accumsan porta iaculis. Aliquam non eros quam. Proin porta lacus lectus, vestibulum finibus arcu fringilla et. Duis interdum ante nec est mattis pellentesque. Vestibulum eleifend libero et arcu efficitur cursus. Cras et ornare elit, sed consectetur massa. Nulla tempus felis augue. Vivamus sit amet elementum lectus. Aenean diam sem, bibendum vitae vestibulum eu, tempor et nisi. Suspendisse egestas diam vel velit maximus suscipit. Fusce eleifend iaculis velit, quis porta nisi. Sed justo velit, viverra id lectus eu, posuere maximus neque. Maecenas lacus risus, fermentum ornare velit id, pharetra faucibus elit.
+
+            Morbi sed malesuada sapien, id iaculis arcu. Suspendisse a quam dignissim, venenatis lectus sit amet, porttitor lectus. Aliquam erat volutpat. Donec aliquet nisl id sem vehicula, sed facilisis velit sodales. Nunc fringilla tortor eget ante consectetur tempus. In rutrum, lectus tincidunt interdum auctor, mauris erat tempus augue, eu ornare diam dui non massa. Nulla ut quam eu neque vulputate aliquet non pulvinar turpis. Aenean dictum quam non suscipit suscipit.
+
+            Praesent ut faucibus elit, eget feugiat ante. Pellentesque ac tortor augue. Vivamus dignissim dolor id quam maximus gravida. Sed accumsan tellus et euismod auctor. Sed eget nisi id erat malesuada viverra. Praesent tellus quam, aliquet nec pulvinar quis, condimentum sit amet sapien. Praesent euismod a est sed tempor. Ut malesuada enim ut ipsum sollicitudin, tincidunt accumsan nunc commodo. Nunc at magna viverra, dapibus quam sit amet, fermentum quam. Quisque felis magna.
+            `
+          }
+        };
+
+        await expect(
+          client.mutate({ mutation: createReview, variables })
+        ).rejects.toThrow('Body may not exceed 250 words.');
+      });
+
+      test('Empty body should be allowed', async () => {
+        const client = getClient(userThree.jwt);
+
+        const variables = {
+          listingId: listingTwo.listing.id,
+          data: {
+            ...defaultData,
+            body: ''
+          }
+        };
+
+        const {
+          data: {
+            createReview: { id }
+          }
+        } = await client.mutate({ mutation: createReview, variables });
+
+        // Remove review and reset listing rating
+        await prisma.mutation.deleteReview({ where: { id } });
+        await prisma.mutation.updateListing({
+          where: { id: listingTwo.listing.id },
+          data: {
+            ratingSum: listingTwo.input.ratingSum,
+            reviewCount: listingTwo.input.reviewCount,
+            rating: listingTwo.input.rating
+          }
+        });
+      });
+
       // Input Sanitization
+      test('Title should be sanitized', async () => {
+        const client = getClient(userThree.jwt);
+
+        const variables = {
+          listingId: listingTwo.listing.id,
+          data: {
+            ...defaultData,
+            title: '    Wonderful stay <3     '
+          }
+        };
+
+        const {
+          data: {
+            createReview: { id, title }
+          }
+        } = await client.mutate({ mutation: createReview, variables });
+
+        expect(title).toBe('Wonderful stay &lt;3');
+
+        // Remove review and reset listing rating
+        await prisma.mutation.deleteReview({ where: { id } });
+        await prisma.mutation.updateListing({
+          where: { id: listingTwo.listing.id },
+          data: {
+            ratingSum: listingTwo.input.ratingSum,
+            reviewCount: listingTwo.input.reviewCount,
+            rating: listingTwo.input.rating
+          }
+        });
+      });
+
+      test('Body should be sanitized', async () => {
+        const client = getClient(userThree.jwt);
+
+        const variables = {
+          listingId: listingTwo.listing.id,
+          data: {
+            ...defaultData,
+            body: '    Wonderful stay <3     '
+          }
+        };
+
+        const {
+          data: {
+            createReview: { id, body }
+          }
+        } = await client.mutate({ mutation: createReview, variables });
+
+        expect(body).toBe('Wonderful stay &lt;3');
+
+        // Remove review and reset listing rating
+        await prisma.mutation.deleteReview({ where: { id } });
+        await prisma.mutation.updateListing({
+          where: { id: listingTwo.listing.id },
+          data: {
+            ratingSum: listingTwo.input.ratingSum,
+            reviewCount: listingTwo.input.reviewCount,
+            rating: listingTwo.input.rating
+          }
+        });
+      });
     });
   });
 });
