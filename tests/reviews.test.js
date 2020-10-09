@@ -14,10 +14,12 @@ import seedDatabase, {
   userThree,
   listingOne,
   listingTwo,
-  listingThree
+  listingThree,
+  reviewOne,
+  reviewTwo
 } from './utils/seedDatabase';
 
-import { createReview } from './operations/review';
+import { createReview, updateReview } from './operations/review';
 
 describe('Reviews', () => {
   const defaultClient = getClient();
@@ -25,7 +27,7 @@ describe('Reviews', () => {
   beforeAll(seedDatabase);
 
   describe('Mutations', () => {
-    describe('createReview', () => {
+    describe.skip('createReview', () => {
       const defaultData = {
         rating: 5,
         title: 'Had a lovely stay',
@@ -430,6 +432,48 @@ describe('Reviews', () => {
       };
 
       // Authentication
+      test('Error is thrown if not authenticated', async () => {
+        const variables = { id: reviewOne.review.id, data: { ...defaultData } };
+
+        await expect(
+          defaultClient.mutate({ mutation: updateReview, variables })
+        ).rejects.toThrow('Authentication required.');
+      });
+
+      test('Error is thrown if user account does not exist', async () => {
+        const token = jwt.sign(
+          { userId: 'sklajfldskjfkdsl' },
+          process.env.JWT_SECRET
+        );
+
+        const client = getClient(token);
+
+        const variables = { id: reviewOne.review.id, data: { ...defaultData } };
+
+        await expect(
+          client.mutate({ mutation: updateReview, variables })
+        ).rejects.toThrow('User account does not exist.');
+      });
+
+      test('Error is thrown if review does not exist', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = { id: 'skldfjldsk', data: { ...defaultData } };
+
+        await expect(
+          client.mutate({ mutation: updateReview, variables })
+        ).rejects.toThrow('Unable to edit review');
+      });
+
+      test('Error is thrown if user is not review author', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = { id: reviewOne.review.id, data: { ...defaultData } };
+
+        await expect(
+          client.mutate({ mutation: updateReview, variables })
+        ).rejects.toThrow('Unable to edit review.');
+      });
 
       // DB Changes
 

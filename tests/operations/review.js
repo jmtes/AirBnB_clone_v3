@@ -11,3 +11,11 @@ export const createReview = gql`
     }
   }
 `;
+
+export const updateReview = gql`
+  mutation($id: ID!, $data: UpdateReviewInput!) {
+    updateReview(id: $id, data: $data) {
+      id
+    }
+  }
+`;

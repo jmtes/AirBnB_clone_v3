@@ -321,7 +321,21 @@ const Mutation = {
 
     return prisma.query.review({ where: { id: review.id } }, info);
   },
-  updateReview: async (_parent, { id, data }, { req, prisma }, info) => {}
+  updateReview: async (_parent, { id, data }, { req, prisma }, info) => {
+    // Make sure user is authenticated
+    const userId = getUserId(req);
+
+    // Make sure user account exists
+    const userExists = await prisma.exists.User({ id: userId });
+    if (!userExists) throw Error('User account does not exist.');
+
+    // Make sure review exists and was written by user
+    let reviewExists = await prisma.exists.Review({
+      id,
+      author: { id: userId }
+    });
+    if (!reviewExists) throw Error('Unable to edit review.');
+  }
 };
 
 export default Mutation;
