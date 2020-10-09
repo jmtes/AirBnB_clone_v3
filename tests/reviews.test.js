@@ -13,7 +13,8 @@ import seedDatabase, {
   userTwo,
   userThree,
   listingOne,
-  listingTwo
+  listingTwo,
+  listingThree
 } from './utils/seedDatabase';
 
 import { createReview } from './operations/review';
@@ -127,6 +128,108 @@ describe('Reviews', () => {
           listing: { id: listingOne.listing.id }
         });
         expect(reviewExists).toBe(true);
+
+        // Remove review and reset listing rating
+        await prisma.mutation.deleteReview({ where: { id } });
+        await prisma.mutation.updateListing({
+          where: { id: listingOne.listing.id },
+          data: {
+            ratingSum: listingOne.input.ratingSum,
+            reviewCount: listingOne.input.reviewCount,
+            rating: listingOne.input.rating
+          }
+        });
+      });
+
+      test('Listing rating is updated (no prior reviews)', async () => {
+        const client = getClient(userThree.jwt);
+
+        const variables = {
+          listingId: listingThree.listing.id,
+          data: { ...defaultData }
+        };
+
+        const listingBefore = await prisma.query.listing(
+          { where: { id: listingThree.listing.id } },
+          '{ ratingSum reviewCount rating }'
+        );
+
+        expect(listingBefore.ratingSum).toBe(0);
+        expect(listingBefore.reviewCount).toBe(0);
+        expect(listingBefore.rating).toBe(0);
+
+        const {
+          data: {
+            createReview: { id }
+          }
+        } = await client.mutate({ mutation: createReview, variables });
+
+        const listingAfter = await prisma.query.listing(
+          { where: { id: listingThree.listing.id } },
+          '{ ratingSum reviewCount rating }'
+        );
+
+        expect(listingAfter.ratingSum).toBe(defaultData.rating);
+        expect(listingAfter.reviewCount).toBe(1);
+        expect(listingAfter.rating).toBe(defaultData.rating);
+
+        // Remove review and reset listing rating
+        await prisma.mutation.deleteReview({ where: { id } });
+        await prisma.mutation.updateListing({
+          where: { id: listingOne.listing.id },
+          data: {
+            ratingSum: listingThree.input.ratingSum,
+            reviewCount: listingThree.input.reviewCount,
+            rating: listingThree.input.rating
+          }
+        });
+      });
+
+      test('Listing rating is updated (existing reviews)', async () => {
+        const client = getClient(userThree.jwt);
+
+        const variables = {
+          listingId: listingTwo.listing.id,
+          data: { ...defaultData }
+        };
+
+        let listing = await prisma.query.listing(
+          { where: { id: listingTwo.listing.id } },
+          '{ ratingSum reviewCount rating }'
+        );
+
+        const oldSum = listing.ratingSum;
+        const oldCount = listing.reviewCount;
+
+        const {
+          data: {
+            createReview: { id, rating }
+          }
+        } = await client.mutate({ mutation: createReview, variables });
+
+        listing = await prisma.query.listing(
+          { where: { id: listingTwo.listing.id } },
+          '{ ratingSum reviewCount rating }'
+        );
+
+        const newSum = listing.ratingSum;
+        const newCount = listing.reviewCount;
+        const newRating = listing.rating;
+
+        expect(newSum).toBe(oldSum + rating);
+        expect(newCount).toBe(oldCount + 1);
+        expect(newRating).toBe(parseInt((newSum / newCount).toFixed(2), 10));
+
+        // Remove review and reset listing rating
+        await prisma.mutation.deleteReview({ where: { id } });
+        await prisma.mutation.updateListing({
+          where: { id: listingOne.listing.id },
+          data: {
+            ratingSum: listingTwo.input.ratingSum,
+            reviewCount: listingTwo.input.reviewCount,
+            rating: listingTwo.input.rating
+          }
+        });
       });
 
       // Input Validation
