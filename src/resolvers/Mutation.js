@@ -320,7 +320,8 @@ const Mutation = {
     await updateListingRating(review, listing.id, 'CREATE', prisma);
 
     return prisma.query.review({ where: { id: review.id } }, info);
-  }
+  },
+  updateReview: async (_parent, { id, data }, { req, prisma }, info) => {}
 };
 
 export default Mutation;

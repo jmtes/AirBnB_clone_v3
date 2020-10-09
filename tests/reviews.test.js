@@ -32,6 +32,7 @@ describe('Reviews', () => {
         body:
           'The place was beautifully decorated and had everything we needed to feel at home, not to mention the view outside was breathtaking! Would definitely book again!'
       };
+
       // Authentication
       test('Error is thrown if not authenticated', async () => {
         const variables = {
@@ -418,6 +419,23 @@ describe('Reviews', () => {
           }
         });
       });
+    });
+
+    describe('updateReview', () => {
+      const defaultData = {
+        rating: 4,
+        title: 'Nice stay',
+        body:
+          'The place was beautifully decorated, not to mention the view outside was breathtaking! It could use a little renovation, though.'
+      };
+
+      // Authentication
+
+      // DB Changes
+
+      // Input Validation
+
+      // Input Sanitization
     });
   });
 });
