@@ -23,6 +23,14 @@ export const userTwo = {
   jwt: null
 };
 
+export const userThree = {
+  input: {
+    name: 'Theo Morton',
+    email: 'theo@domain.tld',
+    password: bcrypt.hashSync('LFdx1ZZnXju8')
+  }
+};
+
 export const cityOne = {
   input: {
     name: 'Chula Vista',
@@ -136,6 +144,25 @@ export const reservationTwo = {
   }
 };
 
+export const reviewOne = {
+  input: {
+    rating: 5,
+    title: 'Nice stay',
+    body: 'Beautiful home with a grill and hot tub and close to everything'
+  },
+  review: null
+};
+
+export const reviewTwo = {
+  input: {
+    rating: 4,
+    title: 'Good place, but...',
+    body:
+      'The photos are very accurate, there were no surprises. However, the cabana could use some renovations.'
+  },
+  review: null
+};
+
 const seedDatabase = async () => {
   // Wipe database
   await prisma.mutation.deleteManyReservations();
@@ -150,6 +177,12 @@ const seedDatabase = async () => {
 
   userTwo.user = await prisma.mutation.createUser({ data: userTwo.input });
   userTwo.jwt = jwt.sign({ userId: userTwo.user.id }, process.env.JWT_SECRET);
+
+  userThree.user = await prisma.mutation.createUser({ data: userThree.input });
+  userThree.jwt = jwt.sign(
+    { userId: userThree.user.id },
+    process.env.JWT_SECRET
+  );
 
   // Create dummy cities
   cityOne.city = await prisma.mutation.createCity({ data: cityOne.input });
@@ -195,6 +228,22 @@ const seedDatabase = async () => {
     data: {
       ...reservationTwo.input,
       user: { connect: { id: userOne.user.id } },
+      listing: { connect: { id: listingTwo.listing.id } }
+    }
+  });
+
+  // Create dummy reviews
+  reviewOne.review = await prisma.mutation.createReview({
+    data: {
+      ...reviewOne.input,
+      author: { connect: { id: userTwo.user.id } },
+      listing: { connect: { id: listingOne.listing.id } }
+    }
+  });
+  reviewTwo.review = await prisma.mutation.createReview({
+    data: {
+      ...reviewTwo.input,
+      author: { connect: { id: userOne.user.id } },
       listing: { connect: { id: listingTwo.listing.id } }
     }
   });
