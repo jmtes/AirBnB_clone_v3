@@ -5,6 +5,7 @@ import generateToken from './utils/generateToken';
 import hashPassword from './utils/hashPassword';
 import validation from './utils/validation';
 import { getLocationData, getCityId } from './utils/location';
+import updateListingRating from './utils/updateListingRating';
 
 const {
   validateEmail,
@@ -13,7 +14,9 @@ const {
   validateBio,
   validateDesc,
   validatePhoto,
-  validateDates
+  validateDates,
+  validateTitle,
+  validateBody
 } = validation;
 
 const Mutation = {
@@ -268,6 +271,55 @@ const Mutation = {
     if (!reservationExists) throw Error('Unable to cancel reservation.');
 
     return prisma.mutation.deleteReservation({ where: { id } }, info);
+  },
+  createReview: async (_parent, { listingId, data }, { req, prisma }, info) => {
+    // Make sure user is authenticated
+    const userId = getUserId(req);
+
+    // Make sure user account exists
+    const userExists = await prisma.exists.User({ id: userId });
+    if (!userExists) throw Error('User account does not exist.');
+
+    // Make sure listing exists
+    const listing = await prisma.query.listing(
+      { where: { id: listingId } },
+      '{ id owner { id } }'
+    );
+    if (!listing) throw Error('Listing does not exist.');
+
+    // Make sure user does not own listing
+    if (listing.owner.id === userId)
+      throw Error('Cannot write a review for your own listing.');
+
+    // Make sure user hasn't already written a review for the listing
+    const hasMadeReview = await prisma.exists.Review({
+      author: { id: userId },
+      listing: { id: listing.id }
+    });
+    if (hasMadeReview)
+      throw Error('Cannot write multiple reviews for one place.');
+
+    // Make sure rating is between 1 and 5
+    if (data.rating < 1 || data.rating > 5)
+      throw Error('Rating must be on a scale between 1 and 5.');
+
+    // Validate and sanitize title and body
+    if (data.title !== undefined) data.title = validateTitle(data.title);
+    if (data.body !== undefined) data.body = validateBody(data.body);
+
+    // Create review
+    const review = await prisma.mutation.createReview({
+      data: {
+        ...data,
+        author: { connect: { id: userId } },
+        listing: { connect: { id: listing.id } }
+      }
+    });
+
+    // Update average listing rating
+    await updateListingRating(review, listing.id, 'CREATE', prisma);
+
+    return prisma.query.review({ where: { id: review.id } }, info);
   }
 };
 
