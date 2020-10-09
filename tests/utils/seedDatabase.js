@@ -98,7 +98,10 @@ export const listingOne = {
     maxGuests: 6,
     price: 398,
     amenities: { connect: [{ name: 'Air conditioning' }, { name: 'Wifi' }] },
-    photos: { set: [] }
+    photos: { set: [] },
+    ratingSum: 5,
+    reviewCount: 1,
+    rating: 5
   },
   listing: null
 };
@@ -116,7 +119,41 @@ export const listingTwo = {
     maxGuests: 2,
     price: 370,
     amenities: { connect: [{ name: 'Kitchen' }, { name: 'Air conditioning' }] },
-    photos: { set: [] }
+    photos: { set: [] },
+    ratingSum: 4,
+    reviewCount: 1,
+    rating: 4
+  },
+  listing: null
+};
+
+export const listingThree = {
+  input: {
+    name: 'Private room + shared bathroom in main house',
+    desc:
+      'Private room with shared bathroom in home located in gated community in North Chula Vista. The property is freeway close and super close to the most popular casinos, shopping centers, restaurants, cafes, hiking trails & golf in the area. Please note that this property is an HOA community. As such, it is important to abide by all HOA rules.',
+    address: '1530 Winter Ln',
+    latitude: 32.633113,
+    longitude: -116.93835,
+    beds: 1,
+    baths: 1,
+    maxGuests: 2,
+    price: 55,
+    amenities: {
+      connect: [
+        { name: 'Kitchen' },
+        { name: 'Air conditioning' },
+        { name: 'Wifi' }
+      ]
+    },
+    photos: {
+      set: [
+        'https://a0.muscache.com/im/pictures/06da37a6-5f47-4635-af77-d643803aa579.jpg'
+      ]
+    },
+    ratingSum: 0,
+    reviewCount: 0,
+    rating: 0
   },
   listing: null
 };
@@ -165,6 +202,7 @@ export const reviewTwo = {
 
 const seedDatabase = async () => {
   // Wipe database
+  await prisma.mutation.deleteManyReviews();
   await prisma.mutation.deleteManyReservations();
   await prisma.mutation.deleteManyListings();
   await prisma.mutation.deleteManyAmenities();
@@ -213,6 +251,13 @@ const seedDatabase = async () => {
       ...listingTwo.input,
       owner: { connect: { id: userTwo.user.id } },
       city: { connect: { id: cityTwo.city.id } }
+    }
+  });
+  listingThree.listing = await prisma.mutation.createListing({
+    data: {
+      ...listingThree.input,
+      owner: { connect: { id: userOne.user.id } },
+      city: { connect: { id: cityOne.city.id } }
     }
   });
 
