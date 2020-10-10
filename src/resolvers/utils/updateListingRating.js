@@ -16,6 +16,14 @@ const updateListingRating = async (review, listingId, mutation, prisma) => {
     data.rating = parseInt((data.ratingSum / data.reviewCount).toFixed(2), 10);
 
     await prisma.mutation.updateListing({ where: { id: listingId }, data });
+  } else if (mutation === 'UPDATE') {
+    data.ratingSum += review.rating - review.oldRating;
+    data.rating = parseInt((data.ratingSum / data.reviewCount).toFixed(2), 10);
+
+    await prisma.mutation.updateListing({
+      where: { id: listingId },
+      data
+    });
   }
 };
 
