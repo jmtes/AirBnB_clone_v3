@@ -13,7 +13,8 @@ import seedDatabase, {
   userTwo,
   listingOne,
   listingTwo,
-  reservationOne
+  reservationOne,
+  reservationTwo
 } from './utils/seedDatabase';
 
 import {
@@ -284,12 +285,12 @@ describe('Reservations', () => {
         const client = getClient(userOne.jwt);
 
         const variables = {
-          listingId: listingTwo.listing.id,
+          id: reservationTwo.reservation.id,
           data: { ...defaultData, checkin: 'October 7, 2020' }
         };
 
         await expect(
-          client.mutate({ mutation: createReservation, variables })
+          client.mutate({ mutation: updateReservation, variables })
         ).rejects.toThrow('Checkin and checkout must be valid ISO strings.');
       });
 
@@ -297,12 +298,12 @@ describe('Reservations', () => {
         const client = getClient(userOne.jwt);
 
         const variables = {
-          listingId: listingTwo.listing.id,
+          id: reservationTwo.reservation.id,
           data: { ...defaultData, checkout: 'October 7, 2020' }
         };
 
         await expect(
-          client.mutate({ mutation: createReservation, variables })
+          client.mutate({ mutation: updateReservation, variables })
         ).rejects.toThrow('Checkin and checkout must be valid ISO strings.');
       });
 
@@ -310,7 +311,7 @@ describe('Reservations', () => {
         const client = getClient(userOne.jwt);
 
         const variables = {
-          listingId: listingTwo.listing.id,
+          id: reservationTwo.reservation.id,
           data: {
             ...defaultData,
             checkin: new Date('September 7, 2020').toISOString()
@@ -318,7 +319,7 @@ describe('Reservations', () => {
         };
 
         await expect(
-          client.mutate({ mutation: createReservation, variables })
+          client.mutate({ mutation: updateReservation, variables })
         ).rejects.toThrow("Checkin cannot be before today's date.");
       });
 
@@ -326,7 +327,7 @@ describe('Reservations', () => {
         const client = getClient(userOne.jwt);
 
         const variables = {
-          listingId: listingTwo.listing.id,
+          id: reservationTwo.reservation.id,
           data: {
             ...defaultData,
             checkout: new Date('September 7, 2020').toISOString()
@@ -334,7 +335,7 @@ describe('Reservations', () => {
         };
 
         await expect(
-          client.mutate({ mutation: createReservation, variables })
+          client.mutate({ mutation: updateReservation, variables })
         ).rejects.toThrow('Checkout cannot be before checkin date.');
       });
 
@@ -342,14 +343,14 @@ describe('Reservations', () => {
         const client = getClient(userOne.jwt);
 
         const variables = {
-          listingId: listingTwo.listing.id,
+          id: reservationTwo.reservation.id,
           data: {
             ...defaultData,
             checkout: defaultData.checkin
           }
         };
 
-        await client.mutate({ mutation: createReservation, variables });
+        await client.mutate({ mutation: updateReservation, variables });
       });
     });
 
