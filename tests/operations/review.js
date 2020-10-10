@@ -16,6 +16,8 @@ export const updateReview = gql`
   mutation($id: ID!, $data: UpdateReviewInput!) {
     updateReview(id: $id, data: $data) {
       id
+      title
+      body
     }
   }
 `;

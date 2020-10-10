@@ -330,11 +330,45 @@ const Mutation = {
     if (!userExists) throw Error('User account does not exist.');
 
     // Make sure review exists and was written by user
-    let reviewExists = await prisma.exists.Review({
+    const reviewExists = await prisma.exists.Review({
       id,
       author: { id: userId }
     });
     if (!reviewExists) throw Error('Unable to edit review.');
+
+    // Validate and sanitize title and body
+    if (data.title !== undefined) data.title = validateTitle(data.title);
+    if (data.body !== undefined) data.body = validateBody(data.body);
+
+    if (data.rating !== undefined) {
+      // Make sure rating is between 1 and 5
+      if (data.rating < 1 || data.rating > 5)
+        throw Error('Rating must be on a scale between 1 and 5.');
+
+      // Get current review
+      let review = await prisma.query.review(
+        { where: { id } },
+        '{ rating listing { id } }'
+      );
+
+      if (data.rating !== review.rating) {
+        // Preserve old rating
+        const oldRating = review.rating;
+
+        review = await prisma.mutation.updateReview(
+          { where: { id }, data },
+          '{rating listing { id }}'
+        );
+
+        // Update listing rating
+        review.oldRating = oldRating;
+        await updateListingRating(review, review.listing.id, 'UPDATE', prisma);
+
+        return prisma.query.review({ where: { id } }, info);
+      }
+    }
+
+    return prisma.mutation.updateReview({ where: { id }, data }, info);
   }
 };
 

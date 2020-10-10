@@ -184,7 +184,7 @@ export const reservationTwo = {
 export const reviewOne = {
   input: {
     rating: 5,
-    title: 'Nice stay',
+    title: 'Amazing stay',
     body: 'Beautiful home with a grill and hot tub and close to everything'
   },
   review: null

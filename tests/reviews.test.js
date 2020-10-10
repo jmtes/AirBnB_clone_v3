@@ -425,7 +425,6 @@ describe('Reviews', () => {
 
     describe('updateReview', () => {
       const defaultData = {
-        rating: 4,
         title: 'Nice stay',
         body:
           'The place was beautifully decorated, not to mention the view outside was breathtaking! It could use a little renovation, though.'
@@ -476,6 +475,130 @@ describe('Reviews', () => {
       });
 
       // DB Changes
+      test('Changes are reflected in the DB', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = { id: reviewOne.review.id, data: { ...defaultData } };
+
+        const {
+          data: {
+            updateReview: { id, title, body }
+          }
+        } = await client.mutate({ mutation: updateReview, variables });
+
+        // Check returned values
+        expect(id).toBe(reviewOne.review.id);
+        expect(title).toBe(defaultData.title);
+        expect(body).toBe(defaultData.body);
+
+        const wasUpdatedInDB = await prisma.exists.Review({ id, title, body });
+        expect(wasUpdatedInDB).toBe(true);
+      });
+
+      test('Listing rating should not change if data does not contain rating', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = { id: reviewOne.review.id, data: { ...defaultData } };
+
+        let review = await prisma.query.review(
+          { where: { id: reviewOne.review.id } },
+          '{ listing { id rating } }'
+        );
+
+        const oldRating = review.listing.rating;
+
+        await client.mutate({ mutation: updateReview, variables });
+
+        review = await prisma.query.review(
+          { where: { id: reviewOne.review.id } },
+          '{ listing { id rating } }'
+        );
+
+        const newRating = review.listing.rating;
+
+        expect(newRating).toEqual(oldRating);
+      });
+
+      test('Listing rating should not change if rating is the same', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = {
+          id: reviewOne.review.id,
+          data: { ...defaultData, rating: reviewOne.input.rating }
+        };
+
+        let review = await prisma.query.review(
+          { where: { id: reviewOne.review.id } },
+          '{ listing { id rating } }'
+        );
+
+        const oldRating = review.listing.rating;
+
+        await client.mutate({ mutation: updateReview, variables });
+
+        review = await prisma.query.review(
+          { where: { id: reviewOne.review.id } },
+          '{ listing { id rating } }'
+        );
+
+        const newRating = review.listing.rating;
+
+        expect(newRating).toEqual(oldRating);
+      });
+
+      test('Listing rating should increase if new rating is higher than original', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          id: reviewTwo.review.id,
+          data: { ...defaultData, rating: reviewTwo.input.rating + 1 }
+        };
+
+        let review = await prisma.query.review(
+          { where: { id: reviewTwo.review.id } },
+          '{ listing { id rating } }'
+        );
+
+        const oldRating = review.listing.rating;
+
+        await client.mutate({ mutation: updateReview, variables });
+
+        review = await prisma.query.review(
+          { where: { id: reviewTwo.review.id } },
+          '{ listing { id rating } }'
+        );
+
+        const newRating = review.listing.rating;
+
+        expect(newRating).toBeGreaterThan(oldRating);
+      });
+
+      test('Listing rating should decrease if new rating is lower than original', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = {
+          id: reviewOne.review.id,
+          data: { ...defaultData, rating: reviewOne.input.rating - 1 }
+        };
+
+        let review = await prisma.query.review(
+          { where: { id: reviewOne.review.id } },
+          '{ listing { id rating } }'
+        );
+
+        const oldRating = review.listing.rating;
+
+        await client.mutate({ mutation: updateReview, variables });
+
+        review = await prisma.query.review(
+          { where: { id: reviewOne.review.id } },
+          '{ listing { id rating } }'
+        );
+
+        const newRating = review.listing.rating;
+
+        expect(newRating).toBeLessThan(oldRating);
+      });
 
       // Input Validation
 
