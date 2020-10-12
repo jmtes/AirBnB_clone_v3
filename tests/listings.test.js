@@ -669,6 +669,12 @@ describe('Listing', () => {
           listing: { id }
         });
         expect(reservationsStillExist).toBe(false);
+
+        // Make sure all reviews for listing are removed
+        const reviewsStillExist = await prisma.exists.Review({
+          listing: { id }
+        });
+        expect(reviewsStillExist).toBe(false);
       });
     });
   });
