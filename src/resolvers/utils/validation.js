@@ -50,7 +50,7 @@ const validateDesc = (desc) => {
   if (sanitizedDesc.length < 1) throw Error('Description may not be empty.');
 
   // Make sure word count does not exceed 250
-  const wordCount = desc.split(/\s/).length;
+  const wordCount = sanitizedDesc.split(/\s/).length;
   if (wordCount > 250) throw Error('Description may not exceed 250 words.');
 
   return sanitizedDesc;
