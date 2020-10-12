@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import { addFragmentToInfo } from 'graphql-binding';
 
 import getUserId from './utils/getUserId';
 import generateToken from './utils/generateToken';
@@ -369,6 +370,33 @@ const Mutation = {
     }
 
     return prisma.mutation.updateReview({ where: { id }, data }, info);
+  },
+  deleteReview: async (_parent, { id }, { req, prisma }, info) => {
+    // Make sure user is authenticated
+    const userId = getUserId(req);
+
+    // Make sure user account exists
+    const userExists = await prisma.exists.User({ id: userId });
+    if (!userExists) throw Error('User account does not exist.');
+
+    // Make sure review exists and was written by the user
+    const reviewExists = await prisma.exists.Review({
+      id,
+      author: { id: userId }
+    });
+    if (!reviewExists) throw Error('Unable to delete review.');
+
+    // Delete review and update user listing
+    const fragment =
+      'fragment EnsureRatingandListing on Review { rating listing { id } }';
+    const review = await prisma.mutation.deleteReview(
+      { where: { id } },
+      addFragmentToInfo(info, fragment)
+    );
+
+    await updateListingRating(review, review.listing.id, 'DELETE', prisma);
+
+    return review;
   }
 };
 

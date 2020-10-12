@@ -19,7 +19,7 @@ import seedDatabase, {
   reviewTwo
 } from './utils/seedDatabase';
 
-import { createReview, updateReview } from './operations/review';
+import { createReview, updateReview, deleteReview } from './operations/review';
 
 describe('Reviews', () => {
   const defaultClient = getClient();
@@ -423,7 +423,7 @@ describe('Reviews', () => {
       });
     });
 
-    describe('updateReview', () => {
+    describe.skip('updateReview', () => {
       const defaultData = {
         title: 'Nice stay',
         body:
@@ -727,6 +727,95 @@ describe('Reviews', () => {
         } = await client.mutate({ mutation: updateReview, variables });
 
         expect(body).toBe('Wonderful stay &lt;3');
+      });
+    });
+
+    describe('deleteReview', () => {
+      // Authentication
+      test('Error is thrown if user is not authenticated', async () => {
+        const variables = { id: reviewTwo.review.id };
+
+        await expect(
+          defaultClient.mutate({ mutation: deleteReview, variables })
+        ).rejects.toThrow('Authentication required.');
+      });
+
+      test('Error is thrown if user account does not exist', async () => {
+        const token = jwt.sign(
+          { userId: 'hasdjkfhsdjklf' },
+          process.env.JWT_SECRET
+        );
+
+        const client = getClient(token);
+
+        const variables = { id: reviewTwo.review.id };
+
+        await expect(
+          client.mutate({ mutation: deleteReview, variables })
+        ).rejects.toThrow('User account does not exist.');
+      });
+
+      test('Error is thrown if review does not exist', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = { id: 'jaslkfsah' };
+
+        await expect(
+          client.mutate({ mutation: deleteReview, variables })
+        ).rejects.toThrow('Unable to delete review.');
+      });
+
+      test('Error is thrown if user is not review author', async () => {
+        const client = getClient(userThree.jwt);
+
+        const variables = { id: reviewTwo.review.id };
+
+        await expect(
+          client.mutate({ mutation: deleteReview, variables })
+        ).rejects.toThrow('Unable to delete review.');
+      });
+
+      // DB Changes
+      test('Review is removed from DB and listing rating is updated', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = { id: reviewTwo.review.id };
+
+        // Preserve old listing values
+        let listing = await prisma.query.listing(
+          { where: { id: listingTwo.listing.id } },
+          '{ ratingSum reviewCount rating }'
+        );
+
+        const oldSum = listing.ratingSum;
+        const oldCount = listing.reviewCount;
+
+        // Delete review from client
+        const {
+          data: {
+            deleteReview: { id, rating }
+          }
+        } = await client.mutate({ mutation: deleteReview, variables });
+
+        // Make sure review was deleted
+        const reviewStillExists = await prisma.exists.Review({ id });
+        expect(reviewStillExists).toBe(false);
+
+        // Ensure listing rating was changed as expected
+        listing = await prisma.query.listing(
+          { where: { id: listingTwo.listing.id } },
+          '{ ratingSum reviewCount rating }'
+        );
+
+        const newSum = listing.ratingSum;
+        const newCount = listing.reviewCount;
+        const newRating = listing.rating;
+
+        expect(newSum).toBe(oldSum - rating);
+        expect(newCount).toBe(oldCount - 1);
+        expect(newRating).toBe(
+          newCount ? parseInt((newSum / newCount).toFixed(2), 10) : 0
+        );
       });
     });
   });

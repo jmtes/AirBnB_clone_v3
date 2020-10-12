@@ -21,3 +21,12 @@ export const updateReview = gql`
     }
   }
 `;
+
+export const deleteReview = gql`
+  mutation($id: ID!) {
+    deleteReview(id: $id) {
+      id
+      rating
+    }
+  }
+`;
