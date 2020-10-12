@@ -105,7 +105,27 @@ const Mutation = {
     const userExists = await prisma.exists.User({ id });
     if (!userExists) throw Error('Account does not exist.');
 
-    return prisma.mutation.deleteUser({ where: { id } }, info);
+    // Get all reviews written by user
+    const reviews = await prisma.query.reviews(
+      { where: { author: { id } } },
+      '{ rating listing { id } }'
+    );
+
+    // Delete user
+    const user = await prisma.mutation.deleteUser({ where: { id } }, info);
+
+    // Update listing reviews
+    for (let i = 0; i < reviews.length; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      await updateListingRating(
+        reviews[i],
+        reviews[i].listing.id,
+        'DELETE',
+        prisma
+      );
+    }
+
+    return user;
   },
   createListing: async (_parent, { data }, { req, prisma }, info) => {
     // Make sure user is authenticated
