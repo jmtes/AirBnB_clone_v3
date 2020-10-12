@@ -6,7 +6,7 @@ type User {
   avatar: String
   bio: String
   listings: [Listing!]! @relation(name: "ListingToUser", onDelete: CASCADE)
-  reviews: [Review!]! @relation(name: "ReviewToUser", onDelete: SET_NULL)
+  reviews: [Review!]! @relation(name: "ReviewToUser", onDelete: CASCADE)
   reservations: [Reservation!]!
     @relation(name: "ReservationToUser", onDelete: CASCADE)
 }
