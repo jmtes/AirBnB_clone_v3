@@ -57,6 +57,7 @@
     "cross-fetch": "^3.0.6",
     "express": "^4.17.1",
     "express-validator": "^6.6.0",
+    "graphql-binding": "^2.5.2",
     "graphql-yoga": "^1.18.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.19",
