@@ -27,7 +27,7 @@ describe('Reviews', () => {
   beforeAll(seedDatabase);
 
   describe('Mutations', () => {
-    describe.skip('createReview', () => {
+    describe('createReview', () => {
       const defaultData = {
         rating: 5,
         title: 'Had a lovely stay',
@@ -423,7 +423,7 @@ describe('Reviews', () => {
       });
     });
 
-    describe.skip('updateReview', () => {
+    describe('updateReview', () => {
       const defaultData = {
         title: 'Nice stay',
         body:

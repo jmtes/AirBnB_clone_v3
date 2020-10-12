@@ -30,7 +30,7 @@ describe('User', () => {
 
   beforeAll(seedDatabase);
 
-  describe.skip('Queries', () => {
+  describe('Queries', () => {
     describe('user', () => {
       test('Returns correct user', async () => {
         const variables = { id: userOne.user.id };
@@ -110,7 +110,7 @@ describe('User', () => {
   });
 
   describe('Mutations', () => {
-    describe.skip('createUser', () => {
+    describe('createUser', () => {
       test('New user should be created in DB upon registration', async () => {
         const variables = {
           data: {
@@ -253,7 +253,7 @@ describe('User', () => {
       });
     });
 
-    describe.skip('loginUser', () => {
+    describe('loginUser', () => {
       test('Should succeed with valid credentials', async () => {
         const variables = {
           data: { email: 'emma@domain.tld', password: 'LFdx1ZZnXju6' }
@@ -289,7 +289,7 @@ describe('User', () => {
       });
     });
 
-    describe.skip('updateUserProfile', () => {
+    describe('updateUserProfile', () => {
       test('Should update user info in DB', async () => {
         const client = getClient(userOne.jwt);
 
@@ -477,7 +477,7 @@ describe('User', () => {
       });
     });
 
-    describe.skip('updateUserEmail', () => {
+    describe('updateUserEmail', () => {
       test('Email change is reflected in DB', async () => {
         const client = getClient(userOne.jwt);
 
@@ -595,7 +595,7 @@ describe('User', () => {
       });
     });
 
-    describe.skip('updateUserPassword', () => {
+    describe('updateUserPassword', () => {
       test('Error is thrown if not authenticated', async () => {
         const variables = {
           data: {
