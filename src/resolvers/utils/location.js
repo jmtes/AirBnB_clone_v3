@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { liqKey, unsplashKey } from '../../../config';
+
 const getCityCoordinates = async (city, state, region, country) => {
   const { data } = await axios.get('https://us1.locationiq.com/v1/search.php', {
     params: {
@@ -10,7 +12,7 @@ const getCityCoordinates = async (city, state, region, country) => {
       format: 'json',
       addressdetails: 1,
       limit: 1,
-      key: process.env.LOCATION_IQ_API_KEY
+      key: liqKey
     }
   });
 
@@ -31,7 +33,7 @@ const getCityPhoto = async (city) => {
       color: 'blue'
     },
     headers: {
-      Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`
+      Authorization: `Client-ID ${unsplashKey}`
     }
   });
 
@@ -96,7 +98,7 @@ export const getLocationData = async (address) => {
           addressdetails: 1,
           limit: 1,
           extratags: 1,
-          key: process.env.LOCATION_IQ_API_KEY
+          key: liqKey
         }
       }
     );

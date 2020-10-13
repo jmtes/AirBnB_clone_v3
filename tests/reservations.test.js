@@ -26,6 +26,8 @@ import {
   deleteReservation
 } from './operations/reservation';
 
+import { jwtSecret } from '../config';
+
 describe('Reservations', () => {
   const defaultClient = getClient();
 
@@ -41,10 +43,7 @@ describe('Reservations', () => {
       });
 
       test('Error is thrown if user account does not exist', async () => {
-        const token = jwt.sign(
-          { userId: 'jasklfhdsl' },
-          process.env.JWT_SECRET
-        );
+        const token = jwt.sign({ userId: 'jasklfhdsl' }, jwtSecret);
 
         const client = getClient(token);
 
@@ -232,10 +231,7 @@ describe('Reservations', () => {
       });
 
       test('Error is thrown if user account does not exist', async () => {
-        const token = jwt.sign(
-          { userId: 'ahfkjsdsdjkfj' },
-          process.env.JWT_SECRET
-        );
+        const token = jwt.sign({ userId: 'ahfkjsdsdjkfj' }, jwtSecret);
 
         const client = getClient(token);
 
@@ -391,10 +387,7 @@ describe('Reservations', () => {
       });
 
       test('Error is thrown if user account does not exist', async () => {
-        const token = jwt.sign(
-          { userId: 'hskjfhsldjkf' },
-          process.env.JWT_SECRET
-        );
+        const token = jwt.sign({ userId: 'hskjfhsldjkf' }, jwtSecret);
 
         const client = getClient(token);
 
@@ -547,10 +540,7 @@ describe('Reservations', () => {
       });
 
       test('Error is thrown if user account does not exist', async () => {
-        const token = jwt.sign(
-          { userId: 'sjhdfjksdfl' },
-          process.env.JWT_SECRET
-        );
+        const token = jwt.sign({ userId: 'sjhdfjksdfl' }, jwtSecret);
 
         const client = getClient(token);
 

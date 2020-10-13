@@ -25,6 +25,8 @@ import {
   getMe
 } from './operations/user';
 
+import { jwtSecret } from '../config';
+
 describe('User', () => {
   const defaultClient = getClient();
 
@@ -95,10 +97,7 @@ describe('User', () => {
       });
 
       test('Error is thrown if user does not exist (accounts for deactivation)', async () => {
-        const token = jwt.sign(
-          { userId: 'aslkdjlaskfd' },
-          process.env.JWT_SECRET
-        );
+        const token = jwt.sign({ userId: 'aslkdjlaskfd' }, jwtSecret);
 
         const client = getClient(token);
 
@@ -338,10 +337,7 @@ describe('User', () => {
       });
 
       test('Error is thrown if account does not exist', async () => {
-        const token = jwt.sign(
-          { userId: 'adjksafKhdskjf' },
-          process.env.JWT_SECRET
-        );
+        const token = jwt.sign({ userId: 'adjksafKhdskjf' }, jwtSecret);
 
         const client = getClient(token);
 
@@ -560,10 +556,7 @@ describe('User', () => {
       });
 
       test('Error is thrown if account does not exist', async () => {
-        const token = jwt.sign(
-          { userId: 'aksljdasld' },
-          process.env.JWT_SECRET
-        );
+        const token = jwt.sign({ userId: 'aksljdasld' }, jwtSecret);
 
         const client = getClient(token);
 
@@ -610,7 +603,7 @@ describe('User', () => {
       });
 
       test('Error is thrown if account does not exist', async () => {
-        const token = jwt.sign({ userId: 'asjdklsah' }, process.env.JWT_SECRET);
+        const token = jwt.sign({ userId: 'asjdklsah' }, jwtSecret);
 
         const client = getClient(token);
 
@@ -689,10 +682,7 @@ describe('User', () => {
       });
 
       test('Error is thrown if account does not exist', async () => {
-        const token = jwt.sign(
-          { userId: 'ajslkdhsaldf' },
-          process.env.JWT_SECRET
-        );
+        const token = jwt.sign({ userId: 'ajslkdhsaldf' }, jwtSecret);
 
         const client = getClient(token);
 

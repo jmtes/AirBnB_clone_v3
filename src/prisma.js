@@ -2,10 +2,12 @@ import { Prisma } from 'prisma-binding';
 
 import { fragmentReplacements } from './resolvers';
 
+import { prismaEndpoint, prismaSecret } from '../config';
+
 const prisma = new Prisma({
   typeDefs: 'src/generated/prisma.graphql',
-  endpoint: process.env.PRISMA_ENDPOINT,
-  secret: process.env.PRISMA_SECRET,
+  endpoint: prismaEndpoint,
+  secret: prismaSecret,
   fragmentReplacements
 });
 

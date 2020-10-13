@@ -25,6 +25,8 @@ import {
   deleteListing
 } from './operations/listing';
 
+import { jwtSecret } from '../config';
+
 describe('Listing', () => {
   const defaultClient = getClient();
 
@@ -335,10 +337,7 @@ describe('Listing', () => {
       });
 
       test('Error is thrown if user account does not exist', async () => {
-        const token = jwt.sign(
-          { userId: 'ajsdkasjfls' },
-          process.env.JWT_SECRET
-        );
+        const token = jwt.sign({ userId: 'ajsdkasjfls' }, jwtSecret);
 
         const client = getClient(token);
 
@@ -576,10 +575,7 @@ describe('Listing', () => {
       });
 
       test('Error is thrown if user account does not exist', async () => {
-        const token = jwt.sign(
-          { userId: 'jaskfhdsjflka' },
-          process.env.JWT_SECRET
-        );
+        const token = jwt.sign({ userId: 'jaskfhdsjflka' }, jwtSecret);
 
         const client = getClient(token);
 
@@ -810,7 +806,7 @@ describe('Listing', () => {
       });
 
       test('Error is thrown if user account does not exist', async () => {
-        const token = jwt.sign({ userId: 'ashfjklsd' }, process.env.JWT_SECRET);
+        const token = jwt.sign({ userId: 'ashfjklsd' }, jwtSecret);
 
         const client = getClient(token);
 

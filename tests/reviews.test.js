@@ -26,6 +26,8 @@ import {
   deleteReview
 } from './operations/review';
 
+import { jwtSecret } from '../config';
+
 describe('Reviews', () => {
   const defaultClient = getClient();
 
@@ -159,7 +161,7 @@ describe('Reviews', () => {
       });
 
       test('Error is thrown if user account does not exist', async () => {
-        const token = jwt.sign({ userId: 'jkshdkjds' }, process.env.JWT_SECRET);
+        const token = jwt.sign({ userId: 'jkshdkjds' }, jwtSecret);
 
         const client = getClient(token);
 
@@ -551,10 +553,7 @@ describe('Reviews', () => {
       });
 
       test('Error is thrown if user account does not exist', async () => {
-        const token = jwt.sign(
-          { userId: 'sklajfldskjfkdsl' },
-          process.env.JWT_SECRET
-        );
+        const token = jwt.sign({ userId: 'sklajfldskjfkdsl' }, jwtSecret);
 
         const client = getClient(token);
 
@@ -852,10 +851,7 @@ describe('Reviews', () => {
       });
 
       test('Error is thrown if user account does not exist', async () => {
-        const token = jwt.sign(
-          { userId: 'hasdjkfhsdjklf' },
-          process.env.JWT_SECRET
-        );
+        const token = jwt.sign({ userId: 'hasdjkfhsdjklf' }, jwtSecret);
 
         const client = getClient(token);
 

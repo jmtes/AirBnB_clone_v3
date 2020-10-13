@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
 
+import { jwtSecret } from '../../../config';
+
 const getUserId = (req, authRequired = true) => {
   const header = req.request
     ? req.request.headers.authorization
@@ -7,7 +9,7 @@ const getUserId = (req, authRequired = true) => {
 
   if (header) {
     const token = header.replace('Bearer ', '');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, jwtSecret);
 
     return decoded.userId;
   }

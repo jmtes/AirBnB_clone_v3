@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken';
 
 import prisma from '../../src/prisma';
 
+import { jwtSecret } from '../../config';
+
 export const userOne = {
   input: {
     name: 'Emma Thomas',
@@ -236,16 +238,13 @@ const seedDatabase = async () => {
 
   // Create dummy users
   userOne.user = await prisma.mutation.createUser({ data: userOne.input });
-  userOne.jwt = jwt.sign({ userId: userOne.user.id }, process.env.JWT_SECRET);
+  userOne.jwt = jwt.sign({ userId: userOne.user.id }, jwtSecret);
 
   userTwo.user = await prisma.mutation.createUser({ data: userTwo.input });
-  userTwo.jwt = jwt.sign({ userId: userTwo.user.id }, process.env.JWT_SECRET);
+  userTwo.jwt = jwt.sign({ userId: userTwo.user.id }, jwtSecret);
 
   userThree.user = await prisma.mutation.createUser({ data: userThree.input });
-  userThree.jwt = jwt.sign(
-    { userId: userThree.user.id },
-    process.env.JWT_SECRET
-  );
+  userThree.jwt = jwt.sign({ userId: userThree.user.id }, jwtSecret);
 
   // Create dummy cities
   cityOne.city = await prisma.mutation.createCity({ data: cityOne.input });
