@@ -178,7 +178,32 @@ export const reservationTwo = {
     checkout: new Date(
       new Date().getTime() + 1000 * 60 * 60 * 24 * 10
     ).toISOString()
-  }
+  },
+  reservation: null
+};
+
+export const reservationThree = {
+  input: {
+    checkin: new Date(
+      new Date().getTime() + 1000 * 60 * 60 * 24 * 24
+    ).toISOString(),
+    checkout: new Date(
+      new Date().getTime() + 1000 * 60 * 60 * 24 * 26
+    ).toISOString()
+  },
+  reservation: null
+};
+
+export const reservationFour = {
+  input: {
+    checkin: new Date(
+      new Date().getTime() + 1000 * 60 * 60 * 24 * 40
+    ).toISOString(),
+    checkout: new Date(
+      new Date().getTime() + 1000 * 60 * 60 * 24 * 42
+    ).toISOString()
+  },
+  reservation: null
 };
 
 export const reviewOne = {
@@ -272,6 +297,20 @@ const seedDatabase = async () => {
   reservationTwo.reservation = await prisma.mutation.createReservation({
     data: {
       ...reservationTwo.input,
+      user: { connect: { id: userOne.user.id } },
+      listing: { connect: { id: listingTwo.listing.id } }
+    }
+  });
+  reservationThree.reservation = await prisma.mutation.createReservation({
+    data: {
+      ...reservationThree.input,
+      user: { connect: { id: userOne.user.id } },
+      listing: { connect: { id: listingTwo.listing.id } }
+    }
+  });
+  reservationFour.reservation = await prisma.mutation.createReservation({
+    data: {
+      ...reservationFour.input,
       user: { connect: { id: userOne.user.id } },
       listing: { connect: { id: listingTwo.listing.id } }
     }
