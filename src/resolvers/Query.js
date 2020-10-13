@@ -84,6 +84,46 @@ const Query = {
 
     return listing;
   },
+  reservations: async (
+    _parent,
+    { user, listing, first, skip, after, orderBy },
+    { req, prisma },
+    info
+  ) => {
+    // Make sure user is authenticated
+    const userId = getUserId(req);
+
+    // Make sure user account exists
+    const userExists = await prisma.exists.User({ id: userId });
+    if (!userExists) throw Error('User account does not exist.');
+
+    // Make sure only either user or listing is provided
+    // The logic being is that, in making this query, you should be either a user viewing reservations you've made or a listing owner viewing reservations made for a listing of yours.
+    // Thus, it would not make sense for both to be provided.
+    if (!user === !listing)
+      throw Error('Either user or listing argument must be provided.');
+
+    const opArgs = { first, skip, after, orderBy, where: {} };
+
+    if (user) {
+      // Make sure user ids match
+      if (user !== userId) throw Error('Unable to get reservations.');
+
+      opArgs.where.user = { id: userId };
+    }
+    if (listing) {
+      // Make sure listing exists and is owned by user
+      const userOwnsListing = await prisma.exists.Listing({
+        id: listing,
+        owner: { id: userId }
+      });
+      if (!userOwnsListing) throw Error('Unable to get reservations.');
+
+      opArgs.where.listing = { id: listing };
+    }
+
+    return prisma.query.reservations(opArgs, info);
+  },
   reviews: (
     _parent,
     { author, listing, rating, first, skip, after, orderBy },

@@ -14,10 +14,13 @@ import seedDatabase, {
   listingOne,
   listingTwo,
   reservationOne,
-  reservationTwo
+  reservationTwo,
+  reservationThree,
+  reservationFour
 } from './utils/seedDatabase';
 
 import {
+  getReservations,
   createReservation,
   updateReservation,
   deleteReservation
@@ -27,6 +30,185 @@ describe('Reservations', () => {
   const defaultClient = getClient();
 
   beforeAll(seedDatabase);
+
+  describe('Queries', () => {
+    describe('reservations', () => {
+      // Authentication
+      test('Error is thrown if not authenticated', async () => {
+        await expect(
+          defaultClient.query({ query: getReservations })
+        ).rejects.toThrow('Authentication required.');
+      });
+
+      test('Error is thrown if user account does not exist', async () => {
+        const token = jwt.sign(
+          { userId: 'jasklfhdsl' },
+          process.env.JWT_SECRET
+        );
+
+        const client = getClient(token);
+
+        await expect(client.query({ query: getReservations })).rejects.toThrow(
+          'User account does not exist.'
+        );
+      });
+
+      test('Error is thrown if neither user nor listing arg is provided', async () => {
+        const client = getClient(userOne.jwt);
+
+        await expect(client.query({ query: getReservations })).rejects.toThrow(
+          'Either user or listing argument must be provided.'
+        );
+      });
+
+      test('Error is thrown if both user and listing args are provided', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          user: userOne.user.id,
+          listing: listingOne.listing.id
+        };
+
+        await expect(
+          client.query({ query: getReservations, variables })
+        ).rejects.toThrow('Either user or listing argument must be provided.');
+      });
+
+      test('Error is thrown if specified user is not the same as authenticated user', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = { user: userTwo.user.id };
+
+        await expect(
+          client.query({ query: getReservations, variables })
+        ).rejects.toThrow('Unable to get reservations.');
+      });
+
+      test('Error is thrown if specified listing is not owned by authenticated user', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = { listing: listingTwo.listing.id };
+
+        await expect(
+          client.query({ query: getReservations, variables })
+        ).rejects.toThrow('Unable to get reservations.');
+      });
+
+      test('Error is thrown if specified listing does not exist', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = { listing: 'shdfjksdf' };
+
+        await expect(
+          client.query({ query: getReservations, variables })
+        ).rejects.toThrow('Unable to get reservations.');
+      });
+
+      // Gets correct data
+      test('User arg filters out reservations not made by specified user', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = { user: userOne.user.id };
+
+        const {
+          data: { reservations }
+        } = await client.query({ query: getReservations, variables });
+
+        expect(reservations.length).toBe(3);
+
+        const allMadeByUser = reservations.every(
+          (res) => res.user.id === userOne.user.id
+        );
+        expect(allMadeByUser).toBe(true);
+      });
+
+      test('Listing arg filters out reservations not made for specified listing', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = { listing: listingTwo.listing.id };
+
+        const {
+          data: { reservations }
+        } = await client.query({ query: getReservations, variables });
+
+        expect(reservations.length).toBe(3);
+
+        const allMadeForListing = reservations.every(
+          (res) => res.listing.id === listingTwo.listing.id
+        );
+        expect(allMadeForListing).toBe(true);
+      });
+
+      // Pagination and sorting
+      test('First arg gets only first n reservations', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = { user: userOne.user.id, first: 2 };
+
+        const {
+          data: { reservations }
+        } = await client.query({ query: getReservations, variables });
+
+        expect(reservations.length).toBe(2);
+        expect(reservations[0].id).toBe(reservationTwo.reservation.id);
+        expect(reservations[1].id).toBe(reservationThree.reservation.id);
+      });
+
+      test('Skip arg skips first n reservations', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = { listing: listingTwo.listing.id, skip: 2 };
+
+        const {
+          data: { reservations }
+        } = await client.query({ query: getReservations, variables });
+
+        expect(reservations.length).toBe(1);
+        expect(reservations[0].id).toBe(reservationFour.reservation.id);
+      });
+
+      test('After arg gets only reservations that come after specified resrvation', async () => {
+        const client = getClient(userOne.jwt);
+
+        const variables = {
+          user: userOne.user.id,
+          after: reservationTwo.reservation.id
+        };
+
+        const {
+          data: { reservations }
+        } = await client.query({ query: getReservations, variables });
+
+        expect(reservations.length).toBe(2);
+        expect(reservations[0].id).toBe(reservationThree.reservation.id);
+      });
+
+      test('OrderBy arg sorts reservations as expected', async () => {
+        const client = getClient(userTwo.jwt);
+
+        const variables = {
+          listing: listingTwo.listing.id,
+          orderBy: 'checkin_DESC'
+        };
+
+        const {
+          data: { reservations }
+        } = await client.query({ query: getReservations, variables });
+
+        expect(reservations.length).toBe(3);
+
+        // Make sure reservations are ordered by descending checkin date
+        for (let i = 0; i < reservations.length - 1; i += 1) {
+          const current = reservations[i];
+          const next = reservations[i + 1];
+
+          expect(new Date(current.checkin).valueOf()).toBeGreaterThan(
+            new Date(next.checkin).valueOf()
+          );
+        }
+      });
+    });
+  });
 
   describe('Mutations', () => {
     describe('createReservation', () => {

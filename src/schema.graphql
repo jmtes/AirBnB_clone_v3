@@ -1,4 +1,4 @@
-# import CityOrderByInput, ListingOrderByInput, ReviewOrderByInput from './generated/prisma.graphql'
+# import CityOrderByInput, ListingOrderByInput, ReservationOrderByInput, ReviewOrderByInput from './generated/prisma.graphql'
 
 type Query {
   user(id: ID!): User!
@@ -26,6 +26,14 @@ type Query {
     orderBy: ListingOrderByInput
   ): [Listing!]!
   listing(id: ID!): Listing!
+  reservations(
+    user: ID
+    listing: ID
+    first: Int
+    skip: Int
+    after: String
+    orderBy: ReservationOrderByInput
+  ): [Reservation!]!
   reviews(
     author: ID
     listing: ID
