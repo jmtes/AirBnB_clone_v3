@@ -19,14 +19,125 @@ import seedDatabase, {
   reviewTwo
 } from './utils/seedDatabase';
 
-import { createReview, updateReview, deleteReview } from './operations/review';
+import {
+  getReviews,
+  createReview,
+  updateReview,
+  deleteReview
+} from './operations/review';
 
 describe('Reviews', () => {
   const defaultClient = getClient();
 
   beforeAll(seedDatabase);
 
-  describe('Mutations', () => {
+  describe('Queries', () => {
+    describe('reviews', () => {
+      test('Gets all reviews from DB with no args', async () => {
+        const {
+          data: { reviews }
+        } = await defaultClient.query({ query: getReviews });
+
+        expect(reviews.length).toBe(2);
+      });
+
+      test('Author arg filters out reviews that were not written by specified user', async () => {
+        const variables = { author: userOne.user.id };
+
+        const {
+          data: { reviews }
+        } = await defaultClient.query({ query: getReviews, variables });
+
+        expect(reviews.length).toBe(1);
+
+        const allWrittenByCorrectAuthor = reviews.every(
+          (review) => review.author.id === userOne.user.id
+        );
+        expect(allWrittenByCorrectAuthor).toBe(true);
+      });
+
+      test('Listing arg filters out reviews that were not written for specified listing', async () => {
+        const variables = { listing: listingOne.listing.id };
+
+        const {
+          data: { reviews }
+        } = await defaultClient.query({ query: getReviews, variables });
+
+        expect(reviews.length).toBe(1);
+
+        const allForCorrectListing = reviews.every(
+          (review) => review.listing.id === listingOne.listing.id
+        );
+        expect(allForCorrectListing).toBe(true);
+      });
+
+      test('Rating arg filters out reviews that do not have the specified rating', async () => {
+        const variables = { rating: 5 };
+
+        const {
+          data: { reviews }
+        } = await defaultClient.query({ query: getReviews, variables });
+
+        expect(reviews.length).toBe(1);
+
+        const allRaveReviews = reviews.every((review) => review.rating === 5);
+        expect(allRaveReviews).toBe(true);
+      });
+
+      test('First arg gets only first n reviews', async () => {
+        const variables = { first: 1 };
+
+        const {
+          data: { reviews }
+        } = await defaultClient.query({ query: getReviews, variables });
+
+        expect(reviews.length).toBe(1);
+        expect(reviews[0].id).toBe(reviewOne.review.id);
+      });
+
+      test('Skip arg skips first n reviews', async () => {
+        const variables = { skip: 1 };
+
+        const {
+          data: { reviews }
+        } = await defaultClient.query({ query: getReviews, variables });
+
+        expect(reviews.length).toBe(1);
+        expect(reviews[0].id).toBe(reviewTwo.review.id);
+      });
+
+      test('After arg only gets reviews after specified review', async () => {
+        const variables = { after: reviewOne.review.id };
+
+        const {
+          data: { reviews }
+        } = await defaultClient.query({ query: getReviews, variables });
+
+        expect(reviews.length).toBe(1);
+        expect(reviews[0].id).toBe(reviewTwo.review.id);
+      });
+
+      test('OrderBy arg sorts reviews as expected', async () => {
+        const variables = { orderBy: 'rating_ASC' };
+
+        const {
+          data: { reviews }
+        } = await defaultClient.query({ query: getReviews, variables });
+
+        expect(reviews.length).toBe(2);
+
+        // Make sure reviews are sorted by ascending rating
+        for (let i = 0; i < reviews.length - 1; i += 1) {
+          const current = reviews[i];
+          const next = reviews[i + 1];
+
+          expect(current.rating).toBeLessThanOrEqual(next.rating);
+        }
+      });
+    });
+  });
+
+  describe.skip('Mutations', () => {
     describe('createReview', () => {
       const defaultData = {
         rating: 5,

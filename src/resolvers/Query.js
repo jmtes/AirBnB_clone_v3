@@ -83,6 +83,20 @@ const Query = {
     if (!listing) throw Error('Listing not found.');
 
     return listing;
+  },
+  reviews: (
+    _parent,
+    { author, listing, rating, first, skip, after, orderBy },
+    { prisma },
+    info
+  ) => {
+    const opArgs = { first, skip, after, orderBy, where: {} };
+
+    if (author) opArgs.where.author = { id: author };
+    if (listing) opArgs.where.listing = { id: listing };
+    if (rating) opArgs.where.rating = rating;
+
+    return prisma.query.reviews(opArgs, info);
   }
 };
 
