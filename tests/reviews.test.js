@@ -137,7 +137,7 @@ describe('Reviews', () => {
     });
   });
 
-  describe.skip('Mutations', () => {
+  describe('Mutations', () => {
     describe('createReview', () => {
       const defaultData = {
         rating: 5,
