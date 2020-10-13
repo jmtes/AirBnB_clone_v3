@@ -1,4 +1,4 @@
-# import CityOrderByInput from './generated/prisma.graphql'
+# import CityOrderByInput, ListingOrderByInput from './generated/prisma.graphql'
 
 type Query {
   user(id: ID!): User!
@@ -11,6 +11,20 @@ type Query {
     orderBy: CityOrderByInput
   ): [City!]!
   city(id: ID!): City!
+  listings(
+    owner: ID
+    city: ID
+    amenities: [AmenityName!]
+    beds: Int
+    baths: Int
+    guests: Int
+    price: Float
+    rating: Float
+    first: Int
+    skip: Int
+    after: String
+    orderBy: ListingOrderByInput
+  ): [Listing!]!
   listing(id: ID!): Listing!
 }
 

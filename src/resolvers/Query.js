@@ -41,6 +41,43 @@ const Query = {
 
     return city;
   },
+  listings: (
+    _parent,
+    {
+      owner,
+      city,
+      amenities,
+      beds,
+      baths,
+      guests,
+      price,
+      rating,
+      first,
+      skip,
+      after,
+      orderBy
+    },
+    { prisma },
+    info
+  ) => {
+    const opArgs = { first, skip, after, orderBy, where: {} };
+
+    if (owner) opArgs.where.owner = { id: owner };
+    if (city) opArgs.where.city = { id: city };
+    if (amenities) {
+      const amenityMap = amenities.map((amenity) => ({
+        amenities_some: { enum: amenity }
+      }));
+      opArgs.where.AND = amenityMap;
+    }
+    if (beds !== undefined) opArgs.where.beds_gte = beds;
+    if (baths !== undefined) opArgs.where.baths_gte = baths;
+    if (guests !== undefined) opArgs.where.maxGuests_gte = guests;
+    if (price !== undefined) opArgs.where.price_lte = price;
+    if (rating !== undefined) opArgs.where.rating_gte = rating;
+
+    return prisma.query.listings(opArgs, info);
+  },
   listing: async (_parent, { id }, { prisma }, info) => {
     const listing = await prisma.query.listing({ where: { id } }, info);
     if (!listing) throw Error('Listing not found.');

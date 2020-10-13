@@ -11,12 +11,15 @@ import getClient from './utils/getClient';
 import seedDatabase, {
   userOne,
   userTwo,
+  cityOne,
   listingOne,
-  listingTwo
+  listingTwo,
+  listingThree
 } from './utils/seedDatabase';
 
 import {
   getListing,
+  getListings,
   createListing,
   updateListing,
   deleteListing
@@ -113,6 +116,195 @@ describe('Listing', () => {
         } = await client.query({ query: getListing, variables });
 
         expect(listing.reservations).toBeTruthy();
+      });
+    });
+
+    describe('listings', () => {
+      test('Gets all listings from DB when no args are given', async () => {
+        const {
+          data: { listings }
+        } = await defaultClient.query({ query: getListings });
+
+        expect(listings.length).toBe(3);
+      });
+
+      test('Owner arg filters out listings not owned by specified user', async () => {
+        const variables = { owner: userOne.user.id };
+
+        const {
+          data: { listings }
+        } = await defaultClient.query({ query: getListings, variables });
+
+        expect(listings.length).toBe(2);
+
+        const allHaveCorrectOwner = listings.every(
+          (listing) => listing.owner.id === userOne.user.id
+        );
+        expect(allHaveCorrectOwner).toBe(true);
+      });
+
+      test('City arg filters out listings not in specified city', async () => {
+        const variables = { city: cityOne.city.id };
+
+        const {
+          data: { listings }
+        } = await defaultClient.query({ query: getListings, variables });
+
+        expect(listings.length).toBe(2);
+
+        const allInCorrectCity = listings.every(
+          (listing) => listing.city.id === cityOne.city.id
+        );
+        expect(allInCorrectCity).toBe(true);
+      });
+
+      test('Amenities arg filters out listings that do not contain at least each specified amenity', async () => {
+        const variables = {
+          amenities: ['KITCHEN', 'AIR_CONDITIONING']
+        };
+
+        const {
+          data: { listings }
+        } = await defaultClient.query({ query: getListings, variables });
+
+        expect(listings.length).toBe(2);
+
+        listings.forEach((listing) => {
+          expect(listing.amenities.length).toBeGreaterThanOrEqual(2);
+          expect(
+            listing.amenities.some((amenity) => amenity.name === 'Kitchen')
+          ).toBe(true);
+          expect(
+            listing.amenities.some(
+              (amenity) => amenity.name === 'Air conditioning'
+            )
+          ).toBe(true);
+        });
+      });
+
+      test('Beds arg filters out listings that have fewer than specified number of beds', async () => {
+        const variables = { beds: 2 };
+
+        const {
+          data: { listings }
+        } = await defaultClient.query({ query: getListings, variables });
+
+        expect(listings.length).toBe(2);
+
+        const allHaveAdequateBeds = listings.every(
+          (listing) => listing.beds >= 2
+        );
+        expect(allHaveAdequateBeds).toBe(true);
+      });
+
+      test('Baths arg filters out listings that have fewer than specified number of baths', async () => {
+        const variables = { baths: 2 };
+
+        const {
+          data: { listings }
+        } = await defaultClient.query({ query: getListings, variables });
+
+        expect(listings.length).toBe(1);
+
+        const allHaveAdequateBaths = listings.every(
+          (listing) => listing.baths >= 2
+        );
+        expect(allHaveAdequateBaths).toBe(true);
+      });
+
+      test('Guests arg filters out listings that cannot accommodate specified number of guests', async () => {
+        const variables = { guests: 4 };
+
+        const {
+          data: { listings }
+        } = await defaultClient.query({ query: getListings, variables });
+
+        expect(listings.length).toBe(1);
+
+        const allCanAccommodate = listings.every(
+          (listing) => listing.maxGuests >= 4
+        );
+        expect(allCanAccommodate).toBe(true);
+      });
+
+      test('Price arg filters out listings that cost more than specified price', async () => {
+        const variables = { price: 150 };
+
+        const {
+          data: { listings }
+        } = await defaultClient.query({ query: getListings, variables });
+
+        expect(listings.length).toBe(1);
+
+        const allAreWithinBudget = listings.every(
+          (listing) => listing.price <= 150
+        );
+        expect(allAreWithinBudget).toBe(true);
+      });
+
+      test('Rating arg filters out listings with lower than the specified average rating', async () => {
+        const variables = { rating: 4.5 };
+
+        const {
+          data: { listings }
+        } = await defaultClient.query({ query: getListings, variables });
+
+        expect(listings.length).toBe(1);
+
+        const allRatedHighly = listings.every(
+          (listing) => listing.rating >= 4.5
+        );
+        expect(allRatedHighly).toBe(true);
+      });
+
+      test('First arg gets only first n listings', async () => {
+        const variables = { first: 2 };
+
+        const {
+          data: { listings }
+        } = await defaultClient.query({ query: getListings, variables });
+
+        expect(listings.length).toBe(2);
+      });
+
+      test('Skip arg skips first n listings', async () => {
+        const variables = { skip: 2 };
+
+        const {
+          data: { listings }
+        } = await defaultClient.query({ query: getListings, variables });
+
+        expect(listings.length).toBe(1);
+
+        expect(listings[0].id).toBe(listingThree.listing.id);
+      });
+
+      test('After arg only shows listings after specified listing', async () => {
+        const variables = { after: listingOne.listing.id };
+
+        const {
+          data: { listings }
+        } = await defaultClient.query({ query: getListings, variables });
+
+        expect(listings.length).toBe(2);
+
+        expect(listings[0].id).toBe(listingTwo.listing.id);
+      });
+
+      test('orderBy orders listings as expected', async () => {
+        const variables = { orderBy: 'price_ASC' };
+
+        const {
+          data: { listings }
+        } = await defaultClient.query({ query: getListings, variables });
+
+        // Check that price is ascending
+        for (let i = 0; i < listings.length - 1; i += 1) {
+          const current = listings[i];
+          const next = listings[i + 1];
+
+          expect(current.price).toBeLessThanOrEqual(next.price);
+        }
       });
     });
   });

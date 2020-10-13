@@ -13,6 +13,54 @@ export const getListing = gql`
   }
 `;
 
+export const getListings = gql`
+  query(
+    $owner: ID
+    $city: ID
+    $amenities: [AmenityName!]
+    $beds: Int
+    $baths: Int
+    $guests: Int
+    $price: Float
+    $rating: Float
+    $first: Int
+    $skip: Int
+    $after: String
+    $orderBy: ListingOrderByInput
+  ) {
+    listings(
+      owner: $owner
+      city: $city
+      amenities: $amenities
+      beds: $beds
+      baths: $baths
+      guests: $guests
+      price: $price
+      rating: $rating
+      first: $first
+      skip: $skip
+      after: $after
+      orderBy: $orderBy
+    ) {
+      id
+      owner {
+        id
+      }
+      city {
+        id
+      }
+      amenities {
+        name
+      }
+      beds
+      baths
+      maxGuests
+      price
+      rating
+    }
+  }
+`;
+
 export const createListing = gql`
   mutation($data: CreateListingInput!) {
     createListing(data: $data) {
