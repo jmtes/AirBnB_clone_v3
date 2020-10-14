@@ -1,0 +1,257 @@
+# import CityOrderByInput, ListingOrderByInput, ReservationOrderByInput, ReviewOrderByInput from './generated/prisma.graphql'
+
+type Query {
+  user(id: ID!): User!
+  me: User!
+  cities(
+    query: String
+    first: Int
+    skip: Int
+    after: String
+    orderBy: CityOrderByInput
+  ): [City!]!
+  city(id: ID!): City!
+  listings(
+    owner: ID
+    city: ID
+    amenities: [AmenityName!]
+    beds: Int
+    baths: Int
+    guests: Int
+    price: Float
+    rating: Float
+    first: Int
+    skip: Int
+    after: String
+    orderBy: ListingOrderByInput
+  ): [Listing!]!
+  listing(id: ID!): Listing!
+  reservations(
+    user: ID
+    listing: ID
+    first: Int
+    skip: Int
+    after: String
+    orderBy: ReservationOrderByInput
+  ): [Reservation!]!
+  reviews(
+    author: ID
+    listing: ID
+    rating: Int
+    first: Int
+    skip: Int
+    after: String
+    orderBy: ReviewOrderByInput
+  ): [Review!]!
+}
+
+type Mutation {
+  createUser(data: CreateUserInput!): AuthPayload!
+  loginUser(data: LoginUserInput!): AuthPayload!
+  updateUserProfile(data: UpdateUserProfileInput!): User!
+  updateUserEmail(data: UpdateUserEmailInput!): User!
+  updateUserPassword(data: UpdateUserPasswordInput!): User!
+  deleteUser: User!
+  createListing(data: CreateListingInput!): Listing!
+  updateListing(id: ID!, data: UpdateListingInput!): Listing!
+  deleteListing(id: ID!): Listing!
+  createReservation(listingId: ID!, data: CreateReservationInput!): Reservation!
+  updateReservation(id: ID!, data: UpdateReservationInput!): Reservation!
+  deleteReservation(id: ID!): Reservation!
+  createReview(listingId: ID!, data: CreateReviewInput!): Review!
+  updateReview(id: ID!, data: UpdateReviewInput!): Review!
+  deleteReview(id: ID!): Review!
+}
+
+# type Subscription {
+# }
+
+type AuthPayload {
+  user: User!
+  token: String!
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  password: String!
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+input UpdateUserProfileInput {
+  name: String
+  avatar: String
+  bio: String
+}
+
+input UpdateUserEmailInput {
+  email: String!
+  password: String!
+}
+
+input UpdateUserPasswordInput {
+  oldPassword: String!
+  newPassword: String!
+}
+
+input CreateListingInput {
+  name: String!
+  desc: String!
+  address: String!
+  latitude: Float!
+  longitude: Float!
+  beds: Int!
+  baths: Int!
+  maxGuests: Int
+  price: Float!
+  photos: [String!]!
+  amenities: [AmenityName!]!
+}
+
+input UpdateListingInput {
+  name: String
+  desc: String
+  beds: Int
+  baths: Int
+  maxGuests: Int
+  price: Float
+  photos: [String!]
+  amenities: [AmenityName!]
+}
+
+input CreateReservationInput {
+  checkin: String!
+  checkout: String!
+}
+
+input UpdateReservationInput {
+  checkin: String!
+  checkout: String!
+}
+
+input CreateReviewInput {
+  rating: Int!
+  title: String
+  body: String
+}
+
+input UpdateReviewInput {
+  rating: Int
+  title: String
+  body: String
+}
+
+type User {
+  id: ID!
+  email: String
+  password: String
+  name: String!
+  avatar: String
+  bio: String
+  listings: [Listing!]!
+  reviews: [Review!]!
+  reservations: [Reservation!]
+}
+
+type City {
+  id: ID!
+  name: String!
+  state: String
+  region: String
+  country: String!
+  latitude: Float!
+  longitude: Float!
+  photo: String!
+  listings: [Listing!]!
+}
+
+type Listing {
+  id: ID!
+  createdAt: String!
+  updatedAt: String!
+  name: String!
+  desc: String!
+  owner: User!
+  city: City!
+  address: String
+  latitude: Float!
+  longitude: Float!
+  beds: Int!
+  baths: Int!
+  maxGuests: Int
+  price: Float!
+  amenities: [Amenity!]!
+  photos: [String!]!
+  reservations: [Reservation!]
+  reviews: [Review!]!
+  rating: Float
+}
+
+type Amenity {
+  id: ID!
+  name: String!
+  enum: String!
+}
+
+type Reservation {
+  id: ID!
+  createdAt: String!
+  updatedAt: String!
+  user: User!
+  listing: Listing!
+  checkin: String!
+  checkout: String!
+}
+
+type Review {
+  id: ID!
+  createdAt: String!
+  updatedAt: String!
+  author: User
+  listing: Listing!
+  rating: Int!
+  title: String
+  body: String
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+enum AmenityName {
+  KITCHEN
+  SHAMPOO
+  HEATING
+  AIR_CONDITIONING
+  WASHER
+  DRYER
+  WIFI
+  BREAKFAST
+  INDOOR_FIREPLACE
+  HANGERS
+  IRON
+  HAIR_DRYER
+  LAPTOP_FRIENDLY_WORKSPACE
+  TV
+  CRIB
+  HIGH_CHAIR
+  SELF_CHECK_IN
+  SMOKE_ALARM
+  CARBON_MONOXIDE_ALARM
+  PRIVATE_BATHROOM
+  PIANO
+  BEACHFRONT
+  WATERFRONT
+  FREE_PARKING
+  HOT_TUB
+  GYM
+  POOL
+  PETS_ALLOWED
+  SMOKING_ALLOWED
+}

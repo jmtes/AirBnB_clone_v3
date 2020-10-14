@@ -1,0 +1,76 @@
+type User {
+  id: ID! @unique @id
+  email: String! @unique
+  password: String!
+  name: String!
+  avatar: String
+  bio: String
+  listings: [Listing!]! @relation(name: "ListingToUser", onDelete: CASCADE)
+  reviews: [Review!]! @relation(name: "ReviewToUser", onDelete: CASCADE)
+  reservations: [Reservation!]!
+    @relation(name: "ReservationToUser", onDelete: CASCADE)
+}
+
+type City {
+  id: ID! @unique @id
+  name: String!
+  state: String
+  region: String
+  country: String!
+  latitude: Float!
+  longitude: Float!
+  photo: String!
+  listings: [Listing!]! @relation(name: "ListingToCity", onDelete: CASCADE)
+}
+
+type Listing {
+  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  name: String!
+  desc: String!
+  owner: User! @relation(name: "ListingToUser", onDelete: SET_NULL)
+  city: City! @relation(name: "ListingToCity", onDelete: SET_NULL)
+  address: String!
+  latitude: Float!
+  longitude: Float!
+  beds: Int!
+  baths: Int!
+  maxGuests: Int
+  price: Float!
+  amenities: [Amenity!]!
+  photos: [String!]! @scalarList(strategy: RELATION)
+  reservations: [Reservation!]!
+    @relation(name: "ReservationToListing", onDelete: CASCADE)
+  reviews: [Review!]! @relation(name: "ReviewToListing", onDelete: CASCADE)
+  rating: Float! @default(value: 0)
+  reviewCount: Int! @default(value: 0)
+  ratingSum: Int! @default(value: 0)
+}
+
+type Amenity {
+  id: ID! @unique @id
+  name: String! @unique
+  enum: String! @unique
+}
+
+type Reservation {
+  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  user: User! @relation(name: "ReservationToUser", onDelete: SET_NULL)
+  listing: Listing! @relation(name: "ReservationToListing", onDelete: SET_NULL)
+  checkin: DateTime!
+  checkout: DateTime!
+}
+
+type Review {
+  id: ID! @unique @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  author: User @relation(name: "ReviewToUser", onDelete: SET_NULL)
+  listing: Listing! @relation(name: "ReviewToListing", onDelete: SET_NULL)
+  rating: Int!
+  title: String
+  body: String
+}
