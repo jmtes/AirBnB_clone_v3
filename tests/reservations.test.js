@@ -26,7 +26,7 @@ import {
   deleteReservation
 } from './operations/reservation';
 
-import { jwtSecret } from '../config';
+import { jwtSecret } from './config';
 
 describe('Reservations', () => {
   const defaultClient = getClient();

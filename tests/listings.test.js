@@ -25,7 +25,7 @@ import {
   deleteListing
 } from './operations/listing';
 
-import { jwtSecret } from '../config';
+import { jwtSecret } from './config';
 
 describe('Listing', () => {
   const defaultClient = getClient();

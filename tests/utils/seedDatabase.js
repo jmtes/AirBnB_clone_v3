@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 import prisma from '../../src/prisma';
 
-import { jwtSecret } from '../../config';
+import { jwtSecret } from '../config';
 
 export const userOne = {
   input: {

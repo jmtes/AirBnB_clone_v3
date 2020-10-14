@@ -26,7 +26,7 @@ import {
   deleteReview
 } from './operations/review';
 
-import { jwtSecret } from '../config';
+import { jwtSecret } from './config';
 
 describe('Reviews', () => {
   const defaultClient = getClient();

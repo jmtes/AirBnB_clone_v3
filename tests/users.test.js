@@ -25,7 +25,7 @@ import {
   getMe
 } from './operations/user';
 
-import { jwtSecret } from '../config';
+import { jwtSecret } from './config';
 
 describe('User', () => {
   const defaultClient = getClient();
