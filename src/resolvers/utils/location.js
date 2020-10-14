@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { liqKey, unsplashKey } from '../../../config';
+import { liqKey, unsplashKey } from '../../config';
 
 const getCityCoordinates = async (city, state, region, country) => {
   const { data } = await axios.get('https://us1.locationiq.com/v1/search.php', {

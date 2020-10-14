@@ -2,7 +2,7 @@ import { Prisma } from 'prisma-binding';
 
 import { fragmentReplacements } from './resolvers';
 
-import { prismaEndpoint, prismaSecret } from '../config';
+import { prismaEndpoint, prismaSecret } from './config';
 
 const prisma = new Prisma({
   typeDefs: 'src/generated/prisma.graphql',

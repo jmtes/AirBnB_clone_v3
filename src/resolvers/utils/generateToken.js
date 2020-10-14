@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-import { jwtSecret } from '../../../config';
+import { jwtSecret } from '../../config';
 
 const generateToken = (userId) =>
   jwt.sign({ userId }, jwtSecret, {
